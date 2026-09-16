@@ -1,0 +1,33 @@
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 300px;
+  flex: 1;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 4px;
+}
+
+.title {
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-title);
+}
+
+.count {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--color-muted);
+}
+
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}

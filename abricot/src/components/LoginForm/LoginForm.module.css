@@ -1,0 +1,164 @@
+.page {
+  display: flex;
+  min-height: 100vh;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 562px;
+  min-height: 100vh;
+  padding: 55px 140px;
+  background: var(--color-bg);
+  flex-shrink: 0;
+}
+
+.hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: url("/fondLogin.jpg");
+  background-size: cover;
+  background-position: center right;
+  
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-heading);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-brand);
+}
+
+.logoIcon {
+  width: 35px;
+  height: 25px;
+}
+
+.formContent {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.title {
+  font-family: var(--font-heading);
+  font-size: 40px;
+  font-weight: 700;
+  color: var(--color-brand);
+  line-height: 1.12;
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: 29px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--color-black);
+}
+
+.input {
+  padding: 19px 17px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background: var(--color-white);
+  font-size: 14px;
+  color: var(--color-title);
+  transition: border-color 0.2s;
+}
+
+.input::placeholder {
+  color: var(--color-muted);
+}
+
+.input:focus {
+  border-color: var(--color-brand);
+  outline: none;
+}
+
+.submitBtn {
+  width: 249px;
+  padding: 13px 74px;
+  background: var(--color-title);
+  color: var(--color-white);
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 400;
+  transition: background 0.2s;
+}
+
+.submitBtn:hover {
+  background: var(--color-dark);
+}
+
+.forgotLink {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--color-brand);
+}
+
+.forgotLink:hover {
+  text-decoration: underline;
+}
+
+.signupRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.signupText {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--color-black);
+}
+
+.signupLink {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--color-brand);
+}
+
+.signupLink:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 1024px) {
+  .hero {
+    display: none;
+  }
+
+  .panel {
+    width: 100%;
+    padding: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .panel {
+    padding: 24px;
+  }
+
+  .title {
+    font-size: 32px;
+  }
+
+  .submitBtn {
+    width: 100%;
+  }
+}
