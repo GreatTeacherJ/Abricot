@@ -89,6 +89,7 @@
   gap: 15px;
 }
 
+
 .teamLabel {
   display: flex;
   align-items: center;
@@ -106,7 +107,7 @@
 .teamMembers {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
 }
 
 .avatar {
@@ -123,8 +124,22 @@
   flex-shrink: 0;
 }
 
+.ownerAvatar{
+  background: var(--color-brand-light);
+}
+
+.otherAvatar{
+  background: var(--color-border);
+}
+
 .avatarOverlap {
   margin-left: -8px;
+}
+
+.containerAvatar{
+  margin-left: 5px;
+  display: flex;
+  flex-direction: row;
 }
 
 .ownerTag {

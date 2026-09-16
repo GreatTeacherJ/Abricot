@@ -22,7 +22,10 @@ export default function LoginForm() {
 		console.log(email);
 		console.log(password);
 
-		const response = await loginAPI(email, password);
+		//const response = await loginAPI(email, password);
+
+		//Pour teste a supprimer
+		const response = await loginAPI("alice@example.com", "P@ssword123");
 
 		if (!response) {
 			setErrorMessage("Erreur serveur");

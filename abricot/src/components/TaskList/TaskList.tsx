@@ -1,5 +1,7 @@
+import { useEffect } from "react";
 import TaskRow from "../TaskRow/TaskRow";
 import styles from "./TaskList.module.css";
+import { assignedTskApi } from "@/utils/utilsUser";
 
 /** Données fictives des tâches assignées */
 const tasks = [
@@ -55,6 +57,11 @@ const tasks = [
 
 /** Liste des tâches assignées (vue tableau) */
 export default function TaskList() {
+	useEffect(() => {
+		const data = assignedTskApi();
+		console.log("assignedTasks : ", data);
+	}, []);
+
 	return (
 		<div className={styles.card}>
 			{/* En-tête : titre + barre de recherche */}

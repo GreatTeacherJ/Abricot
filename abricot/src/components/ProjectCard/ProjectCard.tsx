@@ -1,97 +1,100 @@
+"use client";
+
 import Link from "next/link";
 import styles from "./ProjectCard.module.css";
-
-/** Membre de l'équipe projet */
-interface TeamMember {
-  /** Initiales affichées sur l'avatar */
-  initials: string;
-  /** true si propriétaire du projet */
-  isOwner?: boolean;
-}
+import type { Project, Tasks } from "@/types/types";
+import Image from "next/image";
+import { taskForProjectApi } from "@/utils/utilsUser";
+import { useEffect, useState } from "react";
 
 /** Props d'une carte projet */
 interface ProjectCardProps {
-  /** Nom du projet */
-  name: string;
-  /** Slug URL pour la navigation */
-  slug: string;
-  /** Description du projet */
-  description: string;
-  /** Pourcentage de progression (0-100) */
-  progress: number;
-  /** Nombre total de tâches */
-  totalTasks: number;
-  /** Nombre de tâches terminées */
-  completedTasks: number;
-  /** Membres de l'équipe */
-  team: TeamMember[];
+	project: Project;
 }
 
 /** Carte projet cliquable menant à la page de détail */
-export default function ProjectCard({
-  name,
-  slug,
-  description,
-  progress,
-  totalTasks,
-  completedTasks,
-  team,
-}: ProjectCardProps) {
-  return (
-    <Link href={`/projets/${slug}`} className={styles.card}>
-      {/* Titre + description */}
-      <div className={styles.titleBlock}>
-        <h3 className={styles.title}>{name}</h3>
-        <p className={styles.description}>{description}</p>
-      </div>
+export default function ProjectCard({ project }: ProjectCardProps) {
+	//liste de tache récupérées
+	const [tasks, setTasks] = useState<Tasks>([]);
 
-      {/* Barre de progression */}
-      <div className={styles.progressBlock}>
-        <div className={styles.progressHeader}>
-          <span className={styles.progressLabel}>Progression</span>
-          <span className={styles.progressValue}>{progress}%</span>
-        </div>
-        <div className={styles.progressBar}>
-          <div className={styles.progressFill} style={{ width: `${progress}%` }} />
-        </div>
-        <span className={styles.taskCount}>
-          {completedTasks}/{totalTasks} tâches terminées
-        </span>
-      </div>
+	const totalTasks = project._count.tasks;
+	//Recherche des tache términées
+	const completedTasks = tasks.filter((task) => task.status === "DONE").length;
+	const progress = Math.round((completedTasks / totalTasks) * 100);
 
-      {/* Équipe : avatars + tag propriétaire */}
-      <div className={styles.teamBlock}>
-        <span className={styles.teamLabel}>
-          <svg className={styles.teamLabelIcon} viewBox="0 0 12 12" fill="currentColor">
-            <path d="M6 6a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm0 1c-2.7 0-5 1.3-5 3v1h10v-1c0-1.7-2.3-3-5-3z" />
-          </svg>
-          Équipe ({team.length})
-        </span>
-        <div className={styles.teamMembers}>
-          {/* Premier membre (propriétaire) */}
-          {team.slice(0, 1).map((member) => (
-            <div key={member.initials} className={styles.avatar}>
-              {member.initials}
-            </div>
-          ))}
-          {team.slice(0, 1).map((member) =>
-            member.isOwner ? (
-              <span key={`owner-${member.initials}`} className={styles.ownerTag}>
-                Propriétaire
-              </span>
-            ) : null
-          )}
-          {/* Membres supplémentaires (avatars superposés) */}
-          {team.slice(1).map((member) => (
-            <div
-              key={member.initials}
-              className={`${styles.avatar} ${styles.avatarOverlap}`}
-            >
-              {member.initials}
-            </div>
-          ))}
-        </div>
-      </div>
-    </Link>
-  );
+	useEffect(() => {
+		async function taskForProject() {
+			const data = await taskForProjectApi(project.id);
+
+			if (!data.data) {
+				console.log("ProjectCard : ", data.message);
+				return;
+			}
+			setTasks(data.data);
+		}
+
+		taskForProject();
+	}, []);
+
+	console.log("ProjectCard créé : ", project);
+
+	return (
+		<Link href={`/projets/${project.id}`} className={styles.card}>
+			{/* Titre + description */}
+			<div className={styles.titleBlock}>
+				<h3 className={styles.title}>{project.name}</h3>
+				<p className={styles.description}>{project.description}</p>
+			</div>
+
+			{/* Barre de progression */}
+			<div className={styles.progressBlock}>
+				<div className={styles.progressHeader}>
+					<span className={styles.progressLabel}>Progression</span>
+					<span className={styles.progressValue}>{progress}%</span>
+				</div>
+				<div className={styles.progressBar}>
+					<div
+						className={styles.progressFill}
+						style={{ width: `${progress}%` }}
+					/>
+				</div>
+				<span className={styles.taskCount}>
+					{completedTasks}/{totalTasks} tâches terminées
+				</span>
+			</div>
+
+			{/* Équipe : avatars + tag propriétaire */}
+			<div className={styles.teamBlock}>
+				<span className={styles.teamLabel}>
+					<Image src="theamIcon.svg" alt="" width={11} height={11} />
+					Équipe ({project.members.length + 1})
+				</span>
+				<div className={styles.teamMembers}>
+					{/* Premier membre (propriétaire) */}
+					<div className={`${styles.avatar} ${styles.ownerAvatar}`}>
+						{project.owner.name
+							.split(" ")
+							.map((w) => w[0])
+							.join("")}
+					</div>
+
+					<span className={styles.ownerTag}>Propriétaire</span>
+					<div className={styles.containerAvatar}>
+						{/* Membres supplémentaires (avatars superposés) */}
+						{project.members.map((member) => (
+							<div
+								key={member.id}
+								className={`${styles.avatar} ${styles.avatarOverlap} ${styles.otherAvatar}`}
+							>
+								{member.user.name
+									.split(" ")
+									.map((w) => w[0])
+									.join("")}
+							</div>
+						))}
+					</div>
+				</div>
+			</div>
+		</Link>
+	);
 }
