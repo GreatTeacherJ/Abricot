@@ -1,5 +1,6 @@
 import styles from "./Menu.module.css";
 import Image from "next/image";
+import Link from "next/link";
 
 /** Props de la barre de navigation */
 interface MenuProps {
@@ -14,9 +15,9 @@ export default function Menu({ activePage, onPageChange }: MenuProps) {
 	return (
 		<nav className={styles.nav}>
 			{/* Logo de l'application */}
-			<div className={styles.logo}>
+			<Link href="/" className={styles.logo}>
 				<Image src="icon.svg" alt="icon abricot" height={18.72} width={147} />
-			</div>
+			</Link>
 
 			{/* Liens de navigation */}
 			<div className={styles.navItems}>

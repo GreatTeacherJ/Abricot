@@ -19,7 +19,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  background: url("/fondLogin.jpg");
+  background: url("/signIn.jpg");
   background-size: cover;
   background-position: center right;
   
@@ -136,6 +136,11 @@
 
 .signupLink:hover {
   text-decoration: underline;
+}
+
+.error{
+color : rgb(255, 157, 0)
+
 }
 
 @media (max-width: 1024px) {
