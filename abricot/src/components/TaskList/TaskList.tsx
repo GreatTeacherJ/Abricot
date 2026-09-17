@@ -1,13 +1,42 @@
 import TaskRow from "../TaskRow/TaskRow";
 import styles from "./TaskList.module.css";
 import type { Tasks } from "@/types/types";
+import { ChangeEvent, useState, useEffect } from "react";
 
 interface TaskListProps {
 	assignedTasks: Tasks;
 }
 
-/** Liste des tâches assignées (vue tableau) */
+/** Liste des tâches assignées */
 export default function TaskList({ assignedTasks }: TaskListProps) {
+	const [filterTask, setFilterTask] = useState<Tasks>(assignedTasks);
+
+	// synchronise filterTask à chaque fois qu'assignedTasks change
+	useEffect(() => {
+		setFilterTask(assignedTasks);
+	}, [assignedTasks]);
+
+	//on appelle la fonction dés que l'imput change
+	function handleChange(e: ChangeEvent<HTMLInputElement>) {
+		const searchText = e.target.value;
+
+		// normalisation pour une recherche insensible à la casse
+		const normalizedSearch = searchText.toLowerCase().trim();
+
+		// si la recherche est vide, retourne toutes les tâches
+		if (!normalizedSearch) {
+			setFilterTask(assignedTasks);
+		}
+
+		const tasksFilter = assignedTasks.filter(
+			(task) =>
+				task.title.toLowerCase().includes(normalizedSearch) ||
+				task.description.toLowerCase().includes(normalizedSearch),
+		);
+
+		setFilterTask(tasksFilter);
+	}
+
 	return (
 		<div className={styles.card}>
 			{/* En-tête : titre + barre de recherche */}
@@ -21,6 +50,7 @@ export default function TaskList({ assignedTasks }: TaskListProps) {
 						className={styles.searchInput}
 						type="text"
 						placeholder="Rechercher une tâche"
+						onChange={handleChange}
 					/>
 					<svg
 						className={styles.searchIcon}
@@ -37,7 +67,7 @@ export default function TaskList({ assignedTasks }: TaskListProps) {
 
 			{/* Liste des lignes de tâches */}
 			<div className={styles.taskList}>
-				{assignedTasks.map((task, i) => (
+				{filterTask.map((task, i) => (
 					<TaskRow key={i} task={task} />
 				))}
 			</div>
