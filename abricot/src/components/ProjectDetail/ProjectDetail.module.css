@@ -123,13 +123,16 @@
 }
 
 .chip {
+  display: flex;
   padding: 14px 16px;
   border-radius: 8px;
   font-size: 14px;
   font-weight: 400;
   cursor: pointer;
   transition: background 0.2s;
+  gap : 14px;
 }
+
 
 .chipActive {
   background: var(--color-brand-light);

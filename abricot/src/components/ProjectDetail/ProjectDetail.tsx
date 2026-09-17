@@ -7,6 +7,7 @@ import styles from "./ProjectDetail.module.css";
 import { useState, useEffect } from "react";
 import type { Tasks, Project } from "@/types/types";
 import { taskForProjectApi, projectsApi } from "@/utils/utilsUser";
+import Image from "next/image";
 
 /** Props de la page de détail d'un projet */
 interface ProjectDetailProps {
@@ -105,9 +106,21 @@ export default function ProjectDetail({ id }: ProjectDetailProps) {
 						{/* Onglets Liste/Calendrier */}
 						<div className={styles.chips}>
 							<button className={`${styles.chip} ${styles.chipActive}`}>
+								<Image
+									src="/listIcon.svg"
+									alt=""
+									width={16}
+									height={16}
+								/>
 								Liste
 							</button>
 							<button className={`${styles.chip} ${styles.chipInactive}`}>
+								<Image
+									src="/kanbanIcon.svg"
+									alt=""
+									width={16}
+									height={16}
+								/>
 								Calendrier
 							</button>
 						</div>

@@ -34,6 +34,7 @@ export default function Contributors({ project }: ContributorsProps) {
 			</div>
 			{/* Liste des membres avec avatars et rôles */}
 			<div className={styles.members}>
+				{/* Avatar (orange) */}
 				<div className={`${styles.avatar} ${styles.avatarOwner}`}>
 					{owner.initials}
 				</div>
@@ -41,19 +42,20 @@ export default function Contributors({ project }: ContributorsProps) {
 				<span className={`${styles.roleTag} ${styles.roleOwner}`}>
 					Propriétaire
 				</span>
-			</div>
-			{contributors.map((c) => (
-				<div key={c.initials} className={styles.member}>
-					{/* Avatar (orange si propriétaire, gris sinon) */}
-					<div className={`${styles.avatar} ${styles.avatarMember}`}>
-						{c.initials}
+
+				{contributors.map((c) => (
+					<div key={c.initials} className={styles.member}>
+						{/* Avatar (gris) */}
+						<div className={`${styles.avatar} ${styles.avatarMember}`}>
+							{c.initials}
+						</div>
+						{/* Tag rôle (Propriétaire ou nom complet) */}
+						<span className={`${styles.roleTag} ${styles.roleMember}`}>
+							{c.name}
+						</span>
 					</div>
-					{/* Tag rôle (Propriétaire ou nom complet) */}
-					<span className={`${styles.roleTag} ${styles.roleMember}`}>
-						{c.name}
-					</span>
-				</div>
-			))}
+				))}
+			</div>
 		</div>
 	);
 }

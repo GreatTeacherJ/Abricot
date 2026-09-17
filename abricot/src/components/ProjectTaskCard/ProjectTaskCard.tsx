@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import styles from "./ProjectTaskCard.module.css";
 import type { Task } from "@/types/types";
 
@@ -8,6 +11,22 @@ interface ProjectTaskCardProps {
 
 /** Carte de tâche détaillée (échéance, assignés, commentaires) */
 export default function ProjectTaskCard({ task }: ProjectTaskCardProps) {
+	const [btnCmtActive, setBtnCmtActive] = useState<boolean>(false);
+
+	const date = new Date(task.dueDate);
+	// Forcer l'interprétation en UTC pour éviter le décalage
+	const formattedDate = new Intl.DateTimeFormat("fr-FR", {
+		month: "long",
+		year: "numeric",
+		timeZone: "UTC", // évite le décalage de fuseau horaire
+	}).format(date);
+
+	const statusStyle: Record<string, { label: string; className: string }> = {
+		TODO: { label: "À faire", className: styles.tagRed },
+		IN_PROGRESS: { label: "En cour", className: styles.tagOrange },
+		DONE: { label: "Terminée", className: styles.tagGreen },
+	};
+
 	return (
 		<div className={styles.card}>
 			<div className={styles.cardHeader}>
@@ -16,7 +35,11 @@ export default function ProjectTaskCard({ task }: ProjectTaskCardProps) {
 					<div>
 						<div className={styles.titleRow}>
 							<span className={styles.name}>{task.title}</span>
-							<span className={styles.tag}>{task.status}</span>
+							<span
+								className={`${styles.tag} ${statusStyle[task.status].className}`}
+							>
+								{statusStyle[task.status].label}
+							</span>
 						</div>
 						<p className={styles.description}>{task.description}</p>
 					</div>
@@ -53,7 +76,7 @@ export default function ProjectTaskCard({ task }: ProjectTaskCardProps) {
 									fill="#FF8B42"
 								/>
 							</svg>
-							{task.dueDate}
+							{formattedDate}
 						</span>
 					</div>
 
@@ -63,7 +86,14 @@ export default function ProjectTaskCard({ task }: ProjectTaskCardProps) {
 						<div className={styles.assignees}>
 							{task.assignees.map((a) => (
 								<div key={a.id} className={styles.assignee}>
-									<div className={styles.avatar}>{a.user.name}</div>
+									<div
+										className={`${styles.avatar} ${styles.avatarMuted}`}
+									>
+										{a.user.name
+											.split(" ")
+											.map((w) => w[0])
+											.join("")}
+									</div>
 									<span className={styles.assigneeName}>
 										{a.user.name}
 									</span>
@@ -105,6 +135,56 @@ export default function ProjectTaskCard({ task }: ProjectTaskCardProps) {
 					<path d="M1 1l7 6 7-6" />
 				</svg>
 			</button>
+			<div className={styles.commentContainer}>
+				{task.comments.map((comment) => (
+					<div className={styles.comment}>
+						<span className={`${styles.avatar} ${styles.avatarMuted}`}>
+							{comment.author.name
+								.split(" ")
+								.map((w) => w[0])
+								.join("")}
+						</span>
+						<div className={styles.bubleComment}>
+							<div className={styles.infoCommment}>
+								<p className={styles.bubleCommentName}>
+									{comment.author.name}
+								</p>
+								<span className={styles.bubleCommentDate}>
+									{comment.createdAt}
+								</span>
+							</div>
+							<p className={styles.bubleCommentContent}>
+								{comment.content}
+							</p>
+						</div>
+					</div>
+				))}
+				{/*A modifier imput comment user */}
+				<div className={styles.comment}>
+					<span className={`${styles.avatar} ${styles.avatarMuted}`}>
+						{comment.author.name
+							.split(" ")
+							.map((w) => w[0])
+							.join("")}
+					</span>
+					<div className={styles.bubleComment}>
+						<div className={styles.infoCommment}>
+							<p className={styles.bubleCommentName}>
+								{comment.author.name}
+							</p>
+							<span className={styles.bubleCommentDate}>
+								{comment.createdAt}
+							</span>
+						</div>
+						<p className={styles.bubleCommentContent}>{comment.content}</p>
+					</div>
+				</div>
+				<button
+					className={`${styles.commentButton} ${btnCmtActive ? styles.buttonAvtive : styles.buttonNoAvtive}`}
+				>
+					Envoyer
+				</button>
+			</div>
 		</div>
 	);
 }
