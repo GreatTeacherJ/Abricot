@@ -1,67 +1,13 @@
-import { useEffect } from "react";
 import TaskRow from "../TaskRow/TaskRow";
 import styles from "./TaskList.module.css";
-import { assignedTskApi } from "@/utils/utilsUser";
+import type { Tasks } from "@/types/types";
 
-/** Données fictives des tâches assignées */
-const tasks = [
-	{
-		name: "Nom de la tâche",
-		description: "Description de la tâche",
-		project: "Nom du projet",
-		date: "9 mars",
-		comments: 2,
-		status: "à faire" as const,
-	},
-	{
-		name: "Nom de la tâche",
-		description: "Description de la tâche",
-		project: "Nom du projet",
-		date: "9 mars",
-		comments: 2,
-		status: "à faire" as const,
-	},
-	{
-		name: "Nom de la tâche",
-		description: "Description de la tâche",
-		project: "Nom du projet",
-		date: "9 mars",
-		comments: 2,
-		status: "à faire" as const,
-	},
-	{
-		name: "Nom de la tâche",
-		description: "Description de la tâche",
-		project: "Nom du projet",
-		date: "9 mars",
-		comments: 2,
-		status: "à faire" as const,
-	},
-	{
-		name: "Nom de la tâche",
-		description: "Description de la tâche",
-		project: "Nom du projet",
-		date: "9 mars",
-		comments: 2,
-		status: "à faire" as const,
-	},
-	{
-		name: "Nom de la tâche",
-		description: "Description de la tâche",
-		project: "Nom du projet",
-		date: "9 mars",
-		comments: 2,
-		status: "En cours" as const,
-	},
-];
+interface TaskListProps {
+	assignedTasks: Tasks;
+}
 
 /** Liste des tâches assignées (vue tableau) */
-export default function TaskList() {
-	useEffect(() => {
-		const data = assignedTskApi();
-		console.log("assignedTasks : ", data);
-	}, []);
-
+export default function TaskList({ assignedTasks }: TaskListProps) {
 	return (
 		<div className={styles.card}>
 			{/* En-tête : titre + barre de recherche */}
@@ -91,8 +37,8 @@ export default function TaskList() {
 
 			{/* Liste des lignes de tâches */}
 			<div className={styles.taskList}>
-				{tasks.map((task, i) => (
-					<TaskRow key={i} {...task} />
+				{assignedTasks.map((task, i) => (
+					<TaskRow key={i} task={task} />
 				))}
 			</div>
 		</div>

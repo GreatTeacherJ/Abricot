@@ -2,7 +2,7 @@
 
 import { cookies } from "next/headers";
 
-import type { Projects, Tasks } from "@/types/types";
+import type { Projects, Tasks, User } from "@/types/types";
 
 interface AssignedTskApi {
 	message: string;
@@ -14,14 +14,19 @@ interface ProjetApi {
 	data: Projects | undefined;
 }
 
-export async function profilApi(): Promise<string> {
+interface ProfilApi {
+	message: string;
+	data: User | undefined;
+}
+
+export async function profilApi(): Promise<ProfilApi> {
 	try {
 		const cookieStore = await cookies();
 		const cookie = cookieStore.get("tokenAbricot");
 		const token = cookie?.value;
 
 		if (!token) {
-			return "Token non trouvé";
+			return { message: "Token non trouvé", data: undefined };
 		}
 
 		const response = await fetch("http://localhost:8000/auth/profile", {
@@ -33,16 +38,20 @@ export async function profilApi(): Promise<string> {
 		const data = await response.json();
 
 		if (!response.ok) {
-			return data.message;
+			return { message: data.message, data: undefined };
 		}
 
-		const id = data.data.id;
-
-		return id;
+		return { message: data.message, data: data.data.user };
 	} catch (error) {
-		const message = "Erreur profilAPI:" + error;
-		console.error(message);
-		return message;
+		const errorMessage = error instanceof Error ? error.message : String(error);
+		const message = `Erreur profilAPI: ${errorMessage}`;
+
+		console.error(message, error); // log complet côté serveur/console, avec stack trace
+
+		return {
+			message,
+			data: undefined, // on respecte le type : list vide en cas d'erreur
+		};
 	}
 }
 

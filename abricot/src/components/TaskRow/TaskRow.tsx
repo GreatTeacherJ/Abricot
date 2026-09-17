@@ -1,73 +1,63 @@
+import { Task } from "@/types/types";
 import styles from "./TaskRow.module.css";
+import Image from "next/image";
 
 /** Props d'une ligne de tâche (vue tableau) */
 interface TaskRowProps {
-  /** Nom de la tâche */
-  name: string;
-  /** Description courte */
-  description: string;
-  /** Nom du projet associé */
-  project: string;
-  /** Date d'échéance */
-  date: string;
-  /** Nombre de commentaires */
-  comments: number;
-  /** Statut de la tâche */
-  status: "à faire" | "En cours" | "Terminée";
+	task: Task;
 }
 
-/** Correspondance statut → classe CSS du tag */
-const tagClassMap = {
-  "à faire": `${styles.tag} ${styles.tagRed}`,
-  "En cours": `${styles.tag} ${styles.tagOrange}`,
-  "Terminée": `${styles.tag} ${styles.tagGreen}`,
-};
-
 /** Ligne de tâche unique dans la vue tableau */
-export default function TaskRow({
-  name,
-  description,
-  project,
-  date,
-  comments,
-  status,
-}: TaskRowProps) {
-  return (
-    <div className={styles.row}>
-      {/* Infos principales : nom, description, métadonnées */}
-      <div className={styles.info}>
-        <div className={styles.nameBlock}>
-          <span className={styles.name}>{name}</span>
-          <span className={styles.description}>{description}</span>
-        </div>
-        <div className={styles.meta}>
-          <span className={styles.metaItem}>
-            <svg className={styles.metaIcon} viewBox="0 0 14 14" fill="currentColor">
-              <path d="M2 2h10v10H2z" />
-            </svg>
-            {project}
-          </span>
-          <span className={styles.metaItem}>
-            <svg className={styles.metaIcon} viewBox="0 0 14 14" fill="currentColor">
-              <rect x="1" y="2" width="12" height="11" rx="1" />
-              <path d="M4 0v3M10 0v3M1 5h12" />
-            </svg>
-            {date}
-          </span>
-          <span className={styles.metaItem}>
-            <svg className={styles.metaIcon} viewBox="0 0 14 14" fill="currentColor">
-              <path d="M1 1h12v9H4l-3 3V1z" />
-            </svg>
-            {comments}
-          </span>
-        </div>
-      </div>
+export default function TaskRow({ task }: TaskRowProps) {
+	const date = new Date(task.dueDate);
+	// Forcer l'interprétation en UTC pour éviter le décalage
+	const formattedDate = new Intl.DateTimeFormat("fr-FR", {
+		month: "long",
+		year: "numeric",
+		timeZone: "UTC", // évite le décalage de fuseau horaire
+	}).format(date);
 
-      {/* Actions : tag statut + bouton voir */}
-      <div className={styles.actions}>
-        <span className={tagClassMap[status]}>{status}</span>
-        <button className={styles.viewBtn}>Voir</button>
-      </div>
-    </div>
-  );
+	const statusStyle: Record<string, { label: string; className: string }> = {
+		TODO: { label: "À faire", className: styles.tagRed },
+		IN_PROGRESS: { label: "En cour", className: styles.tagOrange },
+		DONE: { label: "Terminée", className: styles.tagGreen },
+	};
+
+	return (
+		<div className={styles.row}>
+			{/* Infos principales : nom, description, métadonnées */}
+			<div className={styles.info}>
+				<div className={styles.nameBlock}>
+					<span className={styles.name}>{task.title}</span>
+					<span className={styles.description}>{task.project.description}</span>
+				</div>
+				<div className={styles.meta}>
+					<span className={styles.metaItem}>
+						<Image src="/grayFolder.svg" alt="" width={18} height={18} />
+						{task.project.name}
+					</span>
+					<span className={styles.metaItem}>
+						<Image src="/grayCalandar.svg" alt="" width={18} height={18} />
+						{formattedDate}
+					</span>
+					<span className={styles.metaItem}>
+						<Image src="/grayComments.svg" alt="" width={18} height={18} />
+						{task.comments.length}
+					</span>
+				</div>
+			</div>
+
+			{/* Actions : tag statut + bouton voir */}
+			<div className={styles.actions}>
+				<div className={styles.header}>
+					<span
+						className={`${styles.tag} ${statusStyle[task.status].className}`}
+					>
+						{statusStyle[task.status].label}
+					</span>
+				</div>
+				<button className={styles.viewBtn}>Voir</button>
+			</div>
+		</div>
+	);
 }

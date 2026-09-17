@@ -48,10 +48,7 @@
   color: var(--color-muted);
 }
 
-.metaIcon {
-  width: 14px;
-  height: 14px;
-}
+
 
 .actions {
   display: flex;
@@ -61,14 +58,18 @@
 }
 
 .tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 4px 16px;
-  border-radius: 50px;
-  font-size: 14px;
-  font-weight: 400;
-  white-space: nowrap;
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 4px 16px;
+gap: 10px;
+
+margin: 0 auto;
+width: fit-content;
+height: 25px;
+
+border-radius: 50px;
 }
 
 .tagRed {
