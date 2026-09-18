@@ -324,6 +324,62 @@ export const getProjects = async (
 /**
  * Récupérer un projet spécifique
  * GET /projects/:id
+ *
+ * @swagger
+ * /projects/{id}:
+ *   get:
+ *     summary: Récupérer un projet spécifique
+ *     description: Retourne le détail d'un projet accessible par l'utilisateur connecté, incluant ses membres, ses tâches et le rôle de l'utilisateur
+ *     tags: [Projets]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID du projet
+ *         example: "clm123abc456"
+ *     responses:
+ *       200:
+ *         description: Projet récupéré avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               allOf:
+ *                 - $ref: '#/components/schemas/Success'
+ *                 - type: object
+ *                   properties:
+ *                     data:
+ *                       type: object
+ *                       properties:
+ *                         project:
+ *                           $ref: '#/components/schemas/Project'
+ *       401:
+ *         description: Non authentifié
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       403:
+ *         description: Accès refusé au projet
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: Projet non trouvé
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Erreur serveur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 export const getProject = async (
   req: Request,
@@ -408,6 +464,77 @@ export const getProject = async (
 /**
  * Mettre à jour un projet
  * PUT /projects/:id
+ *
+ * @swagger
+ * /projects/{id}:
+ *   put:
+ *     summary: Mettre à jour un projet
+ *     description: Modifie le nom et/ou la description d'un projet. Nécessite les permissions de modification sur le projet
+ *     tags: [Projets]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID du projet
+ *         example: "clm123abc456"
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Nouveau nom du projet
+ *                 example: "Mon Projet Modifié"
+ *               description:
+ *                 type: string
+ *                 description: Nouvelle description du projet
+ *                 example: "Description mise à jour"
+ *     responses:
+ *       200:
+ *         description: Projet mis à jour avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               allOf:
+ *                 - $ref: '#/components/schemas/Success'
+ *                 - type: object
+ *                   properties:
+ *                     data:
+ *                       type: object
+ *                       properties:
+ *                         project:
+ *                           $ref: '#/components/schemas/Project'
+ *       400:
+ *         description: Données invalides
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       401:
+ *         description: Non authentifié
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       403:
+ *         description: Permissions insuffisantes pour modifier ce projet
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Erreur serveur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 export const updateProject = async (
   req: Request,
@@ -497,6 +624,48 @@ export const updateProject = async (
 /**
  * Supprimer un projet
  * DELETE /projects/:id
+ *
+ * @swagger
+ * /projects/{id}:
+ *   delete:
+ *     summary: Supprimer un projet
+ *     description: Supprime définitivement un projet ainsi que ses tâches, membres et commentaires associés (suppression en cascade)
+ *     tags: [Projets]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID du projet
+ *         example: "clm123abc456"
+ *     responses:
+ *       200:
+ *         description: Projet supprimé avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Success'
+ *       401:
+ *         description: Non authentifié
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       403:
+ *         description: Permissions insuffisantes pour supprimer ce projet
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Erreur serveur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 export const deleteProject = async (
   req: Request,
@@ -538,6 +707,86 @@ export const deleteProject = async (
 /**
  * Ajouter un contributeur à un projet
  * POST /projects/:id/contributors
+ *
+ * @swagger
+ * /projects/{id}/contributors:
+ *   post:
+ *     summary: Ajouter un contributeur à un projet
+ *     description: Ajoute un utilisateur existant (identifié par son email) comme membre d'un projet. Nécessite les permissions de modification sur le projet
+ *     tags: [Projets]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID du projet
+ *         example: "clm123abc456"
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: Email de l'utilisateur à ajouter
+ *                 example: "user1@example.com"
+ *               role:
+ *                 type: string
+ *                 enum: [ADMIN, CONTRIBUTOR]
+ *                 default: CONTRIBUTOR
+ *                 description: Rôle du membre dans le projet
+ *                 example: "CONTRIBUTOR"
+ *     responses:
+ *       200:
+ *         description: Contributeur ajouté avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Success'
+ *       400:
+ *         description: Données invalides
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       401:
+ *         description: Non authentifié
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       403:
+ *         description: Permissions insuffisantes pour modifier ce projet
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: Utilisateur non trouvé
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       409:
+ *         description: L'utilisateur est déjà membre de ce projet
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Erreur serveur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 export const addContributor = async (
   req: Request,
@@ -614,6 +863,61 @@ export const addContributor = async (
 /**
  * Retirer un contributeur d'un projet
  * DELETE /projects/:id/contributors/:userId
+ *
+ * @swagger
+ * /projects/{id}/contributors/{userId}:
+ *   delete:
+ *     summary: Retirer un contributeur d'un projet
+ *     description: Retire un membre d'un projet. Le propriétaire du projet ne peut pas se retirer lui-même
+ *     tags: [Projets]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID du projet
+ *         example: "clm123abc456"
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID de l'utilisateur à retirer
+ *         example: "clm789def012"
+ *     responses:
+ *       200:
+ *         description: Contributeur retiré avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Success'
+ *       400:
+ *         description: Le propriétaire du projet ne peut pas se retirer
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       401:
+ *         description: Non authentifié
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       403:
+ *         description: Permissions insuffisantes pour modifier ce projet
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Erreur serveur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 export const removeContributor = async (
   req: Request,

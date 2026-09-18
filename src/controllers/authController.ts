@@ -316,6 +316,70 @@ export const getProfile = async (
 /**
  * Mettre à jour le profil de l'utilisateur connecté
  * PUT /auth/profile
+ *
+ * @swagger
+ * /auth/profile:
+ *   put:
+ *     summary: Mettre à jour le profil de l'utilisateur connecté
+ *     description: Modifie le nom et/ou l'email de l'utilisateur connecté
+ *     tags: [Authentification]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Nouveau nom de l'utilisateur
+ *                 example: "John Doe"
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: Nouvel email de l'utilisateur
+ *                 example: "new.email@example.com"
+ *     responses:
+ *       200:
+ *         description: Profil mis à jour avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               allOf:
+ *                 - $ref: '#/components/schemas/Success'
+ *                 - type: object
+ *                   properties:
+ *                     data:
+ *                       type: object
+ *                       properties:
+ *                         user:
+ *                           $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Données invalides
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       401:
+ *         description: Non authentifié
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       409:
+ *         description: Email déjà utilisé par un autre utilisateur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Erreur serveur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 export const updateProfile = async (
   req: Request,
@@ -390,6 +454,65 @@ export const updateProfile = async (
 /**
  * Mettre à jour le mot de passe de l'utilisateur connecté
  * PUT /auth/password
+ *
+ * @swagger
+ * /auth/password:
+ *   put:
+ *     summary: Mettre à jour le mot de passe de l'utilisateur connecté
+ *     description: Modifie le mot de passe de l'utilisateur connecté après vérification du mot de passe actuel
+ *     tags: [Authentification]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - currentPassword
+ *               - newPassword
+ *             properties:
+ *               currentPassword:
+ *                 type: string
+ *                 description: Mot de passe actuel
+ *                 example: "Password123!"
+ *               newPassword:
+ *                 type: string
+ *                 minLength: 8
+ *                 description: Nouveau mot de passe (minimum 8 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial parmi @$!%*?&)
+ *                 example: "NewPassword456!"
+ *     responses:
+ *       200:
+ *         description: Mot de passe mis à jour avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Success'
+ *       400:
+ *         description: Données invalides
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       401:
+ *         description: Non authentifié ou mot de passe actuel incorrect
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: Utilisateur non trouvé
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Erreur serveur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 export const updatePassword = async (
   req: Request,

@@ -5,6 +5,7 @@ import styles from "./ProjectTaskCard.module.css";
 import type { Task } from "@/types/types";
 import { useParams } from "next/navigation";
 import { getInitials } from "@/utils/tools";
+import { postCommentApi } from "@/utils/utilsComment";
 
 /** Props d'une carte de tâche projet (vue détaillée) */
 interface ProjectTaskCardProps {
@@ -39,7 +40,13 @@ export default function ProjectTaskCard({ task }: ProjectTaskCardProps) {
 	};
 
 	async function addComment() {
-		console.log("comment : ", comment);
+		const res = await postCommentApi(task.project.id, task.id, comment);
+
+		if (!res.data) {
+			return;
+		}
+
+		setcomment("");
 	}
 
 	function openComment() {

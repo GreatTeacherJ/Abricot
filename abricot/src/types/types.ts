@@ -44,7 +44,7 @@ interface assignees {
 	user: User;
 }
 
-interface Comments {
+export interface Comments {
 	id: string;
 	content: string;
 	createdAt: string;
