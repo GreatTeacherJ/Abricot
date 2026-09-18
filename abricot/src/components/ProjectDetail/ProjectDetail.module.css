@@ -149,11 +149,31 @@
   background: var(--color-bg);
 }
 
-.filterBtn {
-  display: flex;
+.selectBtn{
+ appearance: none;       /* retire le style natif du navigateur */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+width: 100%;
+}
+
+/* StatusSelect.module.css */
+.wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.select {
+  appearance: none;       /* retire le style natif du navigateur */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding: 23px 42px 23 32px; /* espace à droite pour la flèche */
+  
+  border-radius: 6px;
+  cursor: pointer;
+
+    display: flex;
   align-items: center;
   gap: 8px;
-  padding: 23px 32px;
   border: 1px solid var(--color-border);
   border-radius: 8px;
   background: var(--color-white);
@@ -163,14 +183,22 @@
   transition: background 0.2s;
 }
 
-.filterBtn:hover {
+.select:hover {
   background: var(--color-bg);
 }
 
-.filterChevron {
-  width: 16px;
+.arrow {
+  position: absolute;
+  right: 23px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none; /* laisse les clics passer au select en-dessous */
+  font-size: 10px;
+   width: 16px;
   height: 8px;
+  color: var(--color-muted);
 }
+
 
 .search {
   display: flex;

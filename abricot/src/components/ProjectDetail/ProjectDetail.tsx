@@ -4,10 +4,11 @@ import Link from "next/link";
 import ProjectTaskCard from "../ProjectTaskCard/ProjectTaskCard";
 import Contributors from "../Contributors/Contributors";
 import styles from "./ProjectDetail.module.css";
-import { useState, useEffect } from "react";
+import { useState, useEffect, ChangeEvent } from "react";
 import type { Tasks, Project } from "@/types/types";
 import { taskForProjectApi, projectsApi } from "@/utils/utilsUser";
 import Image from "next/image";
+import { useParams } from "next/navigation";
 
 /** Props de la page de détail d'un projet */
 interface ProjectDetailProps {
@@ -18,7 +19,48 @@ interface ProjectDetailProps {
 export default function ProjectDetail({ id }: ProjectDetailProps) {
 	const [tasks, setTasks] = useState<Tasks>([]);
 	const [project, setProjects] = useState<Project>();
+	const [selectedStatus, setSelectedStatus] = useState("ALL");
+	const [filterTask, setFilterTask] = useState<Tasks>(tasks);
+	const [searchText, setsearchText] = useState<string>("");
+	const params = useParams();
+	const routeName = params.name as string;
 
+	const STATUS_OPTIONS = [
+		{ value: "TODO", label: "À faire" },
+		{ value: "IN_PROGRESS", label: "En cours" },
+		{ value: "DONE", label: "Terminé" },
+		{ value: "ALL", label: "Statut" },
+	];
+
+	//filtre selon le statut
+	useEffect(() => {
+		let filterTaskStatus;
+
+		if (selectedStatus === "ALL") {
+			filterTaskStatus = tasks;
+		} else {
+			filterTaskStatus = tasks.filter((task) => task.status === selectedStatus);
+		}
+
+		// normalisation pour une recherche insensible à la casse
+		const normalizedSearch = searchText.toLowerCase().trim();
+
+		// si la recherche est vide, retourne toutes les tâches
+		if (!normalizedSearch) {
+			setFilterTask(filterTaskStatus);
+			return;
+		}
+
+		const filterTaskSearch = filterTaskStatus.filter(
+			(task) =>
+				task.title.toLowerCase().includes(normalizedSearch) ||
+				task.description.toLowerCase().includes(normalizedSearch),
+		);
+
+		setFilterTask(filterTaskSearch);
+	}, [selectedStatus, tasks, searchText]);
+
+	//apelle API recuperer les taches
 	useEffect(() => {
 		async function taskForProject() {
 			const data = await taskForProjectApi(id);
@@ -55,7 +97,7 @@ export default function ProjectDetail({ id }: ProjectDetailProps) {
 		<div className={styles.page}>
 			{/* En-tête : bouton retour + titre + lien modifier */}
 			<div className={styles.projectHeader}>
-				<Link href="/projets" className={styles.backBtn}>
+				<Link href={"/" + routeName + "/projets"} className={styles.backBtn}>
 					<svg
 						className={styles.backIcon}
 						viewBox="0 0 15 15"
@@ -123,10 +165,20 @@ export default function ProjectDetail({ id }: ProjectDetailProps) {
 							</button>
 						</div>
 						{/* Filtre par statut */}
-						<button className={styles.filterBtn}>
-							Statut
+						<div className={styles.wrapper}>
+							<select
+								value={selectedStatus}
+								onChange={(e) => setSelectedStatus(e.target.value)}
+								className={styles.select}
+							>
+								{STATUS_OPTIONS.map((option) => (
+									<option key={option.value} value={option.value}>
+										{option.label}
+									</option>
+								))}
+							</select>
 							<svg
-								className={styles.filterChevron}
+								className={styles.arrow}
 								viewBox="0 0 16 8"
 								fill="none"
 								stroke="currentColor"
@@ -134,9 +186,16 @@ export default function ProjectDetail({ id }: ProjectDetailProps) {
 							>
 								<path d="M1 1l7 6 7-6" />
 							</svg>
-						</button>
+						</div>
+
 						{/* Barre de recherche */}
 						<div className={styles.search}>
+							<input
+								className={styles.searchInput}
+								type="text"
+								placeholder="Rechercher une tâche"
+								onChange={(e) => setsearchText(e.target.value)}
+							/>
 							<svg
 								className={styles.searchIcon}
 								viewBox="0 0 14 14"
@@ -147,18 +206,13 @@ export default function ProjectDetail({ id }: ProjectDetailProps) {
 								<circle cx="6" cy="6" r="5" />
 								<path d="M10 10l3 3" />
 							</svg>
-							<input
-								className={styles.searchInput}
-								type="text"
-								placeholder="Rechercher une tâche"
-							/>
 						</div>
 					</div>
 				</div>
 
 				{/* Liste des tâches du projet */}
 				<div className={styles.taskList}>
-					{tasks.map((task, i) => (
+					{filterTask.map((task, i) => (
 						<ProjectTaskCard key={i} task={task} />
 					))}
 				</div>
