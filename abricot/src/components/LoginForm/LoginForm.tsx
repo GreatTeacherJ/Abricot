@@ -18,9 +18,6 @@ export default function LoginForm() {
 		const formData = new FormData(e.currentTarget);
 		const email = formData.get("email") as string;
 		const password = formData.get("password") as string;
-		console.log({ email, password });
-		console.log(email);
-		console.log(password);
 
 		//const response = await loginAPI(email, password);
 
@@ -32,12 +29,17 @@ export default function LoginForm() {
 			return;
 		}
 
-		if (response === "connected") {
-			setErrorMessage(response);
-			rooter.push("/");
-		} else {
-			setErrorMessage(response);
+		if (response.data?.success) {
+			const name = response.data.data.user.name;
+			const initials = name
+				.toLowerCase()
+				.normalize("NFD")
+				.replace(/[\u0300-\u036f]/g, "") // enlève les accents
+				.replace(/\s+/g, "-")
+				.replace(/[^a-z0-9-]/g, "");
+			rooter.push(`/${initials}`);
 		}
+		setErrorMessage(response.message);
 	}
 
 	return (

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { use, useState, useEffect } from "react";
 import Menu from "@/components/Menu/Menu";
 import PageHeader from "@/components/PageHeader/PageHeader";
 import TaskList from "@/components/TaskList/TaskList";
@@ -10,8 +10,14 @@ import TypeView from "@/components/TypeView/TypeView";
 import type { Tasks } from "@/types/types";
 import { assignedTskApi } from "@/utils/utilsUser";
 
+interface PageProps {
+	params: Promise<{ name: string }>;
+}
+
 /** Page d'accueil : Dashboard avec vue Liste/Kanban */
-export default function Home() {
+export default function Page({ params }: PageProps) {
+	const { name } = use(params);
+
 	/** Vue active : liste ou kanban */
 	const [activeView, setActiveView] = useState<"list" | "kanban">("list");
 	const [assignedTasks, setAssignedTask] = useState<Tasks>([]);
@@ -29,7 +35,7 @@ export default function Home() {
 		taskAsigned();
 	}, []);
 
-	console.log("assignedTask / Page : ", assignedTasks);
+	console.log("routeName / Page : ", name);
 
 	return (
 		<>

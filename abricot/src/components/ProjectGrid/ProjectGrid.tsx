@@ -13,10 +13,6 @@ export default function ProjectGrid() {
 	useEffect(() => {
 		async function fetchData() {
 			const response = await projectsApi();
-			console.log(`ProjectGrid :
-				message : ${response.message}
-				data 	: ${response.data}
-				`);
 			setProjectList(response.data);
 		}
 

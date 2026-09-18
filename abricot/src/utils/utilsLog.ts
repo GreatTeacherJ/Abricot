@@ -2,7 +2,27 @@
 
 import { cookies } from "next/headers";
 
-export async function loginAPI(email: string, password: string): Promise<string> {
+interface ResponseLog {
+	message: string;
+	data:
+		| {
+				success: true;
+				message: string;
+				data: {
+					user: {
+						id: string;
+						email: string;
+						name: string;
+						createdAt: string;
+						updatedAt: string;
+					};
+					token: string;
+				};
+		  }
+		| undefined;
+}
+
+export async function loginAPI(email: string, password: string): Promise<ResponseLog> {
 	try {
 		const response = await fetch("http://localhost:8000/auth/login", {
 			method: "POST",
@@ -13,10 +33,10 @@ export async function loginAPI(email: string, password: string): Promise<string>
 		const token = data.data?.token;
 		if (response.ok) {
 			if (!token) {
-				return "Token non reçu";
+				return { message: "Token non reçu", data: data };
 			}
 		} else {
-			return data.message;
+			return { message: "Erreur serveur", data: data };
 		}
 
 		// httpOnly = inaccessible en JS côté navigateur, protège du XSS
@@ -27,12 +47,11 @@ export async function loginAPI(email: string, password: string): Promise<string>
 			maxAge: 60 * 60, // 1h en secondes, pas en jours comme js-cookie
 		});
 
-		console.log("cookie créé : ", cookieStore.get("tokenAbricot"));
-		return "connected";
+		return { message: "connecté", data: data };
 	} catch (error) {
 		const message = "Erreur loginAPI:" + error;
 		console.error(message);
-		return message;
+		return { message: message, data: undefined };
 	}
 }
 
@@ -40,7 +59,7 @@ export async function registerAPI(
 	email: string,
 	password: string,
 	name: string,
-): Promise<string> {
+): Promise<ResponseLog> {
 	try {
 		const response = await fetch("http://localhost:8000/auth/register", {
 			method: "POST",
@@ -51,7 +70,7 @@ export async function registerAPI(
 		const token = data.data?.token;
 		if (response.ok) {
 			if (!token) {
-				return "Token non reçu";
+				return { message: "Token non reçu", data: data };
 			}
 		} else {
 			return data.message;
@@ -63,10 +82,10 @@ export async function registerAPI(
 			secure: process.env.NODE_ENV === "production",
 			maxAge: 60 * 60, // 1h en secondes, pas en jours comme js-cookie
 		});
-		return "Account created";
+		return { message: "compte créé", data: data };
 	} catch (error) {
 		const message = "Erreur registerAPI:" + error;
 		console.error(message);
-		return message;
+		return { message: message, data: undefined };
 	}
 }

@@ -6,6 +6,7 @@ import type { Project, Tasks } from "@/types/types";
 import Image from "next/image";
 import { taskForProjectApi } from "@/utils/utilsUser";
 import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 
 /** Props d'une carte projet */
 interface ProjectCardProps {
@@ -16,6 +17,8 @@ interface ProjectCardProps {
 export default function ProjectCard({ project }: ProjectCardProps) {
 	//liste de tache récupérées
 	const [tasks, setTasks] = useState<Tasks>([]);
+	const params = useParams();
+	const routeName = params.name as string;
 
 	const totalTasks = project._count.tasks;
 	//Recherche des tache términées
@@ -27,7 +30,6 @@ export default function ProjectCard({ project }: ProjectCardProps) {
 			const data = await taskForProjectApi(project.id);
 
 			if (!data.data) {
-				console.log("ProjectCard : ", data.message);
 				return;
 			}
 			setTasks(data.data);
@@ -36,10 +38,8 @@ export default function ProjectCard({ project }: ProjectCardProps) {
 		taskForProject();
 	}, []);
 
-	console.log("ProjectCard créé : ", project);
-
 	return (
-		<Link href={`/projets/${project.id}`} className={styles.card}>
+		<Link href={`/${routeName}/projets/${project.id}`} className={styles.card}>
 			{/* Titre + description */}
 			<div className={styles.titleBlock}>
 				<h3 className={styles.title}>{project.name}</h3>

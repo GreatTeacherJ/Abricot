@@ -24,7 +24,6 @@ export default function ProjectDetail({ id }: ProjectDetailProps) {
 			const data = await taskForProjectApi(id);
 
 			if (!data.data) {
-				console.log("ProjectCard : ", data.message);
 				return;
 			}
 			setTasks(data.data);
@@ -34,7 +33,6 @@ export default function ProjectDetail({ id }: ProjectDetailProps) {
 			const data = await projectsApi();
 
 			if (!data.data) {
-				console.log("ProjectCard : ", data.message);
 				return;
 			}
 

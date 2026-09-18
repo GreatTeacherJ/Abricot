@@ -21,23 +21,26 @@ export default function LoginForm() {
 		const firstName = formData.get("firstName") as string;
 		const lastName = formData.get("lastName") as string;
 
-		console.log("clique");
-
 		const name = firstName + " " + lastName;
 
 		const response = await registerAPI(email, password, name);
-		console.log("reponse : ", response);
+
 		if (!response) {
 			setErrorMessage("Erreur serveur");
 			return;
 		}
 
-		if (response === "Account created") {
-			setErrorMessage(response);
-			rooter.push("/");
-		} else {
-			setErrorMessage(response);
+		if (response.data?.success) {
+			const name = response.data.data.user.name;
+			const initials = name
+				.toLowerCase()
+				.normalize("NFD")
+				.replace(/[\u0300-\u036f]/g, "") // enlève les accents
+				.replace(/\s+/g, "-")
+				.replace(/[^a-z0-9-]/g, "");
+			rooter.push(`/${initials}`);
 		}
+		setErrorMessage(response.message);
 	}
 
 	return (

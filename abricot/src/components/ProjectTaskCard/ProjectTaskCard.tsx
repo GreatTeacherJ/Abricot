@@ -3,6 +3,8 @@
 import { useState } from "react";
 import styles from "./ProjectTaskCard.module.css";
 import type { Task } from "@/types/types";
+import { useParams } from "next/navigation";
+import { getInitials } from "@/utils/tools";
 
 /** Props d'une carte de tâche projet (vue détaillée) */
 interface ProjectTaskCardProps {
@@ -11,7 +13,16 @@ interface ProjectTaskCardProps {
 
 /** Carte de tâche détaillée (échéance, assignés, commentaires) */
 export default function ProjectTaskCard({ task }: ProjectTaskCardProps) {
-	const [btnCmtActive, setBtnCmtActive] = useState<boolean>(false);
+	//gére l'ouverture des commentaires
+	const [cmtOpen, setcmtOpen] = useState<boolean>(false);
+	//recupére les nouveaux commmentaires
+	const [comment, setcomment] = useState<string>("");
+	//on reucpere le parametre de l'url
+	const params = useParams();
+	//recuperation de name
+	const name = params.name as string;
+	//recupération des initales
+	const initials = getInitials(name);
 
 	const date = new Date(task.dueDate);
 	// Forcer l'interprétation en UTC pour éviter le décalage
@@ -26,6 +37,18 @@ export default function ProjectTaskCard({ task }: ProjectTaskCardProps) {
 		IN_PROGRESS: { label: "En cour", className: styles.tagOrange },
 		DONE: { label: "Terminée", className: styles.tagGreen },
 	};
+
+	async function addComment() {
+		console.log("comment : ", comment);
+	}
+
+	function openComment() {
+		if (cmtOpen) {
+			setcmtOpen(false);
+		} else {
+			setcmtOpen(true);
+		}
+	}
 
 	return (
 		<div className={styles.card}>
@@ -123,68 +146,80 @@ export default function ProjectTaskCard({ task }: ProjectTaskCardProps) {
 			<hr className={styles.divider} />
 
 			{/* Commentaires */}
-			<button className={styles.commentsBtn}>
+			<button className={styles.commentsBtn} onClick={openComment}>
 				Commentaires ({task.comments.length})
-				<svg
-					className={styles.commentsChevron}
-					viewBox="0 0 16 8"
-					fill="none"
-					stroke="currentColor"
-					strokeWidth="1.5"
-				>
-					<path d="M1 1l7 6 7-6" />
-				</svg>
+				{cmtOpen ? (
+					<svg
+						className={styles.commentsChevron}
+						viewBox="0 0 16 8"
+						fill="none"
+						stroke="currentColor"
+						strokeWidth="1.5"
+					>
+						<path d="M1 7l7-6 7 6" />
+					</svg>
+				) : (
+					<svg
+						className={styles.commentsChevron}
+						viewBox="0 0 16 8"
+						fill="none"
+						stroke="currentColor"
+						strokeWidth="1.5"
+					>
+						<path d="M1 1l7 6 7-6" />
+					</svg>
+				)}
 			</button>
-			<div className={styles.commentContainer}>
-				{task.comments.map((comment) => (
-					<div className={styles.comment}>
-						<span className={`${styles.avatar} ${styles.avatarMuted}`}>
-							{comment.author.name
-								.split(" ")
-								.map((w) => w[0])
-								.join("")}
-						</span>
-						<div className={styles.bubleComment}>
-							<div className={styles.infoCommment}>
-								<p className={styles.bubleCommentName}>
-									{comment.author.name}
-								</p>
-								<span className={styles.bubleCommentDate}>
-									{comment.createdAt}
+			{cmtOpen && (
+				<form onSubmit={addComment}>
+					<div className={styles.commentContainer}>
+						{task.comments.map((comment) => (
+							<div key={comment.id} className={styles.comment}>
+								<span
+									className={`${styles.avatar} ${styles.avatarMuted}`}
+								>
+									{comment.author.name
+										.split(" ")
+										.map((w) => w[0])
+										.join("")}
 								</span>
+								<div className={styles.bubleComment}>
+									<div className={styles.infoCommment}>
+										<p className={styles.bubleCommentName}>
+											{comment.author.name}
+										</p>
+										<span className={styles.bubleCommentDate}>
+											{comment.createdAt}
+										</span>
+									</div>
+									<p className={styles.bubleCommentContent}>
+										{comment.content}
+									</p>
+								</div>
 							</div>
-							<p className={styles.bubleCommentContent}>
-								{comment.content}
-							</p>
-						</div>
-					</div>
-				))}
-				{/*A modifier imput comment user */}
-				<div className={styles.comment}>
-					<span className={`${styles.avatar} ${styles.avatarMuted}`}>
-						{comment.author.name
-							.split(" ")
-							.map((w) => w[0])
-							.join("")}
-					</span>
-					<div className={styles.bubleComment}>
-						<div className={styles.infoCommment}>
-							<p className={styles.bubleCommentName}>
-								{comment.author.name}
-							</p>
-							<span className={styles.bubleCommentDate}>
-								{comment.createdAt}
+						))}
+						{/*A modifier imput comment user */}
+						<div className={styles.comment}>
+							<span className={`${styles.avatar} ${styles.avatarUser}`}>
+								{initials}
 							</span>
+
+							<textarea
+								name="comment"
+								placeholder="Ajouter un commentaire..."
+								className={styles.bubleComment}
+								onChange={(e) => setcomment(e.target.value)}
+							/>
 						</div>
-						<p className={styles.bubleCommentContent}>{comment.content}</p>
+						<button
+							className={`${styles.commentButton} ${comment.trim() ? styles.buttonAvtive : styles.buttonNoAvtive}`}
+							disabled={!comment.trim()}
+						>
+							Envoyer
+						</button>
 					</div>
-				</div>
-				<button
-					className={`${styles.commentButton} ${btnCmtActive ? styles.buttonAvtive : styles.buttonNoAvtive}`}
-				>
-					Envoyer
-				</button>
-			</div>
+				</form>
+			)}
 		</div>
 	);
 }
