@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, Dispatch, SetStateAction, useEffect } from "react";
+import { useState, Dispatch, SetStateAction, useEffect, use } from "react";
 import { Task, Project } from "@/types/types";
-import styles from "@/components/TaskEditModal/TaskEditModal.module.css";
+import styles from "./TaskCreateModal.module.css";
 import Image from "next/image";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { getProjectApi } from "@/utils/utilsProject";
-import { putTasksApi } from "@/utils/utilsTasks";
+import { postAddTasksApi } from "@/utils/utilsTasks";
 
 /** Statuts disponibles avec leur libellé et leur style de tag */
 const STATUSES: { value: Task["status"]; label: string; className: string }[] = [
@@ -18,29 +18,27 @@ const STATUSES: { value: Task["status"]; label: string; className: string }[] = 
 
 /** Props de la modale de modification d'une tâche */
 interface TaskEditModalProps {
-	task: Task;
-	setidTaskModified: Dispatch<SetStateAction<string>>;
 	setPrjIsModfified: Dispatch<SetStateAction<boolean>>;
+	setOpenCrtTsk: Dispatch<SetStateAction<boolean>>;
+	idProject: string;
 }
 
 /** Modale de modification d'une tâche (maquette Figma « Modale modifier une tâche ») */
 export default function TaskEditModal({
-	task,
-	setidTaskModified,
 	setPrjIsModfified,
+	setOpenCrtTsk,
+	idProject,
 }: TaskEditModalProps) {
 	/** Titre de la tâche */
-	const [title, setTitle] = useState(task.title);
+	const [title, setTitle] = useState("");
 	/** Description de la tâche */
-	const [description, setDescription] = useState(task.description);
+	const [description, setDescription] = useState("");
 	/** Échéance — stockée en Date en interne, convertie en string uniquement à l'envoi */
-	const [dueDate, setDueDate] = useState<Date>(
-		task.dueDate ? new Date(task.dueDate) : new Date(),
-	);
+	const [dueDate, setDueDate] = useState<Date>(new Date());
 	/** Contrôle l'ouverture du calendrier flottant */
 	const [calendarOpen, setCalendarOpen] = useState<boolean>(false);
 	/** Statut sélectionné */
-	const [status, setStatus] = useState<Task["status"]>(task.status);
+	const [status, setStatus] = useState<Task["status"]>("TODO");
 	//Projet stocké
 	const [currentProject, setProject] = useState<Project | null>(null);
 	//Partie pour l'imput assigné les tâche
@@ -51,7 +49,7 @@ export default function TaskEditModal({
 
 	useEffect(() => {
 		async function apiProject() {
-			const data = await getProjectApi(task.project.id);
+			const data = await getProjectApi(idProject);
 			if (!data.data) {
 				return;
 			}
@@ -62,18 +60,15 @@ export default function TaskEditModal({
 	}, []);
 
 	function onClose() {
-		setidTaskModified("");
+		setOpenCrtTsk(false);
 	}
 
 	/** Enregistre les modifications puis ferme la modale */
 	async function handleSave() {
 		const date = new Date(dueDate).toISOString(); // "2026-09-18T00:00:00.000Z"
 
-		console.log("appui sur envoyer");
-
-		const response = await putTasksApi(
-			task.project.id,
-			task.id,
+		const response = await postAddTasksApi(
+			idProject,
 			title,
 			description,
 			status,
@@ -82,12 +77,14 @@ export default function TaskEditModal({
 			selectedAssignees,
 		);
 
+		console.log("création de tache : ", response.data);
 		if (!response.data) {
+			console.log("pas de data : ", response);
 			seterror(response.message);
 			return;
 		}
-
-		setPrjIsModfified((prev) => !prev);
+		setOpenCrtTsk((prev) => !prev);
+		setPrjIsModfified(true);
 		onClose();
 	}
 
@@ -97,30 +94,6 @@ export default function TaskEditModal({
 				? prev.filter((id) => id !== userId)
 				: [...prev, userId],
 		);
-	}
-
-	useEffect(() => {
-		if (!currentProject) {
-			return;
-		}
-
-		const assigneesList = currentProject?.members.filter((member) =>
-			assignedVerif(member.user.id),
-		);
-
-		const idList = assigneesList.map((member) => member.user.id);
-
-		if (assignedVerif(currentProject.owner.id)) {
-			idList.push(currentProject.owner.id);
-		}
-
-		setSelectedAssignees(idList);
-	}, [currentProject]);
-
-	function assignedVerif(id: string): boolean {
-		const bool = task.assignees.some((assignee) => assignee.user.id === id);
-
-		return bool;
 	}
 
 	/** Formate une Date en "YYYY-MM-DD" en utilisant l'heure LOCALE (pas UTC, contrairement à toISOString) */
@@ -167,7 +140,7 @@ export default function TaskEditModal({
 					{/* Contenu */}
 					<div className={styles.content}>
 						<h2 id="task-edit-title" className={styles.title}>
-							Modifier
+							Créer une tâche
 						</h2>
 
 						<div className={styles.fields}>
@@ -275,9 +248,13 @@ export default function TaskEditModal({
 										className={styles.controlInput}
 										type="text"
 										value={
-											selectedAssignees.length +
-											" collaborateur" +
-											(selectedAssignees.length > 1 ? "s" : "")
+											selectedAssignees
+												? selectedAssignees.length +
+													" collaborateur" +
+													(selectedAssignees.length > 1
+														? "s"
+														: "")
+												: "Choisir un ou plusieurs collaborateurs"
 										}
 										readOnly
 									/>
@@ -348,9 +325,9 @@ export default function TaskEditModal({
 						</div>
 					</div>
 					{error && <p>{error}</p>}
-					{/* Enregistrer */}
+					{/* Ajouter */}
 					<button className={styles.saveBtn} onClick={handleSave} type="button">
-						Enregistrer
+						+ Ajouter une tâche
 					</button>
 				</form>
 			</div>

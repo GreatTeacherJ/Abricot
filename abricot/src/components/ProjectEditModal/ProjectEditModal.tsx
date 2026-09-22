@@ -128,7 +128,6 @@ export default function ProjectEditModal({
 		// present dans tous les projets
 		async function listCollaborator() {
 			const data = await getAllProjectApi();
-			console.log("API : ", data.message);
 			if (!data.data) {
 				return;
 			}
@@ -148,8 +147,6 @@ export default function ProjectEditModal({
 			setCollaborator.delete(project.owner.id);
 
 			setCollaboratorList(setCollaborator);
-			console.log("propriétaire : ", project.owner.name);
-			console.log("collab : ", collaboratorList);
 		}
 		listCollaborator();
 	}, []);

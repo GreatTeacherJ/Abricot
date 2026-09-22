@@ -11,6 +11,7 @@ import Image from "next/image";
 import { useParams } from "next/navigation";
 import TaskEditModal from "../TaskEditModal/TaskEditModal";
 import ProjectEditModal from "../ProjectEditModal/ProjectEditModal";
+import TaskCreateModal from "../TaskCreateModal/TaskCreateModal";
 
 /** Props de la page de détail d'un projet */
 interface ProjectDetailProps {
@@ -24,6 +25,7 @@ export default function ProjectDetail({ id }: ProjectDetailProps) {
 	const [selectedStatus, setSelectedStatus] = useState("ALL");
 	const [filterTask, setFilterTask] = useState<Tasks>(tasks);
 	const [searchText, setsearchText] = useState<string>("");
+	const [openCrtTsk, setOpenCrtTsk] = useState<boolean>(false);
 	const params = useParams();
 	const routeName = params.name as string;
 
@@ -44,7 +46,7 @@ export default function ProjectDetail({ id }: ProjectDetailProps) {
 		{ value: "DONE", label: "Terminé" },
 		{ value: "ALL", label: "Statut" },
 	];
-	console.log("porjet modifier : ", prjIsModfified);
+
 	//filtre selon le statut
 	useEffect(() => {
 		let filterTaskStatus;
@@ -135,7 +137,12 @@ export default function ProjectDetail({ id }: ProjectDetailProps) {
 				</div>
 				{/* Boutons d'action : créer tâche + IA */}
 				<div className={styles.actionButtons}>
-					<button className={styles.createBtn}>Créer une tâche</button>
+					<button
+						className={styles.createBtn}
+						onClick={() => setOpenCrtTsk(true)}
+					>
+						Créer une tâche
+					</button>
 					<button className={styles.aiBtn}>
 						<svg
 							className={styles.aiStar}
@@ -251,6 +258,18 @@ export default function ProjectDetail({ id }: ProjectDetailProps) {
 					/>
 				)
 			}
+
+			{
+				/*Modale créer tache */
+				openCrtTsk && (
+					<TaskCreateModal
+						idProject={id}
+						setPrjIsModfified={setPrjIsModfified}
+						setOpenCrtTsk={setOpenCrtTsk}
+					/>
+				)
+			}
+
 			{
 				/*Modale Modfier projet */
 				idProjectModified && (
