@@ -24,16 +24,18 @@ export default function ProjectGrid() {
 	}, [isRerender]);
 
 	return (
-		<div className={styles.page}>
+		<>
 			{/* En-tête : titre + bouton création */}
 			<PageHeader setIsRerender={setIsRerender} />
-			{/* Grille de cartes projet */}
-			<div className={styles.grid}>
-				{projectsList &&
-					projectsList.map((project, i) => (
-						<ProjectCard key={i} project={project} />
-					))}
+			<div className={styles.page}>
+				{/* Grille de cartes projet */}
+				<div className={styles.grid}>
+					{projectsList &&
+						projectsList.map((project, i) => (
+							<ProjectCard key={i} project={project} />
+						))}
+				</div>
 			</div>
-		</div>
+		</>
 	);
 }

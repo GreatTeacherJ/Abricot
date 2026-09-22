@@ -1,13 +1,22 @@
 // abricot/src/context/AuthContext.tsx
 "use client"; // nécessaire : Context API utilise useState/useEffect, donc composant client
 
-import { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import {
+	createContext,
+	useContext,
+	useState,
+	ReactNode,
+	useEffect,
+	Dispatch,
+	SetStateAction,
+} from "react";
 import { profilApi } from "@/utils/utilsUser";
 import type { User } from "@/types/types";
 
 // 1. Définir le type des données partagées
 interface AuthContextType {
 	currentUser: User | null;
+	setRendering: Dispatch<SetStateAction<boolean>>;
 }
 
 // 2. Créer le contexte avec une valeur par défaut (undefined pour forcer l'usage via le hook)
@@ -16,6 +25,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 // 3. Le Provider : composant qui encapsule la logique et fournit la valeur
 export function AuthProvider({ children }: { children: ReactNode }) {
 	const [currentUser, setCurrentUser] = useState<User | null>(null);
+	const [rendering, setRendering] = useState<boolean>(false);
 
 	useEffect(() => {
 		async function apiUser() {
@@ -28,10 +38,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 			setCurrentUser(data.data);
 		}
 		apiUser();
-	}, []);
+	}, [rendering]);
 
 	return (
-		<AuthContext.Provider value={{ currentUser }}>{children}</AuthContext.Provider>
+		<AuthContext.Provider value={{ currentUser, setRendering }}>
+			{children}
+		</AuthContext.Provider>
 	);
 }
 

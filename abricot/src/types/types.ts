@@ -74,3 +74,21 @@ export interface Task {
 
 	comments: Comments[];
 }
+
+export interface Success {
+	success: true;
+	message: string;
+	data: {};
+}
+
+export interface Error {
+	success: false;
+	message: string;
+	error: string;
+	details: [
+		{
+			field: string;
+			message: string;
+		},
+	];
+}

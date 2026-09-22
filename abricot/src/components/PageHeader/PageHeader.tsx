@@ -20,10 +20,10 @@ export default function PageHeader({ setIsRerender }: Props) {
 
 	const { currentUser } = useProvider();
 
-	if (pathname !== "/" + routeName) {
+	if (pathname === "/" + routeName) {
 		title = "Tableau de bord";
 		desc =
-			"Bonjour" + currentUser?.name + ",voici un aperçu de vos projets et tâches";
+			"Bonjour " + currentUser?.name + ",voici un aperçu de vos projets et tâches";
 	} else {
 		title = "Mes projets";
 		desc = "Gérez vos projets";
