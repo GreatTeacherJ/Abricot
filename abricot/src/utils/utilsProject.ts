@@ -212,3 +212,45 @@ async function deleteContributors(
 		return { success: false, message: message, data: undefined };
 	}
 }
+
+export async function postCreatProjectApi(
+	title: string,
+	description: string,
+	userContributor: User[],
+): Promise<ProjectApi> {
+	try {
+		const cookieStore = await cookies();
+		const cookie = cookieStore.get("tokenAbricot");
+		const token = cookie?.value;
+
+		if (!token) {
+			return { message: "Token non trouvé", data: undefined };
+		}
+
+		const contributor = userContributor.map((user) => user.email);
+
+		const response = await fetch("http://localhost:8000/projects/", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${token}`,
+			},
+			body: JSON.stringify({
+				name: title,
+				description: description,
+				contributors: contributor,
+			}),
+		});
+		const data = await response.json();
+
+		if (!response.ok) {
+			return { message: data.message, data: undefined };
+		}
+
+		return { message: data.message, data: data.data };
+	} catch (error) {
+		const message = "Erreur profilAPI:" + error;
+		console.error(message);
+		return { message: message, data: undefined };
+	}
+}
