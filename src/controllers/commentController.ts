@@ -20,6 +20,88 @@ import {
 /**
  * Créer un nouveau commentaire sur une tâche
  * POST /projects/:id/tasks/:taskId/comments
+ *
+ * @swagger
+ * /projects/{id}/tasks/{taskId}/comments:
+ *   post:
+ *     summary: Créer un nouveau commentaire sur une tâche
+ *     description: Ajoute un commentaire à une tâche existante d'un projet accessible par l'utilisateur connecté
+ *     tags: [Commentaires]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID du projet
+ *         example: "clm123abc456"
+ *       - in: path
+ *         name: taskId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID de la tâche
+ *         example: "clm789def012"
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - content
+ *             properties:
+ *               content:
+ *                 type: string
+ *                 description: Contenu du commentaire
+ *                 example: "Je m'occupe de cette tâche."
+ *     responses:
+ *       201:
+ *         description: Commentaire créé avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               allOf:
+ *                 - $ref: '#/components/schemas/Success'
+ *                 - type: object
+ *                   properties:
+ *                     data:
+ *                       type: object
+ *                       properties:
+ *                         comment:
+ *                           $ref: '#/components/schemas/Comment'
+ *       400:
+ *         description: Données invalides
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       401:
+ *         description: Non authentifié
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       403:
+ *         description: Accès refusé au projet
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: Tâche non trouvée
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Erreur serveur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 export const createComment = async (
   req: Request,
@@ -101,6 +183,71 @@ export const createComment = async (
 /**
  * Récupérer tous les commentaires d'une tâche
  * GET /projects/:id/tasks/:taskId/comments
+ *
+ * @swagger
+ * /projects/{id}/tasks/{taskId}/comments:
+ *   get:
+ *     summary: Récupérer tous les commentaires d'une tâche
+ *     description: Retourne la liste des commentaires d'une tâche, triés par date de création croissante
+ *     tags: [Commentaires]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID du projet
+ *         example: "clm123abc456"
+ *       - in: path
+ *         name: taskId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID de la tâche
+ *         example: "clm789def012"
+ *     responses:
+ *       200:
+ *         description: Commentaires récupérés avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               allOf:
+ *                 - $ref: '#/components/schemas/Success'
+ *                 - type: object
+ *                   properties:
+ *                     data:
+ *                       type: object
+ *                       properties:
+ *                         comments:
+ *                           type: array
+ *                           items:
+ *                             $ref: '#/components/schemas/Comment'
+ *       401:
+ *         description: Non authentifié
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       403:
+ *         description: Accès refusé au projet
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: Tâche non trouvée
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Erreur serveur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 export const getComments = async (
   req: Request,
@@ -167,6 +314,76 @@ export const getComments = async (
 /**
  * Récupérer un commentaire spécifique
  * GET /projects/:id/tasks/:taskId/comments/:commentId
+ *
+ * @swagger
+ * /projects/{id}/tasks/{taskId}/comments/{commentId}:
+ *   get:
+ *     summary: Récupérer un commentaire spécifique
+ *     description: Retourne le détail d'un commentaire appartenant à une tâche d'un projet accessible par l'utilisateur connecté
+ *     tags: [Commentaires]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID du projet
+ *         example: "clm123abc456"
+ *       - in: path
+ *         name: taskId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID de la tâche
+ *         example: "clm789def012"
+ *       - in: path
+ *         name: commentId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID du commentaire
+ *         example: "clm456ghi789"
+ *     responses:
+ *       200:
+ *         description: Commentaire récupéré avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               allOf:
+ *                 - $ref: '#/components/schemas/Success'
+ *                 - type: object
+ *                   properties:
+ *                     data:
+ *                       type: object
+ *                       properties:
+ *                         comment:
+ *                           $ref: '#/components/schemas/Comment'
+ *       401:
+ *         description: Non authentifié
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       403:
+ *         description: Accès refusé au projet
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: Commentaire non trouvé
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Erreur serveur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 export const getComment = async (
   req: Request,
@@ -230,6 +447,95 @@ export const getComment = async (
 /**
  * Mettre à jour un commentaire
  * PUT /projects/:id/tasks/:taskId/comments/:commentId
+ *
+ * @swagger
+ * /projects/{id}/tasks/{taskId}/comments/{commentId}:
+ *   put:
+ *     summary: Mettre à jour un commentaire
+ *     description: Modifie le contenu d'un commentaire. Seul l'auteur du commentaire peut le modifier
+ *     tags: [Commentaires]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID du projet
+ *         example: "clm123abc456"
+ *       - in: path
+ *         name: taskId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID de la tâche
+ *         example: "clm789def012"
+ *       - in: path
+ *         name: commentId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID du commentaire
+ *         example: "clm456ghi789"
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - content
+ *             properties:
+ *               content:
+ *                 type: string
+ *                 description: Nouveau contenu du commentaire
+ *                 example: "Commentaire mis à jour."
+ *     responses:
+ *       200:
+ *         description: Commentaire mis à jour avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               allOf:
+ *                 - $ref: '#/components/schemas/Success'
+ *                 - type: object
+ *                   properties:
+ *                     data:
+ *                       type: object
+ *                       properties:
+ *                         comment:
+ *                           $ref: '#/components/schemas/Comment'
+ *       400:
+ *         description: Données invalides
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       401:
+ *         description: Non authentifié
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       403:
+ *         description: Accès refusé ou utilisateur non auteur du commentaire
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: Commentaire non trouvé
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Erreur serveur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 export const updateComment = async (
   req: Request,
@@ -326,6 +632,68 @@ export const updateComment = async (
 /**
  * Supprimer un commentaire
  * DELETE /projects/:id/tasks/:taskId/comments/:commentId
+ *
+ * @swagger
+ * /projects/{id}/tasks/{taskId}/comments/{commentId}:
+ *   delete:
+ *     summary: Supprimer un commentaire
+ *     description: Supprime un commentaire. Seul son auteur ou un membre ayant les droits de modération peut le supprimer
+ *     tags: [Commentaires]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID du projet
+ *         example: "clm123abc456"
+ *       - in: path
+ *         name: taskId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID de la tâche
+ *         example: "clm789def012"
+ *       - in: path
+ *         name: commentId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID du commentaire
+ *         example: "clm456ghi789"
+ *     responses:
+ *       200:
+ *         description: Commentaire supprimé avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Success'
+ *       401:
+ *         description: Non authentifié
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       403:
+ *         description: Accès refusé ou utilisateur non autorisé à supprimer ce commentaire
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: Commentaire non trouvé
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Erreur serveur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 export const deleteComment = async (
   req: Request,

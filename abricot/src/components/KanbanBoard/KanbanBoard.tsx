@@ -1,35 +1,22 @@
 import KanbanColumn from "../KanbanColumn/KanbanColumn";
 import styles from "./KanbanBoard.module.css";
+import type { Tasks } from "@/types/types";
 
-/** Données fictives des tâches groupées par statut */
-const tasks = {
-  "à faire": [
-    { name: "Nom de la tâche", description: "Description de la tâche", project: "Nom du projet", date: "9 mars", comments: 2, status: "à faire" as const },
-    { name: "Nom de la tâche", description: "Description de la tâche", project: "Nom du projet", date: "9 mars", comments: 2, status: "à faire" as const },
-    { name: "Nom de la tâche", description: "Description de la tâche", project: "Nom du projet", date: "9 mars", comments: 2, status: "à faire" as const },
-    { name: "Nom de la tâche", description: "Description de la tâche", project: "Nom du projet", date: "9 mars", comments: 2, status: "à faire" as const },
-  ],
-  "En cours": [
-    { name: "Nom de la tâche", description: "Description de la tâche", project: "Nom du projet", date: "9 mars", comments: 2, status: "En cours" as const },
-    { name: "Nom de la tâche", description: "Description de la tâche", project: "Nom du projet", date: "9 mars", comments: 2, status: "En cours" as const },
-    { name: "Nom de la tâche", description: "Description de la tâche", project: "Nom du projet", date: "9 mars", comments: 2, status: "En cours" as const },
-    { name: "Nom de la tâche", description: "Description de la tâche", project: "Nom du projet", date: "9 mars", comments: 2, status: "En cours" as const },
-  ],
-  "Terminée": [
-    { name: "Nom de la tâche", description: "Description de la tâche", project: "Nom du projet", date: "9 mars", comments: 2, status: "Terminée" as const },
-    { name: "Nom de la tâche", description: "Description de la tâche", project: "Nom du projet", date: "9 mars", comments: 2, status: "Terminée" as const },
-    { name: "Nom de la tâche", description: "Description de la tâche", project: "Nom du projet", date: "9 mars", comments: 2, status: "Terminée" as const },
-    { name: "Nom de la tâche", description: "Description de la tâche", project: "Nom du projet", date: "9 mars", comments: 2, status: "Terminée" as const },
-  ],
-};
+interface KanbanBoardProps {
+	assignedTasks: Tasks;
+}
 
 /** Board Kanban avec 3 colonnes : À faire, En cours, Terminées */
-export default function KanbanBoard() {
-  return (
-    <div className={styles.board}>
-      <KanbanColumn title="À faire" tasks={tasks["à faire"]} />
-      <KanbanColumn title="En cours" tasks={tasks["En cours"]} />
-      <KanbanColumn title="Terminées" tasks={tasks["Terminée"]} />
-    </div>
-  );
+export default function KanbanBoard({ assignedTasks }: KanbanBoardProps) {
+	const inProgress = assignedTasks.filter((task) => task.status === "IN_PROGRESS");
+	const todo = assignedTasks.filter((task) => task.status === "TODO");
+	const done = assignedTasks.filter((task) => task.status === "DONE");
+
+	return (
+		<div className={styles.board}>
+			<KanbanColumn title="À faires" assignedTasks={todo} />
+			<KanbanColumn title="En cours" assignedTasks={inProgress} />
+			<KanbanColumn title="Términées" assignedTasks={done} />
+		</div>
+	);
 }

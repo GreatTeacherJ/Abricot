@@ -1,91 +1,162 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./AccountForm.module.css";
+import { useProvider } from "../Provider/Provider";
+import { putProfilApi } from "@/utils/utilsUser";
 
 /** Formulaire de modification du compte utilisateur */
 export default function AccountForm() {
-  /** Nom de famille */
-  const [nom, setNom] = useState("Amélie");
-  /** Prénom */
-  const [prenom, setPrenom] = useState("Amélie");
-  /** Adresse email */
-  const [email, setEmail] = useState("a.dupont@mail.com");
-  /** Nouveau mot de passe (vide par défaut) */
-  const [password, setPassword] = useState("");
+	//recupération des info de l'utilisateur par le Provider
+	const { currentUser, setRendering } = useProvider();
+	/** Nom de famille */
+	const [firstName, setFirstName] = useState("");
+	/** Prénom */
+	const [lastName, setLastName] = useState("");
+	/** Adresse email */
+	const [email, setEmail] = useState("");
+	/** Nouveau mot de passe (vide par défaut) */
+	const [newPassword, setNewPassword] = useState("");
+	/** Nouveau mot de passe (vide par défaut) */
+	const [oldPassword, setOldPassword] = useState("");
+	//Message d'érreur
+	const [error, setError] = useState("");
 
-  return (
-    <div className={styles.card}>
-      {/* En-tête : titre + nom complet */}
-      <div className={styles.header}>
-        <h1 className={styles.title}>Mon compte</h1>
-        <p className={styles.subtitle}>Amélie Dupont</p>
-      </div>
+	useEffect(() => {
+		if (!currentUser) {
+			return;
+		} // trim() enlève les espaces en début/fin, indexOf trouve le premier espace
+		const trimmed = currentUser.name.trim();
+		const spaceIndex = trimmed.indexOf(" ");
 
-      {/* Formulaire de modification */}
-      <form
-        className={styles.form}
-        onSubmit={(e) => {
-          e.preventDefault();
-        }}
-      >
-        <div className={styles.field}>
-          <label className={styles.label} htmlFor="nom">
-            Nom
-          </label>
-          <input
-            className={styles.input}
-            id="nom"
-            type="text"
-            value={nom}
-            onChange={(e) => setNom(e.target.value)}
-          />
-        </div>
+		if (spaceIndex === -1) {
+			setFirstName(trimmed);
+			setLastName("");
+		}
 
-        <div className={styles.field}>
-          <label className={styles.label} htmlFor="prenom">
-            Prénom
-          </label>
-          <input
-            className={styles.input}
-            id="prenom"
-            type="text"
-            value={prenom}
-            onChange={(e) => setPrenom(e.target.value)}
-          />
-        </div>
+		setFirstName(trimmed.slice(0, spaceIndex));
 
-        <div className={styles.field}>
-          <label className={styles.label} htmlFor="email">
-            Email
-          </label>
-          <input
-            className={styles.input}
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
+		setLastName(trimmed.slice(spaceIndex + 1));
+		setEmail(currentUser.email);
+	}, [currentUser]);
 
-        <div className={styles.field}>
-          <label className={styles.label} htmlFor="password">
-            Mot de passe
-          </label>
-          <input
-            className={styles.input}
-            id="password"
-            type="password"
-            placeholder="•••••••••••"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
+	async function handleChange(e: React.SyntheticEvent<HTMLFormElement>) {
+		e.preventDefault();
+		switch (true) {
+			case firstName.trim().length < 3:
+				setError("Merci de rensigner ai moins 2 lettre pour le nom");
+				return;
+			case lastName.trim().length < 3:
+				setError("Merci de rensigner ai moins 2 lettre pour le prénom");
+				return;
+			case newPassword.length > 0 && newPassword.length < 9:
+				setError("Votre Mot de passe doit contenir au moins 8 charatére");
+				return;
+			case newPassword.length > 0 && oldPassword.length === 0:
+				setError("Merci d'entrer votre ancien mot de passe");
+				return;
+		}
 
-        <button type="submit" className={styles.submitBtn}>
-          Modifier les informations
-        </button>
-      </form>
-    </div>
-  );
+		const name = firstName + " " + lastName;
+		const response = await putProfilApi(name, email, newPassword, oldPassword);
+
+		if (!response.success) {
+			setError(response.message);
+			return;
+		}
+
+		setNewPassword("");
+		setOldPassword("");
+		setError(response.message);
+		setRendering((prev) => !prev);
+	}
+
+	return (
+		<div className={styles.card}>
+			{/* En-tête : titre + firstName complet */}
+			<div className={styles.header}>
+				<h1 className={styles.title}>Mon compte</h1>
+				<p className={styles.subtitle}>{currentUser?.name}</p>
+			</div>
+
+			{/* Formulaire de modification */}
+			<form className={styles.form} onSubmit={handleChange}>
+				<div className={styles.field}>
+					<label className={styles.label} htmlFor="firstName">
+						Nom
+					</label>
+					<input
+						className={styles.input}
+						id="firstName"
+						type="text"
+						value={firstName}
+						onChange={(e) => setFirstName(e.target.value)}
+						required
+					/>
+				</div>
+
+				<div className={styles.field}>
+					<label className={styles.label} htmlFor="lastName">
+						Prénom
+					</label>
+					<input
+						className={styles.input}
+						id="lastName"
+						type="text"
+						value={lastName}
+						onChange={(e) => setLastName(e.target.value)}
+						required
+					/>
+				</div>
+
+				<div className={styles.field}>
+					<label className={styles.label} htmlFor="email">
+						Email
+					</label>
+					<input
+						className={styles.input}
+						id="email"
+						type="email"
+						value={email}
+						onChange={(e) => setEmail(e.target.value)}
+						required
+					/>
+				</div>
+
+				<div className={styles.field}>
+					<label className={styles.label} htmlFor="newPassword">
+						Changer le mot de passe
+					</label>
+					<input
+						className={styles.input}
+						id="newPassword"
+						type="Password"
+						placeholder="•••••••••••"
+						value={newPassword}
+						onChange={(e) => setNewPassword(e.target.value)}
+					/>
+				</div>
+				{newPassword && (
+					<div className={styles.field}>
+						<label className={styles.label} htmlFor="oldPassword">
+							Ancien mot de passse
+						</label>
+						<input
+							className={styles.input}
+							id="oldPassword"
+							type="Password"
+							placeholder="•••••••••••"
+							value={oldPassword}
+							onChange={(e) => setOldPassword(e.target.value)}
+							required
+						/>
+					</div>
+				)}
+				{error && <p className={styles.error}>{error}</p>}
+				<button type="submit" className={styles.submitBtn}>
+					Modifier les informations
+				</button>
+			</form>
+		</div>
+	);
 }

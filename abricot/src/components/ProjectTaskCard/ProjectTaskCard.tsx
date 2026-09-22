@@ -1,107 +1,243 @@
-import styles from "./ProjectTaskCard.module.css";
+"use client";
 
-/** Personne assignée à la tâche */
-interface Assignee {
-  /** Initiales */
-  initials: string;
-  /** Nom complet */
-  name: string;
-}
+import { useState, Dispatch, SetStateAction } from "react";
+import styles from "./ProjectTaskCard.module.css";
+import type { Task } from "@/types/types";
+import { useParams } from "next/navigation";
+import { getInitials } from "@/utils/tools";
+import { postCommentApi } from "@/utils/utilsComment";
+import { useScrollToHash } from "@/utils/useScrollToHash";
 
 /** Props d'une carte de tâche projet (vue détaillée) */
 interface ProjectTaskCardProps {
-  /** Nom de la tâche */
-  name: string;
-  /** Description */
-  description: string;
-  /** Statut */
-  status: "À faire" | "En cours" | "Terminée";
-  /** Date d'échéance */
-  dueDate: string;
-  /** Personnes assignées */
-  assignees: Assignee[];
-  /** Nombre de commentaires */
-  comments: number;
+	task: Task;
+	setidTaskModified: Dispatch<SetStateAction<string>>;
+	setCmtIsModfified: Dispatch<SetStateAction<boolean>>;
 }
-
-/** Correspondance statut → classe CSS du tag */
-const tagClassMap = {
-  "À faire": `${styles.tag} ${styles.tagRed}`,
-  "En cours": `${styles.tag} ${styles.tagOrange}`,
-  "Terminée": `${styles.tag} ${styles.tagGreen}`,
-};
 
 /** Carte de tâche détaillée (échéance, assignés, commentaires) */
 export default function ProjectTaskCard({
-  name,
-  description,
-  status,
-  dueDate,
-  assignees,
-  comments,
+	task,
+	setidTaskModified,
+	setCmtIsModfified,
 }: ProjectTaskCardProps) {
-  return (
-    <div className={styles.card}>
-      <div className={styles.cardHeader}>
-        <div className={styles.cardInfo}>
-          {/* Titre + tag statut + description */}
-          <div>
-            <div className={styles.titleRow}>
-              <span className={styles.name}>{name}</span>
-              <span className={tagClassMap[status]}>{status}</span>
-            </div>
-            <p className={styles.description}>{description}</p>
-          </div>
+	//Attend que le DOM soit charger pour mettre le scroll automatique
+	//utilse pour arriver sur la bonne tache quand on clique sur "voir"
+	useScrollToHash();
 
-          {/* Échéance */}
-          <div className={styles.metaRow}>
-            <span className={styles.metaLabel}>Échéance :</span>
-            <span className={styles.metaValue}>
-              <svg className={styles.calendarIcon} viewBox="0 0 15 17" fill="none">
-                <rect x="1" y="2" width="13" height="14" rx="2" stroke="currentColor" strokeWidth="1.5" />
-                <path d="M4 0.5v3M11 0.5v3M0.5 6.5h14" stroke="currentColor" strokeWidth="1.5" />
-                <rect x="4" y="9" width="3" height="3" rx="0.5" fill="#FF8B42" />
-              </svg>
-              {dueDate}
-            </span>
-          </div>
+	//gére l'ouverture des commentaires
+	const [cmtOpen, setcmtOpen] = useState<boolean>(false);
+	//recupére les nouveaux commmentaires
+	const [comment, setcomment] = useState<string>("");
+	//on reucpere le parametre de l'url
+	const params = useParams();
+	//recuperation de name
+	const name = params.name as string;
+	//recupération des initales
+	const initials = getInitials(name);
 
-          {/* Assignés */}
-          <div className={styles.metaRow}>
-            <span className={styles.metaLabel}>Assigné à :</span>
-            <div className={styles.assignees}>
-              {assignees.map((a) => (
-                <div key={a.initials} className={styles.assignee}>
-                  <div className={styles.avatar}>{a.initials}</div>
-                  <span className={styles.assigneeName}>{a.name}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+	const date = new Date(task.dueDate);
+	// Forcer l'interprétation en UTC pour éviter le décalage
+	const formattedDate = new Intl.DateTimeFormat("fr-FR", {
+		month: "long",
+		year: "numeric",
+		timeZone: "UTC", // évite le décalage de fuseau horaire
+	}).format(date);
 
-        {/* Bouton "voir plus" (3 points) */}
-        <div className={styles.cardActions}>
-          <button className={styles.moreBtn}>
-            <svg className={styles.moreIcon} viewBox="0 0 16 16" fill="currentColor">
-              <circle cx="8" cy="3" r="1.5" />
-              <circle cx="8" cy="8" r="1.5" />
-              <circle cx="8" cy="13" r="1.5" />
-            </svg>
-          </button>
-        </div>
-      </div>
+	const statusStyle: Record<string, { label: string; className: string }> = {
+		TODO: { label: "À faire", className: styles.tagRed },
+		IN_PROGRESS: { label: "En cour", className: styles.tagOrange },
+		DONE: { label: "Terminée", className: styles.tagGreen },
+	};
 
-      {/* Séparateur */}
-      <hr className={styles.divider} />
+	async function addComment(event: React.SyntheticEvent<HTMLFormElement>) {
+		event.preventDefault();
+		const res = await postCommentApi(task.project.id, task.id, comment);
 
-      {/* Commentaires */}
-      <button className={styles.commentsBtn}>
-        Commentaires ({comments})
-        <svg className={styles.commentsChevron} viewBox="0 0 16 8" fill="none" stroke="currentColor" strokeWidth="1.5">
-          <path d="M1 1l7 6 7-6" />
-        </svg>
-      </button>
-    </div>
-  );
+		if (!res.data) {
+			return;
+		}
+
+		setcomment("");
+		setCmtIsModfified((prev) => !prev);
+	}
+
+	function openModal() {
+		setidTaskModified(task.id);
+	}
+
+	return (
+		<div className={styles.card} id={task.id}>
+			<div className={styles.cardHeader}>
+				<div className={styles.cardInfo}>
+					{/* Titre + tag statut + description */}
+					<div>
+						<div className={styles.titleRow}>
+							<span className={styles.name}>{task.title}</span>
+							<span
+								className={`${styles.tag} ${statusStyle[task.status].className}`}
+							>
+								{statusStyle[task.status].label}
+							</span>
+						</div>
+						<p className={styles.description}>{task.description}</p>
+					</div>
+
+					{/* Échéance */}
+					<div className={styles.metaRow}>
+						<span className={styles.metaLabel}>Échéance :</span>
+						<span className={styles.metaValue}>
+							<svg
+								className={styles.calendarIcon}
+								viewBox="0 0 15 17"
+								fill="none"
+							>
+								<rect
+									x="1"
+									y="2"
+									width="13"
+									height="14"
+									rx="2"
+									stroke="currentColor"
+									strokeWidth="1.5"
+								/>
+								<path
+									d="M4 0.5v3M11 0.5v3M0.5 6.5h14"
+									stroke="currentColor"
+									strokeWidth="1.5"
+								/>
+								<rect
+									x="4"
+									y="9"
+									width="3"
+									height="3"
+									rx="0.5"
+									fill="#FF8B42"
+								/>
+							</svg>
+							{formattedDate}
+						</span>
+					</div>
+
+					{/* Assignés */}
+					<div className={styles.metaRow}>
+						<span className={styles.metaLabel}>Assigné à :</span>
+						<div className={styles.assignees}>
+							{task.assignees.map((a) => (
+								<div key={a.id} className={styles.assignee}>
+									<div
+										className={`${styles.avatar} ${styles.avatarMuted}`}
+									>
+										{a.user.name
+											.split(" ")
+											.map((w) => w[0])
+											.join("")}
+									</div>
+									<span className={styles.assigneeName}>
+										{a.user.name}
+									</span>
+								</div>
+							))}
+						</div>
+					</div>
+				</div>
+
+				{/* Bouton "voir plus" (3 points) */}
+				<div className={styles.cardActions}>
+					<button className={styles.moreBtn} onClick={openModal}>
+						<svg
+							className={styles.moreIcon}
+							viewBox="0 0 16 16"
+							fill="currentColor"
+						>
+							<circle cx="8" cy="3" r="1.5" />
+							<circle cx="8" cy="8" r="1.5" />
+							<circle cx="8" cy="13" r="1.5" />
+						</svg>
+					</button>
+				</div>
+			</div>
+
+			{/* Séparateur */}
+			<hr className={styles.divider} />
+
+			{/* Commentaires */}
+			<button className={styles.commentsBtn} onClick={() => setcmtOpen(!cmtOpen)}>
+				Commentaires ({task.comments.length})
+				{cmtOpen ? (
+					<svg
+						className={styles.commentsChevron}
+						viewBox="0 0 16 8"
+						fill="none"
+						stroke="currentColor"
+						strokeWidth="1.5"
+					>
+						<path d="M1 7l7-6 7 6" />
+					</svg>
+				) : (
+					<svg
+						className={styles.commentsChevron}
+						viewBox="0 0 16 8"
+						fill="none"
+						stroke="currentColor"
+						strokeWidth="1.5"
+					>
+						<path d="M1 1l7 6 7-6" />
+					</svg>
+				)}
+			</button>
+			{cmtOpen && (
+				<form onSubmit={addComment}>
+					<div className={styles.commentContainer}>
+						{task.comments.map((cmt) => (
+							<div key={cmt.id} className={styles.comment}>
+								<span
+									className={`${styles.avatar} ${styles.avatarMuted}`}
+								>
+									{cmt.author.name
+										.split(" ")
+										.map((w) => w[0])
+										.join("")}
+								</span>
+								<div className={styles.bubleComment}>
+									<div className={styles.infoCommment}>
+										<p className={styles.bubleCommentName}>
+											{cmt.author.name}
+										</p>
+										<span className={styles.bubleCommentDate}>
+											{cmt.createdAt}
+										</span>
+									</div>
+									<p className={styles.bubleCommentContent}>
+										{cmt.content}
+									</p>
+								</div>
+							</div>
+						))}
+						{/*A modifier imput comment user */}
+						<div className={styles.comment}>
+							<span className={`${styles.avatar} ${styles.avatarUser}`}>
+								{initials}
+							</span>
+
+							<textarea
+								name="comment"
+								placeholder="Ajouter un commentaire..."
+								className={styles.bubleComment}
+								onChange={(e) => setcomment(e.target.value)}
+								value={comment}
+							/>
+						</div>
+						<button
+							className={`${styles.commentButton} ${comment.trim() ? styles.buttonAvtive : styles.buttonNoAvtive}`}
+							disabled={!comment.trim()}
+							type="submit"
+						>
+							Envoyer
+						</button>
+					</div>
+				</form>
+			)}
+		</div>
+	);
 }

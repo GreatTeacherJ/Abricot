@@ -28,15 +28,19 @@
 }
 
 .tag {
-  display: inline-flex;
-  padding: 4px 16px;
-  border-radius: 50px;
-  font-size: 14px;
-  font-weight: 400;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 4px 16px;
+gap: 10px;
 
+margin: 0 auto;
+width: fit-content;
+height: 25px;
+
+border-radius: 50px;
+}
 .tagRed {
   background: var(--color-red-bg);
   color: var(--color-red);

@@ -26,6 +26,102 @@ import { getTaskComments } from "../utils/taskComments";
 /**
  * Créer une nouvelle tâche
  * POST /projects/:id/tasks
+ *
+ * @swagger
+ * /projects/{id}/tasks:
+ *   post:
+ *     summary: Créer une nouvelle tâche
+ *     description: Crée une tâche dans un projet. Nécessite les permissions de création de tâches sur le projet
+ *     tags: [Tâches]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID du projet
+ *         example: "clm123abc456"
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - title
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 description: Titre de la tâche
+ *                 example: "Corriger le bug de connexion"
+ *               description:
+ *                 type: string
+ *                 description: Description de la tâche
+ *                 example: "Le formulaire ne valide pas l'email."
+ *               priority:
+ *                 type: string
+ *                 enum: [LOW, MEDIUM, HIGH, URGENT]
+ *                 default: MEDIUM
+ *                 description: Priorité de la tâche
+ *                 example: "HIGH"
+ *               dueDate:
+ *                 type: string
+ *                 format: date-time
+ *                 description: Date d'échéance de la tâche
+ *                 example: "2026-12-31T23:59:59.000Z"
+ *               assigneeIds:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: IDs des utilisateurs assignés (doivent être membres du projet)
+ *                 example: ["clm789def012"]
+ *     responses:
+ *       201:
+ *         description: Tâche créée avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               allOf:
+ *                 - $ref: '#/components/schemas/Success'
+ *                 - type: object
+ *                   properties:
+ *                     data:
+ *                       type: object
+ *                       properties:
+ *                         task:
+ *                           $ref: '#/components/schemas/Task'
+ *       400:
+ *         description: Données invalides ou assignés non membres du projet
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       401:
+ *         description: Non authentifié
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       403:
+ *         description: Accès refusé au projet ou permissions insuffisantes
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: Projet non trouvé
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Erreur serveur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 export const createTask = async (
   req: Request,
@@ -296,6 +392,69 @@ export const getTasks = async (req: Request, res: Response): Promise<void> => {
 /**
  * Récupérer une tâche spécifique
  * GET /projects/:id/tasks/:taskId
+ *
+ * @swagger
+ * /projects/{id}/tasks/{taskId}:
+ *   get:
+ *     summary: Récupérer une tâche spécifique
+ *     description: Retourne le détail d'une tâche d'un projet accessible par l'utilisateur connecté, incluant ses assignations et ses commentaires
+ *     tags: [Tâches]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID du projet
+ *         example: "clm123abc456"
+ *       - in: path
+ *         name: taskId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID de la tâche
+ *         example: "clm789def012"
+ *     responses:
+ *       200:
+ *         description: Tâche récupérée avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               allOf:
+ *                 - $ref: '#/components/schemas/Success'
+ *                 - type: object
+ *                   properties:
+ *                     data:
+ *                       type: object
+ *                       properties:
+ *                         task:
+ *                           $ref: '#/components/schemas/Task'
+ *       401:
+ *         description: Non authentifié
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       403:
+ *         description: Accès refusé au projet
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: Tâche non trouvée
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Erreur serveur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 export const getTask = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -364,6 +523,111 @@ export const getTask = async (req: Request, res: Response): Promise<void> => {
 /**
  * Mettre à jour une tâche
  * PUT /projects/:id/tasks/:taskId
+ *
+ * @swagger
+ * /projects/{id}/tasks/{taskId}:
+ *   put:
+ *     summary: Mettre à jour une tâche
+ *     description: Modifie les champs d'une tâche (titre, description, statut, priorité, échéance, assignés). Nécessite les permissions de modification de tâches sur le projet
+ *     tags: [Tâches]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID du projet
+ *         example: "clm123abc456"
+ *       - in: path
+ *         name: taskId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID de la tâche
+ *         example: "clm789def012"
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 description: Titre de la tâche
+ *                 example: "Corriger le bug de connexion"
+ *               description:
+ *                 type: string
+ *                 description: Description de la tâche
+ *                 example: "Description mise à jour"
+ *               status:
+ *                 type: string
+ *                 enum: [TODO, IN_PROGRESS, DONE, CANCELLED]
+ *                 description: Statut de la tâche
+ *                 example: "IN_PROGRESS"
+ *               priority:
+ *                 type: string
+ *                 enum: [LOW, MEDIUM, HIGH, URGENT]
+ *                 description: Priorité de la tâche
+ *                 example: "URGENT"
+ *               dueDate:
+ *                 type: string
+ *                 format: date-time
+ *                 description: Date d'échéance de la tâche (null pour la retirer)
+ *                 example: "2026-12-31T23:59:59.000Z"
+ *               assigneeIds:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: IDs des utilisateurs assignés (doivent être membres du projet)
+ *                 example: ["clm789def012"]
+ *     responses:
+ *       200:
+ *         description: Tâche mise à jour avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               allOf:
+ *                 - $ref: '#/components/schemas/Success'
+ *                 - type: object
+ *                   properties:
+ *                     data:
+ *                       type: object
+ *                       properties:
+ *                         task:
+ *                           $ref: '#/components/schemas/Task'
+ *       400:
+ *         description: Données invalides ou assignés non membres du projet
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       401:
+ *         description: Non authentifié
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       403:
+ *         description: Accès refusé au projet ou permissions insuffisantes
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: Tâche non trouvée
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Erreur serveur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 export const updateTask = async (
   req: Request,
@@ -519,6 +783,61 @@ export const updateTask = async (
 /**
  * Supprimer une tâche
  * DELETE /projects/:id/tasks/:taskId
+ *
+ * @swagger
+ * /projects/{id}/tasks/{taskId}:
+ *   delete:
+ *     summary: Supprimer une tâche
+ *     description: Supprime définitivement une tâche ainsi que ses assignations et commentaires associés (suppression en cascade). Nécessite les permissions de modification de tâches sur le projet
+ *     tags: [Tâches]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID du projet
+ *         example: "clm123abc456"
+ *       - in: path
+ *         name: taskId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID de la tâche
+ *         example: "clm789def012"
+ *     responses:
+ *       200:
+ *         description: Tâche supprimée avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Success'
+ *       401:
+ *         description: Non authentifié
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       403:
+ *         description: Accès refusé au projet ou permissions insuffisantes
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: Tâche non trouvée
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Erreur serveur
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 export const deleteTask = async (
   req: Request,

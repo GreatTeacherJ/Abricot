@@ -81,6 +81,11 @@
   background: var(--color-dark);
 }
 
+.error{
+color : rgb(255, 157, 0)
+
+}
+
 @media (max-width: 768px) {
   .card {
     margin: 24px 16px 0;

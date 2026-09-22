@@ -1,70 +1,66 @@
 import styles from "./KanbanCard.module.css";
+import type { Task } from "@/types/types";
+import Image from "next/image";
+import { useParams } from "next/navigation";
+import Link from "next/link";
 
-/** Props d'une carte Kanban */
 interface KanbanCardProps {
-  /** Nom de la tâche */
-  name: string;
-  /** Description courte */
-  description: string;
-  /** Projet associé */
-  project: string;
-  /** Date d'échéance */
-  date: string;
-  /** Nombre de commentaires */
-  comments: number;
-  /** Statut de la tâche */
-  status: "à faire" | "En cours" | "Terminée";
+	task: Task;
 }
 
-/** Correspondance statut → classe CSS du tag */
-const tagClassMap = {
-  "à faire": `${styles.tag} ${styles.tagRed}`,
-  "En cours": `${styles.tag} ${styles.tagOrange}`,
-  "Terminée": `${styles.tag} ${styles.tagGreen}`,
-};
-
 /** Carte de tâche unique dans une colonne Kanban */
-export default function KanbanCard({
-  name,
-  description,
-  project,
-  date,
-  comments,
-  status,
-}: KanbanCardProps) {
-  return (
-    <div className={styles.card}>
-      {/* En-tête : nom + tag statut */}
-      <div className={styles.header}>
-        <span className={styles.name}>{name}</span>
-        <span className={tagClassMap[status]}>{status}</span>
-      </div>
-      <span className={styles.description}>{description}</span>
-      {/* Pied de page : métadonnées + bouton voir */}
-      <div className={styles.footer}>
-        <div className={styles.meta}>
-          <span className={styles.metaItem}>
-            <svg className={styles.metaIcon} viewBox="0 0 14 14" fill="currentColor">
-              <path d="M2 2h10v10H2z" />
-            </svg>
-            {project}
-          </span>
-          <span className={styles.metaItem}>
-            <svg className={styles.metaIcon} viewBox="0 0 14 14" fill="currentColor">
-              <rect x="1" y="2" width="12" height="11" rx="1" />
-              <path d="M4 0v3M10 0v3M1 5h12" />
-            </svg>
-            {date}
-          </span>
-          <span className={styles.metaItem}>
-            <svg className={styles.metaIcon} viewBox="0 0 14 14" fill="currentColor">
-              <path d="M1 1h12v9H4l-3 3V1z" />
-            </svg>
-            {comments}
-          </span>
-        </div>
-        <button className={styles.viewBtn}>Voir</button>
-      </div>
-    </div>
-  );
+export default function KanbanCard({ task }: KanbanCardProps) {
+	const params = useParams();
+	const routeName = params.name as string;
+
+	const date = new Date(task.dueDate);
+	// Forcer l'interprétation en UTC pour éviter le décalage
+	const formattedDate = new Intl.DateTimeFormat("fr-FR", {
+		month: "long",
+		year: "numeric",
+		timeZone: "UTC", // évite le décalage de fuseau horaire
+	}).format(date);
+
+	const statusStyle: Record<string, { label: string; className: string }> = {
+		TODO: { label: "À faire", className: styles.tagRed },
+		IN_PROGRESS: { label: "En cour", className: styles.tagOrange },
+		DONE: { label: "Terminée", className: styles.tagGreen },
+	};
+
+	return (
+		<div className={styles.card}>
+			{/* En-tête : nom + tag statut */}
+			<div className={styles.header}>
+				<span className={styles.name}>{task.title}</span>
+				<span className={`${styles.tag} ${statusStyle[task.status].className}`}>
+					{statusStyle[task.status].label}
+				</span>
+			</div>
+			<span className={styles.description}>{task.description}</span>
+			{/* Pied de page : métadonnées + bouton voir */}
+			<div className={styles.footer}>
+				<div className={styles.meta}>
+					<span className={styles.metaItem}>
+						<Image src="/grayFolder.svg" alt="" width={18} height={18} />
+						{task.project.name}
+					</span>
+					<span className={styles.metaItem}>
+						<Image src="/grayCalandar.svg" alt="" width={18} height={18} />
+						{formattedDate}
+					</span>
+					<span className={styles.metaItem}>
+						<Image src="/grayComments.svg" alt="" width={18} height={18} />
+						{task.comments.length}
+					</span>
+				</div>
+				<Link
+					href={"/" + routeName + "/projets/" + task.project.id + "#" + task.id}
+				>
+					<button className={styles.viewBtn} onClick={() => {}}>
+						Voir
+					</button>
+				</Link>
+			</div>
+		</div>
+	);
 }

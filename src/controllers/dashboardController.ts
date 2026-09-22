@@ -245,8 +245,53 @@ export const getProjectsWithTasks = async (
 };
 
 /**
- * Récupérer les statistiques du tableau de bord
- * GET /dashboard/stats
+ * @swagger
+ * /dashboard/stats:
+ *   get:
+ *     summary: Récupérer les statistiques du tableau de bord
+ *     tags: [Tableau de Bord]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Statistiques du tableau de bord récupérées avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               allOf:
+ *                 - $ref: '#/components/schemas/Success'
+ *                 - type: object
+ *                   properties:
+ *                     data:
+ *                       type: object
+ *                       properties:
+ *                         stats:
+ *                           type: object
+ *                           properties:
+ *                             tasks:
+ *                               type: object
+ *                               properties:
+ *                                 total:
+ *                                   type: integer
+ *                                 urgent:
+ *                                   type: integer
+ *                                 overdue:
+ *                                   type: integer
+ *                                 byStatus:
+ *                                   type: object
+ *                                   additionalProperties:
+ *                                     type: integer
+ *                             projects:
+ *                               type: object
+ *                               properties:
+ *                                 total:
+ *                                   type: integer
+ *       401:
+ *         description: Non authentifié
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  */
 export const getDashboardStats = async (
   req: Request,

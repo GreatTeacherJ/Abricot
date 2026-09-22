@@ -138,7 +138,7 @@
   width: 27px;
   height: 27px;
   border-radius: 50%;
-  background: var(--color-border);
+  
   display: flex;
   align-items: center;
   justify-content: center;
@@ -146,6 +146,14 @@
   font-weight: 400;
   color: var(--color-dark);
   flex-shrink: 0;
+}
+
+.avatarMuted{
+background: var(--color-border);
+}
+
+.avatarUser{
+  background: var(--color-brand-light);
 }
 
 .assigneeName {
@@ -167,6 +175,8 @@
   border: none;
 }
 
+/*Commentaires*/
+
 .commentsBtn {
   display: flex;
   align-items: center;
@@ -180,6 +190,126 @@
   width: 16px;
   height: 8px;
 }
+
+
+
+.commentContainer{
+  display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: flex-end;
+padding: 0px;
+gap: 16px;
+
+}
+
+.comment{
+display: flex;
+flex-direction: row;
+align-items: flex-start;
+padding: 0px;
+gap: 14px;
+width: 100%;
+}
+
+.bubleComment{
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+padding: 18px 14px;
+gap: 10px;
+background: var(--color-gray-bg);
+border-radius: 10px;
+width: 100%;
+}
+
+.bubleComment::placeholder{
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 10px;
+line-height: 12px;
+color: var(--color-muted);
+
+}
+
+.infoCommment{
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+align-items: center;
+padding: 0px;
+gap: 239px;
+width: 100%;
+}
+
+.bubleCommentDate{
+/* Body/Body 2xs */
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 10px;
+line-height: 12px;
+text-align: center;
+/* Neutral/Grey 600 */
+color: var(--color-muted-light);
+}
+
+.bubleCommentName{
+/* Body/Body s */
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 17px;
+/* identique à la hauteur de la zone de texte */
+text-align: center;
+color: var(--color-black);
+}
+
+.bubleCommentContent{
+
+/* Body/Body 2xs */
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 10px;
+line-height: 12px;
+color: var(--color-black);
+}
+
+.commentButton{
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 13px 74px;
+gap: 10px;
+
+/* Neutral/Grey 200 */
+background: var(--color-border);
+border-radius: 10px;
+margin: 2px;
+}
+
+.commentButton:hover{
+margin: 0px;
+  border: 2px solid var(--color-muted);
+}
+
+.buttonNoAvtive{
+/* Neutral/Grey 400 */
+color: var(--color-muted);
+
+
+}
+
+.buttonAvtive{
+  color: var(--color-black);
+  background-color: var(--color-brand-light);
+}
+
 
 @media (max-width: 768px) {
   .card {
