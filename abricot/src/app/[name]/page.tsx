@@ -16,11 +16,11 @@ interface PageProps {
 
 /** Page d'accueil : Dashboard avec vue Liste/Kanban */
 export default function Page({ params }: PageProps) {
-	const { name } = use(params);
-
 	/** Vue active : liste ou kanban */
 	const [activeView, setActiveView] = useState<"list" | "kanban">("list");
 	const [assignedTasks, setAssignedTask] = useState<Tasks>([]);
+	//savoir si les projet on été modifié pour le rendering
+	const [isRerender, setIsRerender] = useState<boolean>(false);
 
 	useEffect(() => {
 		async function taskAsigned() {
@@ -33,14 +33,14 @@ export default function Page({ params }: PageProps) {
 			setAssignedTask(data.data);
 		}
 		taskAsigned();
-	}, []);
+	}, [isRerender]);
 
 	return (
 		<>
 			{/* Navigation : clic sur "Projets" → /projets */}
 			<Menu />
 			{/* En-tête avec toggle Liste/Kanban */}
-			<PageHeader />
+			<PageHeader setIsRerender={setIsRerender} />
 			<TypeView activeView={activeView} onViewChange={setActiveView} />
 			{/* Affichage conditionnel selon la vue sélectionnée */}
 			{activeView === "list" ? (

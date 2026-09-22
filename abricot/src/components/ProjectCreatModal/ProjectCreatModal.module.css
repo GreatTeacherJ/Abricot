@@ -45,6 +45,23 @@
   gap: 40px;
 }
 
+.createBtn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 74px;
+  background: var(--color-title);
+  color: var(--color-white);
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 400;
+  transition: background 0.2s;
+}
+
+.createBtn:hover {
+  background: var(--color-dark);
+}
+
 .title {
   font-family: var(--font-heading);
   font-size: 24px;

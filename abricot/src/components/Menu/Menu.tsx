@@ -86,7 +86,7 @@ export default function Menu() {
 					Projets
 				</button>
 			</div>
-			<Link href="/compte">
+			<Link href={"/" + routeName + "/compte"}>
 				{/* Avatar utilisateur */}
 				{userName ? (
 					<div className={styles.userIcon}>{userName}</div>

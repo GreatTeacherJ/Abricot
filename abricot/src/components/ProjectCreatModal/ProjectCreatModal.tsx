@@ -8,8 +8,7 @@ import { useProvider } from "@/components/Provider/Provider";
 
 /** Props de la modale de modification d'un projet */
 interface ProjectCreatModalProps {
-	setIsOpen: Dispatch<SetStateAction<boolean>>;
-	setprojectIsModified: Dispatch<SetStateAction<boolean>>;
+	setIsRerender: Dispatch<SetStateAction<boolean>>;
 }
 
 interface Collaborator {
@@ -19,10 +18,7 @@ interface Collaborator {
 type CollaboratorMap = Map<string, Collaborator>;
 
 /** Modale de modification d'un projet (maquette Figma « Modale modifier projet ») */
-export default function ProjectCreatModal({
-	setIsOpen,
-	setprojectIsModified,
-}: ProjectCreatModalProps) {
+export default function ProjectCreatModal({ setIsRerender }: ProjectCreatModalProps) {
 	/** Nom du projet */
 	const [name, setName] = useState("");
 	/** Description du projet */
@@ -33,7 +29,8 @@ export default function ProjectCreatModal({
 	const [collaboratorList, setCollaboratorList] = useState<CollaboratorMap>(new Map());
 	//erreur de saisi
 	const [error, setError] = useState<string>("");
-
+	//savoir si la modal est ouverte
+	const [isOpen, setIsOpen] = useState<boolean>(false);
 	const { currentUser } = useProvider();
 
 	function onClose() {
@@ -67,7 +64,7 @@ export default function ProjectCreatModal({
 			return;
 		}
 
-		setprojectIsModified((prev) => !prev);
+		setIsRerender((prev) => !prev);
 		onClose();
 	}
 
@@ -116,133 +113,161 @@ export default function ProjectCreatModal({
 	}, []);
 
 	return (
-		<div className={styles.overlay} onClick={onClose}>
-			<div
-				className={styles.modal}
-				role="dialog"
-				aria-modal="true"
-				aria-labelledby="project-edit-title"
-				onClick={(e) => e.stopPropagation()}
-			>
-				{/* Fermeture */}
-				<button className={styles.closeBtn} onClick={onClose} aria-label="Fermer">
-					<svg
-						width="14"
-						height="14"
-						viewBox="0 0 14 14"
-						fill="none"
-						xmlns="http://www.w3.org/2000/svg"
+		<>
+			<button className={styles.createBtn} onClick={() => setIsOpen(true)}>
+				+ Créer un projet
+			</button>
+			{isOpen && (
+				<div className={styles.overlay} onClick={onClose}>
+					<div
+						className={styles.modal}
+						role="dialog"
+						aria-modal="true"
+						aria-labelledby="project-edit-title"
+						onClick={(e) => e.stopPropagation()}
 					>
-						<path
-							d="M1 1L13 13M13 1L1 13"
-							stroke="currentColor"
-							strokeWidth="1"
-							strokeLinecap="round"
-						/>
-					</svg>
-				</button>
-
-				{/* Contenu */}
-				<div className={styles.content}>
-					<h2 id="project-edit-title" className={styles.title}>
-						Modifier un projet
-					</h2>
-
-					<div className={styles.fields}>
-						{/* Titre */}
-						<div className={styles.field}>
-							<label className={styles.label} htmlFor="project-name">
-								Titre*
-							</label>
-							<div className={styles.control}>
-								<input
-									id="project-name"
-									className={styles.controlInput}
-									type="text"
-									value={name}
-									onChange={(e) => setName(e.target.value)}
-									required
-								/>
-							</div>
-						</div>
-
-						{/* Description */}
-						<div className={styles.field}>
-							<label className={styles.label} htmlFor="project-description">
-								Description*
-							</label>
-							<div className={styles.control}>
-								<input
-									id="project-description"
-									className={styles.controlInput}
-									type="text"
-									value={description}
-									onChange={(e) => setDescription(e.target.value)}
-									required
-								/>
-							</div>
-						</div>
-
-						{/* Contributeurs */}
-						<div className={styles.field}>
-							<label className={styles.label} htmlFor="project-members">
-								Contributeurs
-							</label>
-							<div className={styles.control}>
-								<input
-									id="project-members"
-									className={styles.controlInput}
-									type="text"
-									value={
-										selectedMembers.size +
-										" collaborateur" +
-										(selectedMembers.size > 1 ? "s" : "")
-									}
-									readOnly
-								/>
-								<svg
-									className={`${styles.chevronIcon} ${isDropdownOpen ? styles.open : ""}`}
-									width="16"
-									height="8"
-									viewBox="0 0 16 8"
-									fill="none"
+						{/* Fermeture */}
+						<button
+							className={styles.closeBtn}
+							onClick={onClose}
+							aria-label="Fermer"
+						>
+							<svg
+								width="14"
+								height="14"
+								viewBox="0 0 14 14"
+								fill="none"
+								xmlns="http://www.w3.org/2000/svg"
+							>
+								<path
+									d="M1 1L13 13M13 1L1 13"
 									stroke="currentColor"
 									strokeWidth="1"
-									xmlns="http://www.w3.org/2000/svg"
-									onClick={() => setIsDropdownOpen((prev) => !prev)}
-								>
-									<path
-										d="M1 1L8 7L15 1"
-										strokeLinecap="round"
-										strokeLinejoin="round"
-									/>
-								</svg>
-								{isDropdownOpen && (
-									<ul className={styles.dropdownList}>
-										{[...collaboratorList].map(([id, member]) => (
-											<li
-												key={id}
-												onClick={() =>
-													toggleAssignee(member.user)
-												}
-												className={`${styles.assigneeLi}  
+									strokeLinecap="round"
+								/>
+							</svg>
+						</button>
+
+						{/* Contenu */}
+						<div className={styles.content}>
+							<h2 id="project-edit-title" className={styles.title}>
+								Modifier un projet
+							</h2>
+
+							<div className={styles.fields}>
+								{/* Titre */}
+								<div className={styles.field}>
+									<label
+										className={styles.label}
+										htmlFor="project-name"
+									>
+										Titre*
+									</label>
+									<div className={styles.control}>
+										<input
+											id="project-name"
+											className={styles.controlInput}
+											type="text"
+											value={name}
+											onChange={(e) => setName(e.target.value)}
+											required
+										/>
+									</div>
+								</div>
+
+								{/* Description */}
+								<div className={styles.field}>
+									<label
+										className={styles.label}
+										htmlFor="project-description"
+									>
+										Description*
+									</label>
+									<div className={styles.control}>
+										<input
+											id="project-description"
+											className={styles.controlInput}
+											type="text"
+											value={description}
+											onChange={(e) =>
+												setDescription(e.target.value)
+											}
+											required
+										/>
+									</div>
+								</div>
+
+								{/* Contributeurs */}
+								<div className={styles.field}>
+									<label
+										className={styles.label}
+										htmlFor="project-members"
+									>
+										Contributeurs
+									</label>
+									<div className={styles.control}>
+										<input
+											id="project-members"
+											className={styles.controlInput}
+											type="text"
+											value={
+												selectedMembers.size +
+												" collaborateur" +
+												(selectedMembers.size > 1 ? "s" : "")
+											}
+											readOnly
+										/>
+										<svg
+											className={`${styles.chevronIcon} ${isDropdownOpen ? styles.open : ""}`}
+											width="16"
+											height="8"
+											viewBox="0 0 16 8"
+											fill="none"
+											stroke="currentColor"
+											strokeWidth="1"
+											xmlns="http://www.w3.org/2000/svg"
+											onClick={() =>
+												setIsDropdownOpen((prev) => !prev)
+											}
+										>
+											<path
+												d="M1 1L8 7L15 1"
+												strokeLinecap="round"
+												strokeLinejoin="round"
+											/>
+										</svg>
+										{isDropdownOpen && (
+											<ul className={styles.dropdownList}>
+												{[...collaboratorList].map(
+													([id, member]) => (
+														<li
+															key={id}
+															onClick={() =>
+																toggleAssignee(
+																	member.user,
+																)
+															}
+															className={`${styles.assigneeLi}  
 													${Array.from(selectedMembers).find((u) => u.id === id) && styles.assignee}`}
-											>
-												{member.user.name}
-											</li>
-										))}
-									</ul>
-								)}
+														>
+															{member.user.name}
+														</li>
+													),
+												)}
+											</ul>
+										)}
+									</div>
+								</div>
 							</div>
 						</div>
+						{error && <p className={styles.error}>{error}</p>}
+						{/* Enregistrer */}
+						<button className={styles.saveBtn} onClick={handleSave}>
+							Enregistrer
+						</button>
 					</div>
 				</div>
-				{error && <p className={styles.error}>{error}</p>}
-				{/* Enregistrer */}
-				<button className={styles.saveBtn} onClick={handleSave}>
-					Enregistrer
-				</button>
-			</div>
-		</div>
+			)}
+		</>
 	);
 }
