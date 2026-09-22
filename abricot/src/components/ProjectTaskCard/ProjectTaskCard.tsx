@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Dispatch, SetStateAction } from "react";
 import styles from "./ProjectTaskCard.module.css";
 import type { Task } from "@/types/types";
 import { useParams } from "next/navigation";
@@ -10,10 +10,16 @@ import { postCommentApi } from "@/utils/utilsComment";
 /** Props d'une carte de tâche projet (vue détaillée) */
 interface ProjectTaskCardProps {
 	task: Task;
+	setidTaskModified: Dispatch<SetStateAction<string>>;
+	setCmtIsModfified: Dispatch<SetStateAction<boolean>>;
 }
 
 /** Carte de tâche détaillée (échéance, assignés, commentaires) */
-export default function ProjectTaskCard({ task }: ProjectTaskCardProps) {
+export default function ProjectTaskCard({
+	task,
+	setidTaskModified,
+	setCmtIsModfified,
+}: ProjectTaskCardProps) {
 	//gére l'ouverture des commentaires
 	const [cmtOpen, setcmtOpen] = useState<boolean>(false);
 	//recupére les nouveaux commmentaires
@@ -39,7 +45,8 @@ export default function ProjectTaskCard({ task }: ProjectTaskCardProps) {
 		DONE: { label: "Terminée", className: styles.tagGreen },
 	};
 
-	async function addComment() {
+	async function addComment(event: React.SyntheticEvent<HTMLFormElement>) {
+		event.preventDefault();
 		const res = await postCommentApi(task.project.id, task.id, comment);
 
 		if (!res.data) {
@@ -47,14 +54,11 @@ export default function ProjectTaskCard({ task }: ProjectTaskCardProps) {
 		}
 
 		setcomment("");
+		setCmtIsModfified((prev) => !prev);
 	}
 
-	function openComment() {
-		if (cmtOpen) {
-			setcmtOpen(false);
-		} else {
-			setcmtOpen(true);
-		}
+	function openModal() {
+		setidTaskModified(task.id);
 	}
 
 	return (
@@ -135,7 +139,7 @@ export default function ProjectTaskCard({ task }: ProjectTaskCardProps) {
 
 				{/* Bouton "voir plus" (3 points) */}
 				<div className={styles.cardActions}>
-					<button className={styles.moreBtn}>
+					<button className={styles.moreBtn} onClick={openModal}>
 						<svg
 							className={styles.moreIcon}
 							viewBox="0 0 16 16"
@@ -153,7 +157,7 @@ export default function ProjectTaskCard({ task }: ProjectTaskCardProps) {
 			<hr className={styles.divider} />
 
 			{/* Commentaires */}
-			<button className={styles.commentsBtn} onClick={openComment}>
+			<button className={styles.commentsBtn} onClick={() => setcmtOpen(!cmtOpen)}>
 				Commentaires ({task.comments.length})
 				{cmtOpen ? (
 					<svg
@@ -180,12 +184,12 @@ export default function ProjectTaskCard({ task }: ProjectTaskCardProps) {
 			{cmtOpen && (
 				<form onSubmit={addComment}>
 					<div className={styles.commentContainer}>
-						{task.comments.map((comment) => (
-							<div key={comment.id} className={styles.comment}>
+						{task.comments.map((cmt) => (
+							<div key={cmt.id} className={styles.comment}>
 								<span
 									className={`${styles.avatar} ${styles.avatarMuted}`}
 								>
-									{comment.author.name
+									{cmt.author.name
 										.split(" ")
 										.map((w) => w[0])
 										.join("")}
@@ -193,14 +197,14 @@ export default function ProjectTaskCard({ task }: ProjectTaskCardProps) {
 								<div className={styles.bubleComment}>
 									<div className={styles.infoCommment}>
 										<p className={styles.bubleCommentName}>
-											{comment.author.name}
+											{cmt.author.name}
 										</p>
 										<span className={styles.bubleCommentDate}>
-											{comment.createdAt}
+											{cmt.createdAt}
 										</span>
 									</div>
 									<p className={styles.bubleCommentContent}>
-										{comment.content}
+										{cmt.content}
 									</p>
 								</div>
 							</div>
@@ -216,11 +220,13 @@ export default function ProjectTaskCard({ task }: ProjectTaskCardProps) {
 								placeholder="Ajouter un commentaire..."
 								className={styles.bubleComment}
 								onChange={(e) => setcomment(e.target.value)}
+								value={comment}
 							/>
 						</div>
 						<button
 							className={`${styles.commentButton} ${comment.trim() ? styles.buttonAvtive : styles.buttonNoAvtive}`}
 							disabled={!comment.trim()}
+							type="submit"
 						>
 							Envoyer
 						</button>

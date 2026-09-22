@@ -4,11 +4,13 @@ import Link from "next/link";
 import ProjectTaskCard from "../ProjectTaskCard/ProjectTaskCard";
 import Contributors from "../Contributors/Contributors";
 import styles from "./ProjectDetail.module.css";
-import { useState, useEffect, ChangeEvent } from "react";
+import { useState, useEffect } from "react";
 import type { Tasks, Project } from "@/types/types";
 import { taskForProjectApi, projectsApi } from "@/utils/utilsUser";
 import Image from "next/image";
 import { useParams } from "next/navigation";
+import TaskEditModal from "../TaskEditModal/TaskEditModal";
+import ProjectEditModal from "../ProjectEditModal/ProjectEditModal";
 
 /** Props de la page de détail d'un projet */
 interface ProjectDetailProps {
@@ -25,13 +27,24 @@ export default function ProjectDetail({ id }: ProjectDetailProps) {
 	const params = useParams();
 	const routeName = params.name as string;
 
+	//state pour savoir si un commentaire ou une tache à été modifier
+	const [cmtIsModfified, setCmtIsModfified] = useState<boolean>(false);
+	//state pour savoir si un projet a été modifé
+	const [prjIsModfified, setPrjIsModfified] = useState<boolean>(false);
+	//pour l'ouverture des modale je passe l'id qui me dit que je doit
+	// ouvrire la modale quand l'id est vide la modale est fermée
+	//Ouverture modale modif projet
+	const [idProjectModified, setidProjectModified] = useState<string>("");
+	//ouvertur modale modif tâche
+	const [idTaskModified, setidTaskModified] = useState<string>("");
+
 	const STATUS_OPTIONS = [
 		{ value: "TODO", label: "À faire" },
 		{ value: "IN_PROGRESS", label: "En cours" },
 		{ value: "DONE", label: "Terminé" },
 		{ value: "ALL", label: "Statut" },
 	];
-
+	console.log("porjet modifier : ", prjIsModfified);
 	//filtre selon le statut
 	useEffect(() => {
 		let filterTaskStatus;
@@ -87,7 +100,7 @@ export default function ProjectDetail({ id }: ProjectDetailProps) {
 
 		taskForProject();
 		apiProject();
-	}, []);
+	}, [cmtIsModfified, prjIsModfified]);
 
 	if (!project) {
 		return <p>Aucun projet trouvé</p>;
@@ -111,7 +124,12 @@ export default function ProjectDetail({ id }: ProjectDetailProps) {
 				<div className={styles.headerInfo}>
 					<div className={styles.titleRow}>
 						<h1 className={styles.title}>{project.name}</h1>
-						<span className={styles.editLink}>Modifier</span>
+						<button
+							className={styles.editLink}
+							onClick={() => setidProjectModified(project.id)}
+						>
+							Modifier
+						</button>
 					</div>
 					<p className={styles.projectDesc}>{project.description}</p>
 				</div>
@@ -213,10 +231,36 @@ export default function ProjectDetail({ id }: ProjectDetailProps) {
 				{/* Liste des tâches du projet */}
 				<div className={styles.taskList}>
 					{filterTask.map((task, i) => (
-						<ProjectTaskCard key={i} task={task} />
+						<ProjectTaskCard
+							key={i}
+							task={task}
+							setidTaskModified={setidTaskModified}
+							setCmtIsModfified={setCmtIsModfified}
+						/>
 					))}
 				</div>
 			</div>
+
+			{
+				/*Modale modfier tache */
+				idTaskModified && (
+					<TaskEditModal
+						task={tasks.filter((task) => task.id === idTaskModified)[0]}
+						setidTaskModified={setidTaskModified}
+						setPrjIsModfified={setPrjIsModfified}
+					/>
+				)
+			}
+			{
+				/*Modale Modfier projet */
+				idProjectModified && (
+					<ProjectEditModal
+						project={project}
+						setIdProjectModified={setidProjectModified}
+						setPrjIsModfified={setPrjIsModfified}
+					/>
+				)
+			}
 		</div>
 	);
 }

@@ -43,7 +43,7 @@ export async function postCommentApi(
 			return { message: data.message, data: undefined };
 		}
 
-		return { message: data.message, data: data.data.tasks };
+		return { message: data.message, data: data.data.comment };
 	} catch (error) {
 		const message = "Erreur profilAPI:" + error;
 		console.error(message);

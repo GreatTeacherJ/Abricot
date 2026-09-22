@@ -35,8 +35,6 @@ export default function Page({ params }: PageProps) {
 		taskAsigned();
 	}, []);
 
-	console.log("routeName / Page : ", name);
-
 	return (
 		<>
 			{/* Navigation : clic sur "Projets" → /projets */}

@@ -21,7 +21,7 @@ export interface Project {
 	userRole: string;
 }
 
-interface Member {
+export interface Member {
 	id: string;
 	role: string;
 	joinedAt: string;

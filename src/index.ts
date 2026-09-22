@@ -67,6 +67,29 @@ app.use("/dashboard", dashboardRoutes);
 // Route pour la recherche d'utilisateurs
 app.get("/users/search", authenticateToken, searchUsers);
 
+/**
+ * @swagger
+ * /health:
+ *   get:
+ *     summary: Vérifier l'état de santé de l'API
+ *     tags: [Système]
+ *     security: []
+ *     responses:
+ *       200:
+ *         description: API en ligne
+ *         content:
+ *           application/json:
+ *             schema:
+ *               allOf:
+ *                 - $ref: '#/components/schemas/Success'
+ *                 - type: object
+ *                   properties:
+ *                     timestamp:
+ *                       type: string
+ *                       format: date-time
+ *                     environment:
+ *                       type: string
+ */
 // Route de santé
 app.get("/health", (req, res) => {
   res.status(200).json({
@@ -77,6 +100,29 @@ app.get("/health", (req, res) => {
   });
 });
 
+/**
+ * @swagger
+ * /:
+ *   get:
+ *     summary: Point d'entrée de l'API (liste des endpoints)
+ *     tags: [Système]
+ *     security: []
+ *     responses:
+ *       200:
+ *         description: Informations générales et liste des endpoints
+ *         content:
+ *           application/json:
+ *             schema:
+ *               allOf:
+ *                 - $ref: '#/components/schemas/Success'
+ *                 - type: object
+ *                   properties:
+ *                     version:
+ *                       type: string
+ *                     endpoints:
+ *                       type: object
+ *                       additionalProperties: true
+ */
 // Route racine
 app.get("/", (req, res) => {
   res.status(200).json({

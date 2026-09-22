@@ -1,6 +1,9 @@
+"use client";
+
 import { Task } from "@/types/types";
 import styles from "./TaskRow.module.css";
 import Image from "next/image";
+import { useState } from "react";
 
 /** Props d'une ligne de tâche (vue tableau) */
 interface TaskRowProps {
@@ -9,6 +12,8 @@ interface TaskRowProps {
 
 /** Ligne de tâche unique dans la vue tableau */
 export default function TaskRow({ task }: TaskRowProps) {
+	const [isOpen, setIsOpen] = useState<boolean>(false);
+
 	const date = new Date(task.dueDate);
 	// Forcer l'interprétation en UTC pour éviter le décalage
 	const formattedDate = new Intl.DateTimeFormat("fr-FR", {
