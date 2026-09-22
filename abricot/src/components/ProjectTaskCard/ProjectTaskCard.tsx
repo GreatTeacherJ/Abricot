@@ -6,6 +6,7 @@ import type { Task } from "@/types/types";
 import { useParams } from "next/navigation";
 import { getInitials } from "@/utils/tools";
 import { postCommentApi } from "@/utils/utilsComment";
+import { useScrollToHash } from "@/utils/useScrollToHash";
 
 /** Props d'une carte de tâche projet (vue détaillée) */
 interface ProjectTaskCardProps {
@@ -20,6 +21,10 @@ export default function ProjectTaskCard({
 	setidTaskModified,
 	setCmtIsModfified,
 }: ProjectTaskCardProps) {
+	//Attend que le DOM soit charger pour mettre le scroll automatique
+	//utilse pour arriver sur la bonne tache quand on clique sur "voir"
+	useScrollToHash();
+
 	//gére l'ouverture des commentaires
 	const [cmtOpen, setcmtOpen] = useState<boolean>(false);
 	//recupére les nouveaux commmentaires
@@ -62,7 +67,7 @@ export default function ProjectTaskCard({
 	}
 
 	return (
-		<div className={styles.card}>
+		<div className={styles.card} id={task.id}>
 			<div className={styles.cardHeader}>
 				<div className={styles.cardInfo}>
 					{/* Titre + tag statut + description */}

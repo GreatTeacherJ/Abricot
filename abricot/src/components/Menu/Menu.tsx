@@ -43,7 +43,7 @@ export default function Menu() {
 
 	function handleClicProjects() {
 		if (pathname !== "/" + routeName + PROJECT) {
-			router.push(`/${routeName}/projets`);
+			router.push(`/${routeName}${PROJECT}`);
 		}
 	}
 

@@ -1,9 +1,8 @@
-"use client";
-
 import { Task } from "@/types/types";
 import styles from "./TaskRow.module.css";
 import Image from "next/image";
-import { useState } from "react";
+import Link from "next/link";
+import { useParams } from "next/navigation";
 
 /** Props d'une ligne de tâche (vue tableau) */
 interface TaskRowProps {
@@ -12,8 +11,6 @@ interface TaskRowProps {
 
 /** Ligne de tâche unique dans la vue tableau */
 export default function TaskRow({ task }: TaskRowProps) {
-	const [isOpen, setIsOpen] = useState<boolean>(false);
-
 	const date = new Date(task.dueDate);
 	// Forcer l'interprétation en UTC pour éviter le décalage
 	const formattedDate = new Intl.DateTimeFormat("fr-FR", {
@@ -21,6 +18,9 @@ export default function TaskRow({ task }: TaskRowProps) {
 		year: "numeric",
 		timeZone: "UTC", // évite le décalage de fuseau horaire
 	}).format(date);
+
+	const params = useParams();
+	const routeName = params.name as string;
 
 	const statusStyle: Record<string, { label: string; className: string }> = {
 		TODO: { label: "À faire", className: styles.tagRed },
@@ -61,7 +61,13 @@ export default function TaskRow({ task }: TaskRowProps) {
 						{statusStyle[task.status].label}
 					</span>
 				</div>
-				<button className={styles.viewBtn}>Voir</button>
+				<Link
+					href={"/" + routeName + "/projets/" + task.project.id + "#" + task.id}
+				>
+					<button className={styles.viewBtn} onClick={() => {}}>
+						Voir
+					</button>
+				</Link>
 			</div>
 		</div>
 	);

@@ -1,6 +1,8 @@
 import styles from "./KanbanCard.module.css";
 import type { Task } from "@/types/types";
 import Image from "next/image";
+import { useParams } from "next/navigation";
+import Link from "next/link";
 
 interface KanbanCardProps {
 	task: Task;
@@ -8,6 +10,9 @@ interface KanbanCardProps {
 
 /** Carte de tâche unique dans une colonne Kanban */
 export default function KanbanCard({ task }: KanbanCardProps) {
+	const params = useParams();
+	const routeName = params.name as string;
+
 	const date = new Date(task.dueDate);
 	// Forcer l'interprétation en UTC pour éviter le décalage
 	const formattedDate = new Intl.DateTimeFormat("fr-FR", {
@@ -48,7 +53,13 @@ export default function KanbanCard({ task }: KanbanCardProps) {
 						{task.comments.length}
 					</span>
 				</div>
-				<button className={styles.viewBtn}>Voir</button>
+				<Link
+					href={"/" + routeName + "/projets/" + task.project.id + "#" + task.id}
+				>
+					<button className={styles.viewBtn} onClick={() => {}}>
+						Voir
+					</button>
+				</Link>
 			</div>
 		</div>
 	);
