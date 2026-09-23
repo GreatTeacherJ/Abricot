@@ -1,43 +1,19 @@
 "use server";
 
 import { cookies } from "next/headers";
-import type { Project, User } from "@/types/types";
+import type { Project, User, ResponseApi, Projects } from "@/types/types";
+import { responseToken, responseCatch } from "./tools";
 
-interface ProjectApi {
-	message: string;
-	data: Project | undefined;
-}
-
-interface GetAllProjectApi {
-	message: string;
-	data: Project[] | undefined;
-}
-
-interface ResponseApi {
-	success: boolean;
-	message: string;
-	data: {} | undefined;
-}
-
-interface ProjectApi {
-	message: string;
-	data: Project | undefined;
-}
-
-interface PutProjectApi {
-	success: Boolean;
-	message: string[];
-	data: Project | undefined;
-}
-
-export async function getProjectApi(idProject: string): Promise<ProjectApi> {
+export async function getProjectApi(
+	idProject: string,
+): Promise<ResponseApi<{ project: Project }>> {
 	try {
 		const cookieStore = await cookies();
 		const cookie = cookieStore.get("tokenAbricot");
 		const token = cookie?.value;
 
 		if (!token) {
-			return { message: "Token non trouvé", data: undefined };
+			return responseToken();
 		}
 
 		const response = await fetch("http://localhost:8000/projects/" + idProject, {
@@ -48,25 +24,19 @@ export async function getProjectApi(idProject: string): Promise<ProjectApi> {
 		});
 		const data = await response.json();
 
-		if (!response.ok) {
-			return { message: data.message, data: undefined };
-		}
-
-		return { message: data.message, data: data.data.project };
+		return data;
 	} catch (error) {
-		const message = "Erreur profilAPI:" + error;
-		console.error(message);
-		return { message: message, data: undefined };
+		return responseCatch(error);
 	}
 }
 
-export async function getAllProjectApi(): Promise<GetAllProjectApi> {
+export async function getAllProjectApi(): Promise<ResponseApi<Projects>> {
 	const cookieStore = await cookies();
 	const cookie = cookieStore.get("tokenAbricot");
 	const token = cookie?.value;
 
 	if (!token) {
-		return { message: "Token non trouvé", data: undefined };
+		return responseToken();
 	}
 	try {
 		const response = await fetch("http://localhost:8000/projects/", {
@@ -77,15 +47,9 @@ export async function getAllProjectApi(): Promise<GetAllProjectApi> {
 		});
 		const data = await response.json();
 
-		if (!response.ok) {
-			return { message: data.message, data: undefined };
-		}
-
-		return { message: data.message, data: data.data.projects };
+		return data;
 	} catch (error) {
-		const message = "Erreur profilAPI:" + error;
-		console.error(message);
-		return { message: message, data: undefined };
+		return responseCatch(error);
 	}
 }
 
@@ -95,14 +59,15 @@ export async function putProjectApi(
 	description: string,
 	addedMembers: User[] = [],
 	removedMembers: User[] = [],
-): Promise<PutProjectApi> {
+): Promise<ResponseApi<Project | null>[]> {
+	const responseList: ResponseApi<Project | null>[] = [];
 	try {
 		const cookieStore = await cookies();
 		const cookie = cookieStore.get("tokenAbricot");
 		const token = cookie?.value;
 
 		if (!token) {
-			return { success: false, message: ["Token non trouvé"], data: undefined };
+			return [responseToken()];
 		}
 
 		const response = await fetch("http://localhost:8000/projects/" + idProject, {
@@ -119,21 +84,15 @@ export async function putProjectApi(
 		const data = await response.json();
 
 		if (!response.ok) {
-			return { success: false, message: data.message, data: undefined };
+			return [data];
 		}
-
-		let success = true;
-		const message = [data.message];
 
 		//Ajouter les collaborateur
 		if (addedMembers) {
 			for (const Member of addedMembers) {
 				const results = await postContributors(token, Member.email, idProject);
 
-				if (!results.success) {
-					success = false;
-					message.push(results.message);
-				}
+				responseList.push(results);
 			}
 		}
 
@@ -142,18 +101,13 @@ export async function putProjectApi(
 			for (const Member of removedMembers) {
 				const results = await deleteContributors(token, Member.id, idProject);
 
-				if (!results.success) {
-					success = false;
-					message.push(results.message);
-				}
+				responseList.push(results);
 			}
 		}
 
-		return { success: success, message: message, data: data.data.projects };
+		return responseList;
 	} catch (error) {
-		const message = "Erreur profilAPI:" + error;
-		console.error(message);
-		return { success: false, message: [message], data: undefined };
+		return [responseCatch(error)];
 	}
 }
 
@@ -161,7 +115,7 @@ async function postContributors(
 	token: string,
 	email: string,
 	idProject: string,
-): Promise<ResponseApi> {
+): Promise<ResponseApi<null>> {
 	try {
 		const response = await fetch(
 			"http://localhost:8000/projects/" + idProject + "/contributors",
@@ -181,9 +135,7 @@ async function postContributors(
 
 		return data;
 	} catch (error) {
-		const message = "Erreur profilAPI:" + error;
-		console.error(message);
-		return { success: false, message: message, data: undefined };
+		return responseCatch(error);
 	}
 }
 
@@ -191,7 +143,7 @@ async function deleteContributors(
 	token: string,
 	idUser: string,
 	idProject: string,
-): Promise<ResponseApi> {
+): Promise<ResponseApi<null>> {
 	try {
 		const response = await fetch(
 			"http://localhost:8000/projects/" + idProject + "/contributors/" + idUser,
@@ -207,9 +159,32 @@ async function deleteContributors(
 
 		return data;
 	} catch (error) {
-		const message = "Erreur profilAPI:" + error;
-		console.error(message);
-		return { success: false, message: message, data: undefined };
+		return responseCatch(error);
+	}
+}
+
+export async function deleteProjectApi(idProject: string): Promise<ResponseApi<null>> {
+	try {
+		const cookieStore = await cookies();
+		const cookie = cookieStore.get("tokenAbricot");
+		const token = cookie?.value;
+
+		if (!token) {
+			return responseToken();
+		}
+
+		const response = await fetch("http://localhost:8000/projects/" + idProject, {
+			method: "DELETE",
+			headers: {
+				"Content-Type": "application/json",
+				Authorization: `Bearer ${token}`,
+			},
+		});
+		const data = await response.json();
+
+		return data;
+	} catch (error) {
+		return responseCatch(error);
 	}
 }
 
@@ -217,14 +192,14 @@ export async function postCreatProjectApi(
 	title: string,
 	description: string,
 	userContributor: User[],
-): Promise<ProjectApi> {
+): Promise<ResponseApi<Project>> {
 	try {
 		const cookieStore = await cookies();
 		const cookie = cookieStore.get("tokenAbricot");
 		const token = cookie?.value;
 
 		if (!token) {
-			return { message: "Token non trouvé", data: undefined };
+			return responseToken();
 		}
 
 		const contributor = userContributor.map((user) => user.email);
@@ -243,14 +218,8 @@ export async function postCreatProjectApi(
 		});
 		const data = await response.json();
 
-		if (!response.ok) {
-			return { message: data.message, data: undefined };
-		}
-
-		return { message: data.message, data: data.data };
+		return data;
 	} catch (error) {
-		const message = "Erreur profilAPI:" + error;
-		console.error(message);
-		return { message: message, data: undefined };
+		return responseCatch(error);
 	}
 }

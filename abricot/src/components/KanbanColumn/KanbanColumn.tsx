@@ -1,10 +1,10 @@
 import KanbanCard from "../KanbanCard/KanbanCard";
 import styles from "./KanbanColumn.module.css";
-import type { Tasks } from "@/types/types";
+import type { Task } from "@/types/types";
 
 interface KanbanColumnProps {
 	title: string;
-	assignedTasks: Tasks;
+	assignedTasks: Task[];
 }
 
 /** Colonne unique du board Kanban (header + cartes) */

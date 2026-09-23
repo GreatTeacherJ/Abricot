@@ -42,7 +42,7 @@ export default function TaskEditModal({
 	/** Statut sélectionné */
 	const [status, setStatus] = useState<Task["status"]>(task.status);
 	//Projet stocké
-	const [currentProject, setProject] = useState<Project | null>(null);
+	const [currentProject, setProject] = useState<Project>();
 	//Partie pour l'imput assigné les tâche
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 	const [selectedAssignees, setSelectedAssignees] = useState<string[]>([]);
@@ -51,15 +51,15 @@ export default function TaskEditModal({
 
 	useEffect(() => {
 		async function apiProject() {
-			const data = await getProjectApi(task.project.id);
-			if (!data.data) {
+			const response = await getProjectApi(task.project.id);
+			if (!response.success) {
 				return;
 			}
-			setProject(data.data);
+			setProject(response.data.project);
 		}
 
 		apiProject();
-	}, []);
+	}, [task.project.id]);
 
 	function onClose() {
 		setidTaskModified("");
@@ -82,7 +82,7 @@ export default function TaskEditModal({
 			selectedAssignees,
 		);
 
-		if (!response.data) {
+		if (!response.success) {
 			seterror(response.message);
 			return;
 		}
@@ -97,6 +97,11 @@ export default function TaskEditModal({
 				? prev.filter((id) => id !== userId)
 				: [...prev, userId],
 		);
+	}
+	function assignedVerif(id: string): boolean {
+		const bool = task.assignees.some((assignee) => assignee.user.id === id);
+
+		return bool;
 	}
 
 	useEffect(() => {
@@ -116,12 +121,6 @@ export default function TaskEditModal({
 
 		setSelectedAssignees(idList);
 	}, [currentProject]);
-
-	function assignedVerif(id: string): boolean {
-		const bool = task.assignees.some((assignee) => assignee.user.id === id);
-
-		return bool;
-	}
 
 	/** Formate une Date en "YYYY-MM-DD" en utilisant l'heure LOCALE (pas UTC, contrairement à toISOString) */
 	function toLocalDateString(date: Date): string {

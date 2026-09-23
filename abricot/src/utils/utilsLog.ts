@@ -1,28 +1,18 @@
 "use server";
 
 import { cookies } from "next/headers";
+import { responseToken, responseCatch } from "./tools";
+import type { ResponseApi, User } from "@/types/types";
 
-interface ResponseLog {
-	message: string;
-	data:
-		| {
-				success: true;
-				message: string;
-				data: {
-					user: {
-						id: string;
-						email: string;
-						name: string;
-						createdAt: string;
-						updatedAt: string;
-					};
-					token: string;
-				};
-		  }
-		| undefined;
+interface LoginApi {
+	user: User;
+	token: string;
 }
 
-export async function loginAPI(email: string, password: string): Promise<ResponseLog> {
+export async function loginAPI(
+	email: string,
+	password: string,
+): Promise<ResponseApi<LoginApi>> {
 	try {
 		const response = await fetch("http://localhost:8000/auth/login", {
 			method: "POST",
@@ -33,10 +23,10 @@ export async function loginAPI(email: string, password: string): Promise<Respons
 		const token = data.data?.token;
 		if (response.ok) {
 			if (!token) {
-				return { message: "Token non reçu", data: data };
+				return responseToken();
 			}
 		} else {
-			return { message: "Erreur serveur", data: data };
+			return data;
 		}
 
 		// httpOnly = inaccessible en JS côté navigateur, protège du XSS
@@ -47,11 +37,9 @@ export async function loginAPI(email: string, password: string): Promise<Respons
 			maxAge: 60 * 60, // 1h en secondes, pas en jours comme js-cookie
 		});
 
-		return { message: "connecté", data: data };
+		return data;
 	} catch (error) {
-		const message = "Erreur loginAPI:" + error;
-		console.error(message);
-		return { message: message, data: undefined };
+		return responseCatch(error);
 	}
 }
 
@@ -59,7 +47,7 @@ export async function registerAPI(
 	email: string,
 	password: string,
 	name: string,
-): Promise<ResponseLog> {
+): Promise<ResponseApi<LoginApi>> {
 	try {
 		const response = await fetch("http://localhost:8000/auth/register", {
 			method: "POST",
@@ -70,10 +58,10 @@ export async function registerAPI(
 		const token = data.data?.token;
 		if (response.ok) {
 			if (!token) {
-				return { message: "Token non reçu", data: data };
+				return responseToken();
 			}
 		} else {
-			return data.message;
+			return data;
 		}
 
 		const cookieStore = await cookies();
@@ -82,10 +70,9 @@ export async function registerAPI(
 			secure: process.env.NODE_ENV === "production",
 			maxAge: 60 * 60, // 1h en secondes, pas en jours comme js-cookie
 		});
-		return { message: "compte créé", data: data };
+
+		return data;
 	} catch (error) {
-		const message = "Erreur registerAPI:" + error;
-		console.error(message);
-		return { message: message, data: undefined };
+		return responseCatch(error);
 	}
 }

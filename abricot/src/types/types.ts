@@ -1,6 +1,16 @@
-export type Projects = Project[];
+export interface Projects {
+	projects: Project[];
+}
 
-export type Tasks = Task[];
+export interface Tasks {
+	tasks: Task[];
+}
+
+export interface Users {
+	users: User[];
+}
+
+export type Comments = Comment[];
 
 export interface Project {
 	id: string;
@@ -34,6 +44,8 @@ export interface User {
 	id: string;
 	email: string;
 	name: string;
+	createdAt?: string;
+	updatedAt?: string;
 }
 
 interface assignees {
@@ -44,7 +56,7 @@ interface assignees {
 	user: User;
 }
 
-export interface Comments {
+export interface Comment {
 	id: string;
 	content: string;
 	createdAt: string;
@@ -72,10 +84,10 @@ export interface Task {
 	};
 	assignees: assignees[];
 
-	comments: Comments[];
+	comments: Comments;
 }
 
-export interface Success<T = {}> {
+export interface Success<T> {
 	success: true;
 	message: string;
 	data: T;
@@ -92,3 +104,5 @@ export interface Error {
 		},
 	];
 }
+
+export type ResponseApi<T> = Success<T> | Error;

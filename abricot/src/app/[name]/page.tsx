@@ -1,13 +1,13 @@
 "use client";
 
-import { use, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Menu from "@/components/Menu/Menu";
 import PageHeader from "@/components/PageHeader/PageHeader";
 import TaskList from "@/components/TaskList/TaskList";
 import KanbanBoard from "@/components/KanbanBoard/KanbanBoard";
 import Footer from "@/components/Footer/Footer";
 import TypeView from "@/components/TypeView/TypeView";
-import type { Tasks } from "@/types/types";
+import type { Task } from "@/types/types";
 import { assignedTskApi } from "@/utils/utilsUser";
 
 interface PageProps {
@@ -18,19 +18,19 @@ interface PageProps {
 export default function Page({ params }: PageProps) {
 	/** Vue active : liste ou kanban */
 	const [activeView, setActiveView] = useState<"list" | "kanban">("list");
-	const [assignedTasks, setAssignedTask] = useState<Tasks>([]);
+	const [assignedTasks, setAssignedTask] = useState<Task[]>([]);
 	//savoir si les projet on été modifié pour le rendering
 	const [isRerender, setIsRerender] = useState<boolean>(false);
 
 	useEffect(() => {
 		async function taskAsigned() {
-			const data = await assignedTskApi();
+			const response = await assignedTskApi();
 
-			if (!data.data) {
+			if (!response.success) {
 				return <p>Aucune tâche trouvées </p>;
 			}
 
-			setAssignedTask(data.data);
+			setAssignedTask(response.data.tasks);
 		}
 		taskAsigned();
 	}, [isRerender]);

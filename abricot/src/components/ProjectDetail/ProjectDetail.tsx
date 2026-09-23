@@ -5,12 +5,13 @@ import ProjectTaskCard from "../ProjectTaskCard/ProjectTaskCard";
 import Contributors from "../Contributors/Contributors";
 import styles from "./ProjectDetail.module.css";
 import { useState, useEffect } from "react";
-import type { Tasks, Project } from "@/types/types";
+import type { Task, Project } from "@/types/types";
 import { taskForProjectApi, projectsApi } from "@/utils/utilsUser";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import TaskEditModal from "../TaskEditModal/TaskEditModal";
 import ProjectEditModal from "../ProjectEditModal/ProjectEditModal";
+import DeleteModal from "../DeleteModal/DeleteModal";
 import TaskCreateModal from "../TaskCreateModal/TaskCreateModal";
 import { useProvider } from "../Provider/Provider";
 
@@ -21,23 +22,21 @@ interface ProjectDetailProps {
 
 /** Page de détail d'un projet : tâches, contributeurs, actions */
 export default function ProjectDetail({ id }: ProjectDetailProps) {
-	const [tasks, setTasks] = useState<Tasks>([]);
+	const [tasks, setTasks] = useState<Task[]>([]);
 	const [project, setProjects] = useState<Project>();
 	const [selectedStatus, setSelectedStatus] = useState("ALL");
-	const [filterTask, setFilterTask] = useState<Tasks>(tasks);
 	const [searchText, setsearchText] = useState<string>("");
 	const [openCrtTsk, setOpenCrtTsk] = useState<boolean>(false);
 	const params = useParams();
 	const routeName = params.name as string;
-
-	//state pour savoir si un commentaire ou une tache à été modifier
 	const [cmtIsModfified, setCmtIsModfified] = useState<boolean>(false);
-	//state pour savoir si un projet a été modifé
-	const [prjIsModfified, setPrjIsModfified] = useState<boolean>(false);
+
 	//pour l'ouverture des modale je passe l'id qui me dit que je doit
 	// ouvrire la modale quand l'id est vide la modale est fermée
 	//Ouverture modale modif projet
 	const [idProjectModified, setidProjectModified] = useState<string>("");
+	//Ouverture modale suppression projet
+	const [idProjectDeleted, setidProjectDeleted] = useState<string>("");
 	//ouvertur modale modif tâche
 	const [idTaskModified, setidTaskModified] = useState<string>("");
 
@@ -48,57 +47,45 @@ export default function ProjectDetail({ id }: ProjectDetailProps) {
 		{ value: "ALL", label: "Statut" },
 	];
 
-	const { currentUser } = useProvider();
+	const { currentUser, setRendering, rendering } = useProvider();
 	const isOwner = project?.owner.id === currentUser?.id;
+	console.log("propriétaire : ", project?.owner.name, " / user : ", currentUser?.name);
 
-	//filtre selon le statut
-	useEffect(() => {
-		let filterTaskStatus;
+	const filterTaskStatus =
+		selectedStatus === "ALL"
+			? tasks
+			: tasks.filter((task) => task.status === selectedStatus);
 
-		if (selectedStatus === "ALL") {
-			filterTaskStatus = tasks;
-		} else {
-			filterTaskStatus = tasks.filter((task) => task.status === selectedStatus);
-		}
+	const normalizedSearch = searchText.toLowerCase().trim();
 
-		// normalisation pour une recherche insensible à la casse
-		const normalizedSearch = searchText.toLowerCase().trim();
-
-		// si la recherche est vide, retourne toutes les tâches
-		if (!normalizedSearch) {
-			setFilterTask(filterTaskStatus);
-			return;
-		}
-
-		const filterTaskSearch = filterTaskStatus.filter(
-			(task) =>
-				task.title.toLowerCase().includes(normalizedSearch) ||
-				task.description.toLowerCase().includes(normalizedSearch),
-		);
-
-		setFilterTask(filterTaskSearch);
-	}, [selectedStatus, tasks, searchText]);
+	const filterTask = !normalizedSearch
+		? filterTaskStatus
+		: filterTaskStatus.filter(
+				(task) =>
+					task.title.toLowerCase().includes(normalizedSearch) ||
+					task.description.toLowerCase().includes(normalizedSearch),
+			);
 
 	//apelle API recuperer les taches
 	useEffect(() => {
 		async function taskForProject() {
 			const data = await taskForProjectApi(id);
 
-			if (!data.data) {
+			if (!data.success) {
 				return;
 			}
-			setTasks(data.data);
+			setTasks(data.data.tasks);
 		}
 
 		async function apiProject() {
 			const data = await projectsApi();
 
-			if (!data.data) {
+			if (!data.success) {
 				return;
 			}
 
 			const projects = data.data;
-			const project = projects.filter((project) => project.id === id);
+			const project = projects.projects.filter((project) => project.id === id);
 
 			//on prend le premier élément car la ne devrait avoir qu'un seul projet
 			setProjects(project[0]);
@@ -106,7 +93,7 @@ export default function ProjectDetail({ id }: ProjectDetailProps) {
 
 		taskForProject();
 		apiProject();
-	}, [cmtIsModfified, prjIsModfified]);
+	}, [cmtIsModfified, rendering, id]);
 
 	if (!project) {
 		return <p>Aucun projet trouvé</p>;
@@ -146,7 +133,7 @@ export default function ProjectDetail({ id }: ProjectDetailProps) {
 					{isOwner && (
 						<button
 							className={styles.editLink}
-							onClick={() => setidProjectModified(project.id)}
+							onClick={() => setidProjectDeleted(project.id)}
 						>
 							Supprimer
 						</button>
@@ -268,7 +255,7 @@ export default function ProjectDetail({ id }: ProjectDetailProps) {
 					<TaskEditModal
 						task={tasks.filter((task) => task.id === idTaskModified)[0]}
 						setidTaskModified={setidTaskModified}
-						setPrjIsModfified={setPrjIsModfified}
+						setPrjIsModfified={setCmtIsModfified}
 					/>
 				)
 			}
@@ -278,7 +265,7 @@ export default function ProjectDetail({ id }: ProjectDetailProps) {
 				openCrtTsk && (
 					<TaskCreateModal
 						idProject={id}
-						setPrjIsModfified={setPrjIsModfified}
+						setRendering={setRendering}
 						setOpenCrtTsk={setOpenCrtTsk}
 					/>
 				)
@@ -290,7 +277,18 @@ export default function ProjectDetail({ id }: ProjectDetailProps) {
 					<ProjectEditModal
 						project={project}
 						setIdProjectModified={setidProjectModified}
-						setPrjIsModfified={setPrjIsModfified}
+						setPrjIsModfified={setRendering}
+					/>
+				)
+			}
+
+			{
+				/*Modale Supprimer projet */
+				idProjectDeleted && (
+					<DeleteModal
+						project={project}
+						setIdProjectDeleted={setidProjectDeleted}
+						setPrjIsModfified={setRendering}
 					/>
 				)
 			}

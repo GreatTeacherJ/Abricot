@@ -1,12 +1,8 @@
 "use server";
 
 import { cookies } from "next/headers";
-import type { Task } from "@/types/types";
-
-interface ResponseApi {
-	message: string;
-	data: Task | undefined;
-}
+import type { Task, ResponseApi } from "@/types/types";
+import { responseToken, responseCatch } from "./tools";
 
 export async function putTasksApi(
 	idProject: string,
@@ -17,14 +13,14 @@ export async function putTasksApi(
 	priority: "HIGH" | "LOW" | "MEDIUM",
 	date: string,
 	assigneeIds: string[],
-): Promise<ResponseApi> {
+): Promise<ResponseApi<Task>> {
 	try {
 		const cookieStore = await cookies();
 		const cookie = cookieStore.get("tokenAbricot");
 		const token = cookie?.value;
 
 		if (!token) {
-			return { message: "Token non trouvé", data: undefined };
+			return responseToken();
 		}
 
 		const response = await fetch(
@@ -47,15 +43,9 @@ export async function putTasksApi(
 		);
 		const data = await response.json();
 
-		if (!response.ok) {
-			return { message: data.message, data: undefined };
-		}
-
-		return { message: data.message, data: data.data.task };
+		return data;
 	} catch (error) {
-		const message = "Erreur profilAPI:" + error;
-		console.error(message);
-		return { message: message, data: undefined };
+		return responseCatch(error);
 	}
 }
 
@@ -67,14 +57,14 @@ export async function postAddTasksApi(
 	priority: "HIGH" | "LOW" | "MEDIUM",
 	date: string,
 	assigneeIds: string[],
-): Promise<ResponseApi> {
+): Promise<ResponseApi<Task>> {
 	try {
 		const cookieStore = await cookies();
 		const cookie = cookieStore.get("tokenAbricot");
 		const token = cookie?.value;
 
 		if (!token) {
-			return { message: "Token non trouvé", data: undefined };
+			return responseToken();
 		}
 
 		const response = await fetch(
@@ -97,15 +87,8 @@ export async function postAddTasksApi(
 		);
 		const data = await response.json();
 
-		if (!response.ok) {
-			console.log("reponse pas ok : ", data.message);
-			return { message: data.message, data: undefined };
-		}
-		console.log("reponse ok : ", data.message);
-		return { message: data.message, data: data.data.task };
+		return data;
 	} catch (error) {
-		const message = "Erreur profilAPI:" + error;
-		console.error(message);
-		return { message: message, data: undefined };
+		return responseCatch(error);
 	}
 }

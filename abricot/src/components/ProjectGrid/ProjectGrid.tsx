@@ -4,20 +4,22 @@ import { useEffect, useState } from "react";
 import ProjectCard from "../ProjectCard/ProjectCard";
 import styles from "./ProjectGrid.module.css";
 import { projectsApi } from "@/utils/utilsUser";
-import type { Projects } from "@/types/types";
-import ProjectCreatModal from "../ProjectCreatModal/ProjectCreatModal";
+import type { Project } from "@/types/types";
 import PageHeader from "../PageHeader/PageHeader";
 
 /** Grille de projets (3 colonnes responsive) */
 export default function ProjectGrid() {
-	const [projectsList, setProjectList] = useState<Projects | undefined>(undefined);
+	const [projectsList, setProjectList] = useState<Project[]>([]);
 
 	//savoir si les projet on été modifié pour le rendering
 	const [isRerender, setIsRerender] = useState<boolean>(false);
 	useEffect(() => {
 		async function fetchData() {
 			const response = await projectsApi();
-			setProjectList(response.data);
+			if (!response.success) {
+				return;
+			}
+			setProjectList(response.data.projects);
 		}
 
 		fetchData();

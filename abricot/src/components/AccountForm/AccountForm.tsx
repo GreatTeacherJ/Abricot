@@ -34,11 +34,12 @@ export default function AccountForm() {
 		if (spaceIndex === -1) {
 			setFirstName(trimmed);
 			setLastName("");
+		} else {
+			setFirstName(trimmed.slice(0, spaceIndex));
+
+			setLastName(trimmed.slice(spaceIndex + 1));
 		}
 
-		setFirstName(trimmed.slice(0, spaceIndex));
-
-		setLastName(trimmed.slice(spaceIndex + 1));
 		setEmail(currentUser.email);
 	}, [currentUser]);
 
@@ -63,14 +64,16 @@ export default function AccountForm() {
 		const name = firstName + " " + lastName;
 		const response = await putProfilApi(name, email, newPassword, oldPassword);
 
-		if (!response.success) {
-			setError(response.message);
-			return;
-		}
+		// on filtre les réponses en échec et on récupère leurs messages
+		const errorList = response
+			.filter((res) => !res.success)
+			.map((res) => res.message);
+
+		const errorMessage = errorList.join("\n");
 
 		setNewPassword("");
 		setOldPassword("");
-		setError(response.message);
+		setError(errorMessage);
 		setRendering((prev) => !prev);
 		setIsModified(false);
 	}

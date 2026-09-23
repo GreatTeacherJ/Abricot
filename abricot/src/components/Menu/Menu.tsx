@@ -7,7 +7,6 @@ import { useRouter, usePathname, useParams } from "next/navigation";
 import { profilApi } from "@/utils/utilsUser";
 import { useEffect, useState } from "react";
 
-const DASHBOARD = "/";
 const PROJECT = "/projets";
 
 /** Barre de navigation supérieure (logo, liens, avatar) */
@@ -23,8 +22,8 @@ export default function Menu() {
 		async function apiProfil() {
 			const data = await profilApi();
 
-			if (data.data) {
-				const userName = data.data.name;
+			if (data.success) {
+				const userName = data.data.user.name;
 				const initials = userName
 					.split(" ")
 					.map((w) => w[0])

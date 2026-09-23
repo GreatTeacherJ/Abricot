@@ -63,7 +63,7 @@ export default function ProjectCreatModal({ setIsRerender }: ProjectCreatModalPr
 			description,
 			Array.from(selectedMembers),
 		);
-		if (!response.data) {
+		if (!response.success) {
 			setError(response.message);
 			return;
 		}
@@ -91,15 +91,15 @@ export default function ProjectCreatModal({ setIsRerender }: ProjectCreatModalPr
 		// present dans tous les projets
 		async function listCollaborator() {
 			const data = await getAllProjectApi();
-			if (!data.data) {
+			if (!data.success) {
 				return;
 			}
 			//tous les projet de l'utilisateur
 			const allProjects = data.data;
-
+			console.log("AllProject : ", allProjects);
 			const setCollaborator = new Map<string, Collaborator>();
 
-			allProjects.flatMap((project) => {
+			allProjects.projects.flatMap((project) => {
 				//recupérer aussi les propriétaires
 				setCollaborator.set(project.owner.id, { user: project.owner });
 				project.members.map((member) => {
@@ -114,7 +114,7 @@ export default function ProjectCreatModal({ setIsRerender }: ProjectCreatModalPr
 			setCollaboratorList(setCollaborator);
 		}
 		listCollaborator();
-	}, []);
+	}, [currentUser]);
 
 	const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 

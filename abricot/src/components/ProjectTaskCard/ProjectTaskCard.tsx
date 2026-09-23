@@ -71,9 +71,9 @@ export default function ProjectTaskCard({
 
 	async function addComment(event: React.SyntheticEvent<HTMLFormElement>) {
 		event.preventDefault();
-		const res = await postCommentApi(task.project.id, task.id, comment);
+		const response = await postCommentApi(task.project.id, task.id, comment);
 
-		if (!res.data) {
+		if (!response.success) {
 			return;
 		}
 

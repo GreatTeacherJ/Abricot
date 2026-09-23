@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, Dispatch, SetStateAction, useEffect, use } from "react";
+import { useState, Dispatch, SetStateAction, useEffect } from "react";
 import { Task, Project } from "@/types/types";
 import styles from "./TaskCreateModal.module.css";
 import Image from "next/image";
@@ -18,14 +18,14 @@ const STATUSES: { value: Task["status"]; label: string; className: string }[] = 
 
 /** Props de la modale de modification d'une tâche */
 interface TaskEditModalProps {
-	setPrjIsModfified: Dispatch<SetStateAction<boolean>>;
+	setRendering: Dispatch<SetStateAction<boolean>>;
 	setOpenCrtTsk: Dispatch<SetStateAction<boolean>>;
 	idProject: string;
 }
 
 /** Modale de modification d'une tâche (maquette Figma « Modale modifier une tâche ») */
 export default function TaskEditModal({
-	setPrjIsModfified,
+	setRendering,
 	setOpenCrtTsk,
 	idProject,
 }: TaskEditModalProps) {
@@ -40,7 +40,7 @@ export default function TaskEditModal({
 	/** Statut sélectionné */
 	const [status, setStatus] = useState<Task["status"]>("TODO");
 	//Projet stocké
-	const [currentProject, setProject] = useState<Project | null>(null);
+	const [currentProject, setProject] = useState<Project>();
 	//Partie pour l'imput assigné les tâche
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 	const [selectedAssignees, setSelectedAssignees] = useState<string[]>([]);
@@ -50,14 +50,14 @@ export default function TaskEditModal({
 	useEffect(() => {
 		async function apiProject() {
 			const data = await getProjectApi(idProject);
-			if (!data.data) {
+			if (!data.success) {
 				return;
 			}
-			setProject(data.data);
+			setProject(data.data.project);
 		}
 
 		apiProject();
-	}, []);
+	}, [idProject]);
 
 	function onClose() {
 		setOpenCrtTsk(false);
@@ -77,14 +77,12 @@ export default function TaskEditModal({
 			selectedAssignees,
 		);
 
-		console.log("création de tache : ", response.data);
-		if (!response.data) {
-			console.log("pas de data : ", response);
+		if (!response.success) {
 			seterror(response.message);
 			return;
 		}
 		setOpenCrtTsk((prev) => !prev);
-		setPrjIsModfified(true);
+		setRendering((prev) => !prev);
 		onClose();
 	}
 
@@ -224,8 +222,10 @@ export default function TaskEditModal({
 											<DatePicker
 												selected={dueDate} // déjà une Date, pas de conversion nécessaire
 												onChange={(date: Date | null) => {
-													date && setDueDate(date);
-													setCalendarOpen(false); // ferme le calendrier après sélection
+													if (date) {
+														setDueDate(date);
+														setCalendarOpen(false); // ferme le calendrier après sélection
+													}
 												}}
 												inline // affiche le calendrier directement, pas dans un input
 												onClickOutside={() =>

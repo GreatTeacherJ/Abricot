@@ -1,41 +1,24 @@
 import TaskRow from "../TaskRow/TaskRow";
 import styles from "./TaskList.module.css";
-import type { Tasks } from "@/types/types";
-import { ChangeEvent, useState, useEffect } from "react";
+import type { Task } from "@/types/types";
+import { useState } from "react";
 
 interface TaskListProps {
-	assignedTasks: Tasks;
+	assignedTasks: Task[];
 }
 
 /** Liste des tâches assignées */
 export default function TaskList({ assignedTasks }: TaskListProps) {
-	const [filterTask, setFilterTask] = useState<Tasks>(assignedTasks);
+	const [searchText, setSearchText] = useState("");
 
-	// synchronise filterTask à chaque fois qu'assignedTasks change
-	useEffect(() => {
-		setFilterTask(assignedTasks);
-	}, [assignedTasks]);
-
-	//on appelle la fonction dés que l'imput change
-	function handleChange(e: ChangeEvent<HTMLInputElement>) {
-		const searchText = e.target.value;
-
-		// normalisation pour une recherche insensible à la casse
-		const normalizedSearch = searchText.toLowerCase().trim();
-
-		// si la recherche est vide, retourne toutes les tâches
-		if (!normalizedSearch) {
-			setFilterTask(assignedTasks);
-		}
-
-		const tasksFilter = assignedTasks.filter(
-			(task) =>
-				task.title.toLowerCase().includes(normalizedSearch) ||
-				task.description.toLowerCase().includes(normalizedSearch),
-		);
-
-		setFilterTask(tasksFilter);
-	}
+	const normalizedSearch = searchText.toLowerCase().trim();
+	const filterTask = !normalizedSearch
+		? assignedTasks
+		: assignedTasks.filter(
+				(task) =>
+					task.title.toLowerCase().includes(normalizedSearch) ||
+					task.description.toLowerCase().includes(normalizedSearch),
+			);
 
 	return (
 		<div className={styles.card}>
@@ -50,7 +33,7 @@ export default function TaskList({ assignedTasks }: TaskListProps) {
 						className={styles.searchInput}
 						type="text"
 						placeholder="Rechercher une tâche"
-						onChange={handleChange}
+						onChange={(e) => setSearchText(e.target.value)}
 					/>
 					<svg
 						className={styles.searchIcon}

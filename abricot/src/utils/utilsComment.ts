@@ -1,25 +1,21 @@
 "use server";
 
 import { cookies } from "next/headers";
-import type { Comments } from "@/types/types";
-
-interface ResponseApi {
-	message: string;
-	data: Comments | undefined;
-}
+import type { Comment, ResponseApi } from "@/types/types";
+import { responseToken, responseCatch } from "./tools";
 
 export async function postCommentApi(
 	idProject: string,
 	idTask: string,
 	comment: string,
-): Promise<ResponseApi> {
+): Promise<ResponseApi<Comment>> {
 	try {
 		const cookieStore = await cookies();
 		const cookie = cookieStore.get("tokenAbricot");
 		const token = cookie?.value;
 
 		if (!token) {
-			return { message: "Token non trouvé", data: undefined };
+			return responseToken();
 		}
 
 		const response = await fetch(
@@ -39,14 +35,8 @@ export async function postCommentApi(
 		);
 		const data = await response.json();
 
-		if (!response.ok) {
-			return { message: data.message, data: undefined };
-		}
-
-		return { message: data.message, data: data.data.comment };
+		return data;
 	} catch (error) {
-		const message = "Erreur profilAPI:" + error;
-		console.error(message);
-		return { message: message, data: undefined };
+		return responseCatch(error);
 	}
 }

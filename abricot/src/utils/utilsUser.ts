@@ -1,38 +1,17 @@
 "use server";
 
 import { cookies } from "next/headers";
+import { responseToken, responseCatch } from "./tools";
+import type { Projects, Tasks, User, Users, ResponseApi } from "@/types/types";
 
-import type { Projects, Tasks, User, Success, Error } from "@/types/types";
-
-interface AssignedTskApi {
-	message: string;
-	data: Tasks | undefined;
-}
-
-interface ProjetApi {
-	message: string;
-	data: Projects | undefined;
-}
-
-interface ProfilApi {
-	message: string;
-	data: User | undefined;
-}
-
-type ResponseApi = Success | Error;
-
-interface Collaborators {
-	users: User[];
-}
-
-export async function profilApi(): Promise<ProfilApi> {
+export async function profilApi(): Promise<ResponseApi<{ user: User }>> {
 	try {
 		const cookieStore = await cookies();
 		const cookie = cookieStore.get("tokenAbricot");
 		const token = cookie?.value;
 
 		if (!token) {
-			return { message: "Token non trouvé", data: undefined };
+			return responseToken();
 		}
 
 		const response = await fetch("http://localhost:8000/auth/profile", {
@@ -43,32 +22,20 @@ export async function profilApi(): Promise<ProfilApi> {
 		});
 		const data = await response.json();
 
-		if (!response.ok) {
-			return { message: data.message, data: undefined };
-		}
-
-		return { message: data.message, data: data.data.user };
+		return data;
 	} catch (error) {
-		const errorMessage = error instanceof Error ? error.message : String(error);
-		const message = `Erreur profilAPI: ${errorMessage}`;
-
-		console.error(message, error); // log complet côté serveur/console, avec stack trace
-
-		return {
-			message,
-			data: undefined, // on respecte le type : list vide en cas d'erreur
-		};
+		return responseCatch(error);
 	}
 }
 
-export async function assignedTskApi(): Promise<AssignedTskApi> {
+export async function assignedTskApi(): Promise<ResponseApi<Tasks>> {
 	try {
 		const cookieStore = await cookies();
 		const cookie = cookieStore.get("tokenAbricot");
 		const token = cookie?.value;
 
 		if (!token) {
-			return { message: "Token non trouvé", data: undefined };
+			return responseToken();
 		}
 		console.log("assignedTaskAPI token : ", token);
 
@@ -80,26 +47,20 @@ export async function assignedTskApi(): Promise<AssignedTskApi> {
 		});
 		const data = await response.json();
 
-		if (!response.ok) {
-			return { message: data.message, data: undefined };
-		}
-
-		return { message: data.message, data: data.data.tasks };
+		return data;
 	} catch (error) {
-		const message = "Erreur profilAPI:" + error;
-		console.error(message);
-		return { message: message, data: undefined };
+		return responseCatch(error);
 	}
 }
 
-export async function projectsApi(): Promise<ProjetApi> {
+export async function projectsApi(): Promise<ResponseApi<Projects>> {
 	try {
 		const cookieStore = await cookies();
 		const cookie = cookieStore.get("tokenAbricot");
 		const token = cookie?.value;
 
 		if (!token) {
-			return { message: "Token non trouvé", data: undefined };
+			return responseToken();
 		}
 
 		const response = await fetch("http://localhost:8000/projects", {
@@ -110,32 +71,20 @@ export async function projectsApi(): Promise<ProjetApi> {
 		});
 		const data = await response.json();
 
-		if (!response.ok) {
-			return { message: data.message, data: undefined };
-		}
-
-		return { message: data.message, data: data.data.projects };
+		return data;
 	} catch (error) {
-		const errorMessage = error instanceof Error ? error.message : String(error);
-		const message = `Erreur profilAPI: ${errorMessage}`;
-
-		console.error(message, error); // log complet côté serveur/console, avec stack trace
-
-		return {
-			message,
-			data: undefined, // on respecte le type : list vide en cas d'erreur
-		};
+		return responseCatch(error);
 	}
 }
 
-export async function taskForProjectApi(id: string): Promise<AssignedTskApi> {
+export async function taskForProjectApi(id: string): Promise<ResponseApi<Tasks>> {
 	try {
 		const cookieStore = await cookies();
 		const cookie = cookieStore.get("tokenAbricot");
 		const token = cookie?.value;
 
 		if (!token) {
-			return { message: "Token non trouvé", data: undefined };
+			return responseToken();
 		}
 		console.log("assignedTaskAPI token : ", token);
 
@@ -147,15 +96,9 @@ export async function taskForProjectApi(id: string): Promise<AssignedTskApi> {
 		});
 		const data = await response.json();
 
-		if (!response.ok) {
-			return { message: data.message, data: undefined };
-		}
-
-		return { message: data.message, data: data.data.tasks };
+		return data;
 	} catch (error) {
-		const message = "Erreur profilAPI:" + error;
-		console.error(message);
-		return { message: message, data: undefined };
+		return responseCatch(error);
 	}
 }
 
@@ -164,24 +107,16 @@ export async function putProfilApi(
 	email: string,
 	newPassword: string = "",
 	oldPassword: string = "",
-): Promise<ResponseApi> {
+): Promise<ResponseApi<User | null>[]> {
 	try {
+		const responseList: ResponseApi<User | null>[] = [];
+
 		const cookieStore = await cookies();
 		const cookie = cookieStore.get("tokenAbricot");
 		const token = cookie?.value;
 
 		if (!token) {
-			return {
-				success: false,
-				message: "Token de connexion non trouvé",
-				error: "Token de connexion non trouvé",
-				details: [
-					{
-						field: "",
-						message: "",
-					},
-				],
-			};
+			return [responseToken()];
 		}
 
 		const response = await fetch("http://localhost:8000/auth/profile", {
@@ -195,7 +130,7 @@ export async function putProfilApi(
 				email: email,
 			}),
 		});
-		const data: ResponseApi = await response.json();
+		const data = await response.json();
 
 		if (!response.ok) {
 			return data;
@@ -203,27 +138,13 @@ export async function putProfilApi(
 
 		if (newPassword) {
 			const resPassword = await putPassword(token, newPassword, oldPassword);
-			if (!resPassword.success) {
-				return resPassword;
-			}
+			responseList.push(data);
+			responseList.push(resPassword);
 		}
 
 		return data;
 	} catch (error) {
-		const errorMessage = error instanceof Error ? error.message : String(error);
-		const message = `getUserSearchApi: ${errorMessage}`;
-
-		return {
-			success: false,
-			message: message,
-			error: errorMessage,
-			details: [
-				{
-					field: "",
-					message: "",
-				},
-			],
-		};
+		return [responseCatch(error)];
 	}
 }
 
@@ -231,7 +152,7 @@ async function putPassword(
 	token: string,
 	newPassword: string,
 	oldPassword: string,
-): Promise<ResponseApi> {
+): Promise<ResponseApi<null>> {
 	try {
 		const response = await fetch("http://localhost:8000/auth/profile", {
 			method: "PUT",
@@ -246,48 +167,20 @@ async function putPassword(
 		});
 		const data = await response.json();
 
-		if (!response.ok) {
-			return data;
-		}
 		return data;
 	} catch (error) {
-		const errorMessage = error instanceof Error ? error.message : String(error);
-		const message = `getUserSearchApi: ${errorMessage}`;
-
-		return {
-			success: false,
-			message: message,
-			error: errorMessage,
-			details: [
-				{
-					field: "",
-					message: "",
-				},
-			],
-		};
+		return responseCatch(error);
 	}
 }
 
-export async function getUserSearchApi(
-	valueSearch: string,
-): Promise<Success<Collaborators> | Error> {
+export async function getUserSearchApi(valueSearch: string): Promise<ResponseApi<Users>> {
 	try {
 		const cookieStore = await cookies();
 		const cookie = cookieStore.get("tokenAbricot");
 		const token = cookie?.value;
 
 		if (!token) {
-			return {
-				success: false,
-				message: "Token de connexion non trouvé",
-				error: "Token de connexion non trouvé",
-				details: [
-					{
-						field: "",
-						message: "",
-					},
-				],
-			};
+			return responseToken();
 		}
 
 		const response = await fetch(
@@ -303,19 +196,6 @@ export async function getUserSearchApi(
 
 		return data;
 	} catch (error) {
-		const errorMessage = error instanceof Error ? error.message : String(error);
-		const message = `getUserSearchApi: ${errorMessage}`;
-
-		return {
-			success: false,
-			message: message,
-			error: errorMessage,
-			details: [
-				{
-					field: "",
-					message: "",
-				},
-			],
-		};
+		return responseCatch(error);
 	}
 }
