@@ -12,6 +12,7 @@ import { useParams } from "next/navigation";
 import TaskEditModal from "../TaskEditModal/TaskEditModal";
 import ProjectEditModal from "../ProjectEditModal/ProjectEditModal";
 import TaskCreateModal from "../TaskCreateModal/TaskCreateModal";
+import { useProvider } from "../Provider/Provider";
 
 /** Props de la page de détail d'un projet */
 interface ProjectDetailProps {
@@ -46,6 +47,9 @@ export default function ProjectDetail({ id }: ProjectDetailProps) {
 		{ value: "DONE", label: "Terminé" },
 		{ value: "ALL", label: "Statut" },
 	];
+
+	const { currentUser } = useProvider();
+	const isOwner = project?.owner.id === currentUser?.id;
 
 	//filtre selon le statut
 	useEffect(() => {
@@ -126,17 +130,27 @@ export default function ProjectDetail({ id }: ProjectDetailProps) {
 				<div className={styles.headerInfo}>
 					<div className={styles.titleRow}>
 						<h1 className={styles.title}>{project.name}</h1>
-						<button
-							className={styles.editLink}
-							onClick={() => setidProjectModified(project.id)}
-						>
-							Modifier
-						</button>
+						{isOwner && (
+							<button
+								className={styles.editLink}
+								onClick={() => setidProjectModified(project.id)}
+							>
+								Modifier
+							</button>
+						)}
 					</div>
 					<p className={styles.projectDesc}>{project.description}</p>
 				</div>
 				{/* Boutons d'action : créer tâche + IA */}
 				<div className={styles.actionButtons}>
+					{isOwner && (
+						<button
+							className={styles.editLink}
+							onClick={() => setidProjectModified(project.id)}
+						>
+							Supprimer
+						</button>
+					)}
 					<button
 						className={styles.createBtn}
 						onClick={() => setOpenCrtTsk(true)}

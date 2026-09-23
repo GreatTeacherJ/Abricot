@@ -75,10 +75,10 @@ export interface Task {
 	comments: Comments[];
 }
 
-export interface Success {
+export interface Success<T = {}> {
 	success: true;
 	message: string;
-	data: {};
+	data: T;
 }
 
 export interface Error {

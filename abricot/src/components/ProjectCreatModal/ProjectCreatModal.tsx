@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, Dispatch, SetStateAction, useEffect } from "react";
-import { Project, User } from "@/types/types";
+import { useState, Dispatch, SetStateAction, useEffect, useRef } from "react";
+import { User } from "@/types/types";
 import styles from "./ProjectCreatModal.module.css";
 import { getAllProjectApi, postCreatProjectApi } from "@/utils/utilsProject";
 import { useProvider } from "@/components/Provider/Provider";
+import { getUserSearchApi } from "@/utils/utilsUser";
 
 /** Props de la modale de modification d'un projet */
 interface ProjectCreatModalProps {
@@ -32,8 +33,11 @@ export default function ProjectCreatModal({ setIsRerender }: ProjectCreatModalPr
 	//savoir si la modal est ouverte
 	const [isOpen, setIsOpen] = useState<boolean>(false);
 	const { currentUser } = useProvider();
+	//chercher un contributeur
+	const [searchCtb, setSearchCtb] = useState<User[]>([]);
 
 	function onClose() {
+		setSearchCtb([]);
 		setIsOpen(false);
 	}
 
@@ -111,6 +115,29 @@ export default function ProjectCreatModal({ setIsRerender }: ProjectCreatModalPr
 		}
 		listCollaborator();
 	}, []);
+
+	const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+	function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+		const value = e.target.value;
+
+		if (value.trim().length < 2) {
+			setSearchCtb([]);
+			return;
+		}
+
+		if (timeoutRef.current) clearTimeout(timeoutRef.current);
+
+		timeoutRef.current = setTimeout(async () => {
+			const response = await getUserSearchApi(value);
+
+			if (!response.success) {
+				return;
+			}
+			setSearchCtb(response.data.users);
+			console.log("valeur a chercher : ", value);
+		}, 800);
+	}
 
 	return (
 		<>
@@ -258,6 +285,50 @@ export default function ProjectCreatModal({ setIsRerender }: ProjectCreatModalPr
 										)}
 									</div>
 								</div>
+							</div>
+
+							{/* chercher nouveau contributeur*/}
+							<div className={styles.field}>
+								<label
+									className={styles.label}
+									htmlFor="search-contributor"
+								>
+									Trouver de nouveau contributeurs
+								</label>
+								<div className={styles.control}>
+									<input
+										id="search-contributor"
+										className={styles.controlInput}
+										type="text"
+										onChange={handleChange}
+										required
+									/>
+								</div>
+								{
+									//Chercher des collaborateurs
+									searchCtb &&
+										searchCtb.map((user) => (
+											<ul
+												key={user.id}
+												className={styles.searchContainer}
+											>
+												<li
+													onClick={() => {
+														toggleAssignee(user);
+														setCollaboratorList((prev) =>
+															prev.set(user.id, {
+																user: user,
+															}),
+														);
+													}}
+													className={`${styles.assigneeLi}  
+													${Array.from(selectedMembers).find((u) => u.id === user.id) && styles.assignee}`}
+												>
+													{user.name + " / " + user.email}
+												</li>
+											</ul>
+										))
+								}
 							</div>
 						</div>
 						{error && <p className={styles.error}>{error}</p>}

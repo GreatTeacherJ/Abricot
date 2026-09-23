@@ -21,6 +21,10 @@ interface ProfilApi {
 
 type ResponseApi = Success | Error;
 
+interface Collaborators {
+	users: User[];
+}
+
 export async function profilApi(): Promise<ProfilApi> {
 	try {
 		const cookieStore = await cookies();
@@ -205,13 +209,14 @@ export async function putProfilApi(
 		}
 
 		return data;
-	} catch (err) {
-		const message = "Erreur profilAPI:" + err;
-		console.error(message);
+	} catch (error) {
+		const errorMessage = error instanceof Error ? error.message : String(error);
+		const message = `getUserSearchApi: ${errorMessage}`;
+
 		return {
 			success: false,
 			message: message,
-			error: "" + err,
+			error: errorMessage,
 			details: [
 				{
 					field: "",
@@ -245,12 +250,66 @@ async function putPassword(
 			return data;
 		}
 		return data;
-	} catch (err) {
-		const message = "Erreur mise a jour mot de passe :" + err;
+	} catch (error) {
+		const errorMessage = error instanceof Error ? error.message : String(error);
+		const message = `getUserSearchApi: ${errorMessage}`;
+
 		return {
 			success: false,
 			message: message,
-			error: "" + err,
+			error: errorMessage,
+			details: [
+				{
+					field: "",
+					message: "",
+				},
+			],
+		};
+	}
+}
+
+export async function getUserSearchApi(
+	valueSearch: string,
+): Promise<Success<Collaborators> | Error> {
+	try {
+		const cookieStore = await cookies();
+		const cookie = cookieStore.get("tokenAbricot");
+		const token = cookie?.value;
+
+		if (!token) {
+			return {
+				success: false,
+				message: "Token de connexion non trouvé",
+				error: "Token de connexion non trouvé",
+				details: [
+					{
+						field: "",
+						message: "",
+					},
+				],
+			};
+		}
+
+		const response = await fetch(
+			"http://localhost:8000/users/search?query=" + valueSearch,
+			{
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token} `,
+				},
+			},
+		);
+		const data = await response.json();
+
+		return data;
+	} catch (error) {
+		const errorMessage = error instanceof Error ? error.message : String(error);
+		const message = `getUserSearchApi: ${errorMessage}`;
+
+		return {
+			success: false,
+			message: message,
+			error: errorMessage,
 			details: [
 				{
 					field: "",

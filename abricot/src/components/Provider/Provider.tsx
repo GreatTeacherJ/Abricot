@@ -11,12 +11,14 @@ import {
 	SetStateAction,
 } from "react";
 import { profilApi } from "@/utils/utilsUser";
-import type { User } from "@/types/types";
+import type { User, Projects } from "@/types/types";
+import { getAllProjectApi } from "@/utils/utilsProject";
 
 // 1. Définir le type des données partagées
 interface AuthContextType {
 	currentUser: User | null;
 	setRendering: Dispatch<SetStateAction<boolean>>;
+	allProjects: Projects;
 }
 
 // 2. Créer le contexte avec une valeur par défaut (undefined pour forcer l'usage via le hook)
@@ -26,8 +28,10 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
 	const [currentUser, setCurrentUser] = useState<User | null>(null);
 	const [rendering, setRendering] = useState<boolean>(false);
+	const [allProjects, setAllProjects] = useState<Projects>([]);
 
 	useEffect(() => {
+		//Recupére les info de l'utilisateur
 		async function apiUser() {
 			const data = await profilApi();
 
@@ -37,11 +41,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 			setCurrentUser(data.data);
 		}
+
+		//Récupére tous les projets de l'utilisateur
+		async function apiAllProject() {
+			const data = await getAllProjectApi();
+			if (!data.data) {
+				return;
+			}
+			setAllProjects(data.data);
+		}
+
 		apiUser();
 	}, [rendering]);
 
 	return (
-		<AuthContext.Provider value={{ currentUser, setRendering }}>
+		<AuthContext.Provider value={{ currentUser, setRendering, allProjects }}>
 			{children}
 		</AuthContext.Provider>
 	);

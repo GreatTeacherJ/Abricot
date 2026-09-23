@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, Dispatch, SetStateAction, useEffect } from "react";
+import { useState, Dispatch, SetStateAction, useEffect, useRef } from "react";
 import { Project, User } from "@/types/types";
 import styles from "./ProjectEditModal.module.css";
 import { getAllProjectApi, putProjectApi } from "@/utils/utilsProject";
+import { getUserSearchApi } from "@/utils/utilsUser";
 
 /** Props de la modale de modification d'un projet */
 interface ProjectEditModalProps {
@@ -34,10 +35,13 @@ export default function ProjectEditModal({
 	const [collaboratorList, setCollaboratorList] = useState<CollaboratorMap>(new Map());
 	//erreur de saisi
 	const [error, setError] = useState<string>("");
+	//chercher un contributeur
+	const [searchCtb, setSearchCtb] = useState<User[]>([]);
 
 	if (!project) return null;
 
 	function onClose() {
+		setSearchCtb([]);
 		setIdProjectModified("");
 	}
 
@@ -150,6 +154,29 @@ export default function ProjectEditModal({
 		}
 		listCollaborator();
 	}, []);
+
+	const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+	function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+		const value = e.target.value;
+
+		if (value.trim().length < 2) {
+			setSearchCtb([]);
+			return;
+		}
+
+		if (timeoutRef.current) clearTimeout(timeoutRef.current);
+
+		timeoutRef.current = setTimeout(async () => {
+			const response = await getUserSearchApi(value);
+
+			if (!response.success) {
+				return;
+			}
+			setSearchCtb(response.data.users);
+			console.log("valeur a chercher : ", value);
+		}, 800);
+	}
 
 	return (
 		<div className={styles.overlay} onClick={onClose}>
@@ -270,6 +297,44 @@ export default function ProjectEditModal({
 									</ul>
 								)}
 							</div>
+						</div>
+						{/* chercher nouveau contributeur*/}
+						<div className={styles.field}>
+							<label className={styles.label} htmlFor="search-contributor">
+								Trouver de nouveau contributeurs
+							</label>
+							<div className={styles.control}>
+								<input
+									id="search-contributor"
+									className={styles.controlInput}
+									type="text"
+									onChange={handleChange}
+									required
+								/>
+							</div>
+							{
+								//Chercher des collaborateurs
+								searchCtb &&
+									searchCtb.map((user) => (
+										<ul
+											key={user.id}
+											className={styles.searchContainer}
+										>
+											<li
+												onClick={() => {
+													toggleAssignee(user);
+													setCollaboratorList((prev) =>
+														prev.set(user.id, { user: user }),
+													);
+												}}
+												className={`${styles.assigneeLi}  
+													${Array.from(selectedMembers).find((u) => u.id === user.id) && styles.assignee}`}
+											>
+												{user.name + " / " + user.email}
+											</li>
+										</ul>
+									))
+							}
 						</div>
 					</div>
 				</div>

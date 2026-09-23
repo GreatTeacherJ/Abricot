@@ -7,6 +7,7 @@ import { useParams } from "next/navigation";
 import { getInitials } from "@/utils/tools";
 import { postCommentApi } from "@/utils/utilsComment";
 import { useScrollToHash } from "@/utils/useScrollToHash";
+import { useProvider } from "../Provider/Provider";
 
 /** Props d'une carte de tâche projet (vue détaillée) */
 interface ProjectTaskCardProps {
@@ -49,6 +50,24 @@ export default function ProjectTaskCard({
 		IN_PROGRESS: { label: "En cour", className: styles.tagOrange },
 		DONE: { label: "Terminée", className: styles.tagGreen },
 	};
+
+	const { currentUser, allProjects } = useProvider();
+
+	const project = allProjects.find((p) => p.id === task.project.id);
+	let isModified = false;
+
+	if (project?.owner.id === currentUser?.id || task.creatorId === currentUser?.id) {
+		isModified = true;
+	} else {
+		isModified = task.assignees.some((ass) => ass.user.id === currentUser?.id);
+	}
+
+	console.log(`
+		${task.title}
+		assignee : ${task.assignees.map((as) => as.user.name)}
+		moi : ${currentUser?.name}
+		isassigned : ${isModified}
+		`);
 
 	async function addComment(event: React.SyntheticEvent<HTMLFormElement>) {
 		event.preventDefault();
@@ -142,20 +161,24 @@ export default function ProjectTaskCard({
 					</div>
 				</div>
 
-				{/* Bouton "voir plus" (3 points) */}
-				<div className={styles.cardActions}>
-					<button className={styles.moreBtn} onClick={openModal}>
-						<svg
-							className={styles.moreIcon}
-							viewBox="0 0 16 16"
-							fill="currentColor"
-						>
-							<circle cx="8" cy="3" r="1.5" />
-							<circle cx="8" cy="8" r="1.5" />
-							<circle cx="8" cy="13" r="1.5" />
-						</svg>
-					</button>
-				</div>
+				{
+					/* Bouton "voir plus" (3 points) */
+					isModified && (
+						<div className={styles.cardActions}>
+							<button className={styles.moreBtn} onClick={openModal}>
+								<svg
+									className={styles.moreIcon}
+									viewBox="0 0 16 16"
+									fill="currentColor"
+								>
+									<circle cx="8" cy="3" r="1.5" />
+									<circle cx="8" cy="8" r="1.5" />
+									<circle cx="8" cy="13" r="1.5" />
+								</svg>
+							</button>
+						</div>
+					)
+				}
 			</div>
 
 			{/* Séparateur */}
