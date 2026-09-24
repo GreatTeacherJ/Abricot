@@ -69,8 +69,6 @@ export default function TaskEditModal({
 	async function handleSave() {
 		const date = new Date(dueDate).toISOString(); // "2026-09-18T00:00:00.000Z"
 
-		console.log("appui sur envoyer");
-
 		const response = await putTasksApi(
 			task.project.id,
 			task.id,

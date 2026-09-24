@@ -8,6 +8,7 @@ import { getInitials } from "@/utils/tools";
 import { postCommentApi } from "@/utils/utilsComment";
 import { useScrollToHash } from "@/utils/useScrollToHash";
 import { useProvider } from "../Provider/Provider";
+import DeleteModal from "../DeleteModal/DeleteModal";
 
 /** Props d'une carte de tâche projet (vue détaillée) */
 interface ProjectTaskCardProps {
@@ -61,13 +62,6 @@ export default function ProjectTaskCard({
 	} else {
 		isModified = task.assignees.some((ass) => ass.user.id === currentUser?.id);
 	}
-
-	console.log(`
-		${task.title}
-		assignee : ${task.assignees.map((as) => as.user.name)}
-		moi : ${currentUser?.name}
-		isassigned : ${isModified}
-		`);
 
 	async function addComment(event: React.SyntheticEvent<HTMLFormElement>) {
 		event.preventDefault();
@@ -165,6 +159,7 @@ export default function ProjectTaskCard({
 					/* Bouton "voir plus" (3 points) */
 					isModified && (
 						<div className={styles.cardActions}>
+							<DeleteModal toDelete={task} />
 							<button className={styles.moreBtn} onClick={openModal}>
 								<svg
 									className={styles.moreIcon}

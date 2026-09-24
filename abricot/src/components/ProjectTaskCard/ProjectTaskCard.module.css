@@ -68,6 +68,7 @@
 
 .cardActions {
   display: flex;
+  flex-direction: row;
   align-items: center;
   gap: 25px;
   flex-shrink: 0;

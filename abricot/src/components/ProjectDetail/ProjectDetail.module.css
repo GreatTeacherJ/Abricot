@@ -256,28 +256,7 @@ width: 100%;
   background: var(--color-dark);
 }
 
-.aiBtn {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 13px;
-  background: var(--color-brand);
-  color: var(--color-white);
-  border-radius: 10px;
-  font-size: 16px;
-  font-weight: 400;
-  transition: opacity 0.2s;
-  width: fit-content;
-}
 
-.aiBtn:hover {
-  opacity: 0.9;
-}
-
-.aiStar {
-  width: 21px;
-  height: 21px;
-}
 
 @media (max-width: 768px) {
   .projectHeader {

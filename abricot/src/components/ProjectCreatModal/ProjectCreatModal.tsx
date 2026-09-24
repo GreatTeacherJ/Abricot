@@ -6,6 +6,7 @@ import styles from "./ProjectCreatModal.module.css";
 import { getAllProjectApi, postCreatProjectApi } from "@/utils/utilsProject";
 import { useProvider } from "@/components/Provider/Provider";
 import { getUserSearchApi } from "@/utils/utilsUser";
+import useClickOutside from "@/utils/useClickOutside";
 
 /** Props de la modale de modification d'un projet */
 interface ProjectCreatModalProps {
@@ -24,7 +25,7 @@ export default function ProjectCreatModal({ setIsRerender }: ProjectCreatModalPr
 	const [name, setName] = useState("");
 	/** Description du projet */
 	const [description, setDescription] = useState("");
-	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
 	const [selectedMembers, setSelectedMembers] = useState<Set<User>>(new Set());
 	//Liste des collaborateur, trouver comme j'ai pu ( voir plus bas)
 	const [collaboratorList, setCollaboratorList] = useState<CollaboratorMap>(new Map());
@@ -35,6 +36,13 @@ export default function ProjectCreatModal({ setIsRerender }: ProjectCreatModalPr
 	const { currentUser } = useProvider();
 	//chercher un contributeur
 	const [searchCtb, setSearchCtb] = useState<User[]>([]);
+
+	//partie pour que le menu contextuel des contributeur se ferme tous seul
+	//		savoir si le menu déroulant est ouvert
+	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+	const menuRef = useRef<HTMLDivElement>(null);
+
+	useClickOutside(menuRef, () => setIsDropdownOpen(false));
 
 	function onClose() {
 		setSearchCtb([]);
@@ -96,7 +104,6 @@ export default function ProjectCreatModal({ setIsRerender }: ProjectCreatModalPr
 			}
 			//tous les projet de l'utilisateur
 			const allProjects = data.data;
-			console.log("AllProject : ", allProjects);
 			const setCollaborator = new Map<string, Collaborator>();
 
 			allProjects.projects.flatMap((project) => {
@@ -135,7 +142,6 @@ export default function ProjectCreatModal({ setIsRerender }: ProjectCreatModalPr
 				return;
 			}
 			setSearchCtb(response.data.users);
-			console.log("valeur a chercher : ", value);
 		}, 800);
 	}
 
@@ -232,7 +238,7 @@ export default function ProjectCreatModal({ setIsRerender }: ProjectCreatModalPr
 									>
 										Contributeurs
 									</label>
-									<div className={styles.control}>
+									<div className={styles.control} ref={menuRef}>
 										<input
 											id="project-members"
 											className={styles.controlInput}

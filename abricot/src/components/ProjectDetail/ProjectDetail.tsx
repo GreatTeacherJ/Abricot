@@ -14,6 +14,7 @@ import ProjectEditModal from "../ProjectEditModal/ProjectEditModal";
 import DeleteModal from "../DeleteModal/DeleteModal";
 import TaskCreateModal from "../TaskCreateModal/TaskCreateModal";
 import { useProvider } from "../Provider/Provider";
+import AiModal from "../AiModal/AiModal";
 
 /** Props de la page de détail d'un projet */
 interface ProjectDetailProps {
@@ -31,12 +32,12 @@ export default function ProjectDetail({ id }: ProjectDetailProps) {
 	const routeName = params.name as string;
 	const [cmtIsModfified, setCmtIsModfified] = useState<boolean>(false);
 
+	console.log("projet : ", project);
+
 	//pour l'ouverture des modale je passe l'id qui me dit que je doit
 	// ouvrire la modale quand l'id est vide la modale est fermée
 	//Ouverture modale modif projet
 	const [idProjectModified, setidProjectModified] = useState<string>("");
-	//Ouverture modale suppression projet
-	const [idProjectDeleted, setidProjectDeleted] = useState<string>("");
 	//ouvertur modale modif tâche
 	const [idTaskModified, setidTaskModified] = useState<string>("");
 
@@ -49,7 +50,6 @@ export default function ProjectDetail({ id }: ProjectDetailProps) {
 
 	const { currentUser, setRendering, rendering } = useProvider();
 	const isOwner = project?.owner.id === currentUser?.id;
-	console.log("propriétaire : ", project?.owner.name, " / user : ", currentUser?.name);
 
 	const filterTaskStatus =
 		selectedStatus === "ALL"
@@ -130,30 +130,14 @@ export default function ProjectDetail({ id }: ProjectDetailProps) {
 				</div>
 				{/* Boutons d'action : créer tâche + IA */}
 				<div className={styles.actionButtons}>
-					{isOwner && (
-						<button
-							className={styles.editLink}
-							onClick={() => setidProjectDeleted(project.id)}
-						>
-							Supprimer
-						</button>
-					)}
+					{isOwner && <DeleteModal toDelete={project} />}
 					<button
 						className={styles.createBtn}
 						onClick={() => setOpenCrtTsk(true)}
 					>
 						Créer une tâche
 					</button>
-					<button className={styles.aiBtn}>
-						<svg
-							className={styles.aiStar}
-							viewBox="0 0 21 21"
-							fill="currentColor"
-						>
-							<path d="M10.5 0l2.4 7.4h7.6l-6.1 4.5 2.4 7.4L10.5 14.8l-6.2 4.5 2.4-7.4L.6 7.4h7.6z" />
-						</svg>
-						IA
-					</button>
+					<AiModal />
 				</div>
 			</div>
 			{/* Barre des contributeurs */}
@@ -277,17 +261,6 @@ export default function ProjectDetail({ id }: ProjectDetailProps) {
 					<ProjectEditModal
 						project={project}
 						setIdProjectModified={setidProjectModified}
-						setPrjIsModfified={setRendering}
-					/>
-				)
-			}
-
-			{
-				/*Modale Supprimer projet */
-				idProjectDeleted && (
-					<DeleteModal
-						project={project}
-						setIdProjectDeleted={setidProjectDeleted}
 						setPrjIsModfified={setRendering}
 					/>
 				)

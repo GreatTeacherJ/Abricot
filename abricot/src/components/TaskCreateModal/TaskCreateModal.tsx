@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, Dispatch, SetStateAction, useEffect } from "react";
+import { useState, Dispatch, SetStateAction, useEffect, useRef } from "react";
 import { Task, Project } from "@/types/types";
 import styles from "./TaskCreateModal.module.css";
 import Image from "next/image";
@@ -8,6 +8,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { getProjectApi } from "@/utils/utilsProject";
 import { postAddTasksApi } from "@/utils/utilsTasks";
+import useClickOutside from "@/utils/useClickOutside";
 
 /** Statuts disponibles avec leur libellé et leur style de tag */
 const STATUSES: { value: Task["status"]; label: string; className: string }[] = [
@@ -41,11 +42,16 @@ export default function TaskEditModal({
 	const [status, setStatus] = useState<Task["status"]>("TODO");
 	//Projet stocké
 	const [currentProject, setProject] = useState<Project>();
-	//Partie pour l'imput assigné les tâche
-	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 	const [selectedAssignees, setSelectedAssignees] = useState<string[]>([]);
 	//reponse de l'API
 	const [error, seterror] = useState<string>("");
+
+	//partie pour que le menu contextuel des contributeur se ferme tous seul
+	//		savoir si le menu déroulant est ouvert
+	//Partie pour l'imput assigné les tâche
+	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+	const menuRef = useRef<HTMLDivElement>(null);
+	useClickOutside(menuRef, () => setIsDropdownOpen(false));
 
 	useEffect(() => {
 		async function apiProject() {
@@ -242,7 +248,7 @@ export default function TaskEditModal({
 								<label className={styles.label} htmlFor="project-members">
 									Assigné à :
 								</label>
-								<div className={styles.control}>
+								<div className={styles.control} ref={menuRef}>
 									<input
 										id="project-members"
 										className={styles.controlInput}

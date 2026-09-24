@@ -174,7 +174,6 @@ export default function ProjectEditModal({
 				return;
 			}
 			setSearchCtb(response.data.users);
-			console.log("valeur a chercher : ", value);
 		}, 800);
 	}
 	if (!project) return null;

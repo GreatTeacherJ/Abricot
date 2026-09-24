@@ -110,6 +110,17 @@
   cursor: not-allowed;
 }
 
+.editLink {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--color-brand);
+  cursor: pointer;
+}
+
+.editLink:hover {
+  text-decoration: underline;
+}
+
 @media (max-width: 768px) {
   .modal {
     gap: 32px;
