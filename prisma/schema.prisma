@@ -40,6 +40,7 @@ model Project {
   owner       User             @relation("ProjectOwner", fields: [ownerId], references: [id], onDelete: Cascade)
   members     ProjectMember[]
   tasks       Task[]
+  embeddingChunks EmbeddingChunk[]  
 
   @@map("projects")
 }
@@ -107,4 +108,22 @@ model Comment {
   author    User     @relation("CommentAuthor", fields: [authorId], references: [id], onDelete: Cascade)
 
   @@map("comments")
+}
+
+model EmbeddingChunk {
+  id         String   @id @default(cuid())
+  content    String   // texte brut qui a été embeddé
+  embedding  String   // vecteur JSON.stringify (array de floats)
+  sourceType String   // "TASK" | "PROJECT" | "GITHUB_FILE" (futur)
+  sourceId   String   // id de l'objet source (tâche, projet...)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  contentHash String   // Hash SHA-256 du content, pour détecter les changements
+
+  // Relations
+  projectId  String
+  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId, sourceType])
+  @@map("embedding_chunks")
 }

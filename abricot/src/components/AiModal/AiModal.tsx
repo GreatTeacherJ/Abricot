@@ -1,22 +1,41 @@
 import { useState, useRef } from "react";
 import styles from "./AiModal.module.css";
+import { postEmbeddingApi, callModelApi } from "@/utils/utilsAi";
 
 const LINE_HEIGHT = 24; // doit correspondre exactement au line-height défini en CSS
 const MAX_LINES = 4;
 const MAX_HEIGHT = LINE_HEIGHT * MAX_LINES;
 
+type Message = {
+	id: number;
+	text: string;
+	sender: "user" | "bot";
+	timestamp: Date;
+};
+const f: Message = { id: 1, text: "salut salut", sender: "bot", timestamp: new Date() };
+
+const teste = [f, f, f];
+
+interface AiModalProps {
+	idProject: string;
+}
 /** Modale de modification d'un projet (maquette Figma « Modale modifier projet ») */
-export default function AiModal() {
+export default function AiModal({ idProject }: AiModalProps) {
 	const [isOpen, setIsOpen] = useState<boolean>(false);
 
-	const [value, setValue] = useState("");
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
 
 	//texte pour les teste
 	const [responseTxt, setResponseTxt] = useState<string>("");
+	//message de l'utilisateur
+	const [message, setMessage] = useState("");
+	//reponse ia
+	const [messages, setMessages] = useState<Message[]>([f, f, f]);
+	//savoir si l'ia charge
+	const [loading, setLoading] = useState(false);
 
 	const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-		setValue(e.target.value);
+		setMessage(e.target.value);
 
 		const textarea = textareaRef.current;
 		if (!textarea) return;
@@ -30,6 +49,37 @@ export default function AiModal() {
 
 	function onClose() {
 		setIsOpen(false);
+	}
+
+	//Envoyer le prompt a l'API et recupérer la reponsse
+	async function sendMessage() {
+		if (!message.trim()) return;
+
+		const userMessage: Message = {
+			id: Date.now(),
+			text: message,
+			sender: "user",
+			timestamp: new Date(),
+		};
+		//on ajoute le message de l'utilisateur dans la liste
+		setMessages((prev) => [...prev, userMessage]);
+		//on bloque le bouton
+		setLoading(true);
+
+		try {
+			const taskIdsEmbed = postEmbeddingApi(idProject, message);
+		} catch (error) {
+			console.error("Erreur réseau:", error);
+		} finally {
+			setLoading(false);
+		}
+	}
+
+	function handleKeyDown(e: React.KeyboardEvent) {
+		if (e.key === "Enter" && !e.shiftKey) {
+			e.preventDefault();
+			sendMessage();
+		}
 	}
 
 	return (
@@ -79,8 +129,10 @@ export default function AiModal() {
 								/>
 							</svg>
 						</button>
+
 						{/*Contenu */}
 						<div className={styles.content}>
+							{/*Reponse du model */}
 							<div className={styles.responseContent}>
 								<div className={styles.titleWrapper}>
 									<svg
@@ -98,20 +150,34 @@ export default function AiModal() {
 
 									<h1 className={styles.title}>Créer une tâche</h1>
 								</div>
-								<div className={styles.responseText}>
-									<p className={styles.responseText}>{responseTxt}</p>
-								</div>
+								{messages.map((mes) => (
+									<div className={styles.responseText}>
+										<p>{mes.text}</p>
+									</div>
+								))}
+								{loading && (
+									<p className={styles.loading}>
+										En cours de chargement
+									</p>
+								)}
 							</div>
+
+							{/*Input utilisateur */}
 							<div className={styles.containerArea}>
 								<textarea
 									ref={textareaRef}
-									value={value}
+									value={message}
 									onChange={handleChange}
 									placeholder="Décrivez les tâches que vous souhaitez ajouter..."
 									rows={1}
 									className={styles.textarea}
+									onKeyDown={handleKeyDown}
 								/>
-								<button className={styles.buttonArea}>
+								<button
+									className={styles.buttonArea}
+									disabled={loading || !message.trim()}
+									onClick={sendMessage}
+								>
 									<svg
 										width="24"
 										height="24"
