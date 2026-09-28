@@ -10,7 +10,9 @@ export default function ProjetsPage() {
 		<>
 			{/* Navigation : clic sur "Tableau de bord" → / */}
 			<Menu />
-			<ProjectGrid />
+			<main>
+				<ProjectGrid />
+			</main>
 			<Footer />
 		</>
 	);

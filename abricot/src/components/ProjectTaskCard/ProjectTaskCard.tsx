@@ -160,7 +160,7 @@ export default function ProjectTaskCard({
 					isModified && (
 						<div className={styles.cardActions}>
 							<DeleteModal toDelete={task} />
-							<button className={styles.moreBtn} onClick={openModal}>
+							<button className={styles.moreBtn} onClick={openModal} aria-label="Options de la tâche">
 								<svg
 									className={styles.moreIcon}
 									viewBox="0 0 16 16"
@@ -180,7 +180,12 @@ export default function ProjectTaskCard({
 			<hr className={styles.divider} />
 
 			{/* Commentaires */}
-			<button className={styles.commentsBtn} onClick={() => setcmtOpen(!cmtOpen)}>
+			<button
+				className={styles.commentsBtn}
+				onClick={() => setcmtOpen(!cmtOpen)}
+				aria-expanded={cmtOpen}
+				aria-controls={`comments-${task.id}`}
+			>
 				Commentaires ({task.comments.length})
 				{cmtOpen ? (
 					<svg
@@ -205,7 +210,7 @@ export default function ProjectTaskCard({
 				)}
 			</button>
 			{cmtOpen && (
-				<form onSubmit={addComment}>
+				<form onSubmit={addComment} id={`comments-${task.id}`}>
 					<div className={styles.commentContainer}>
 						{task.comments.map((cmt) => (
 							<div key={cmt.id} className={styles.comment}>

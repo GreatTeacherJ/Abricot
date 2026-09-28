@@ -53,7 +53,7 @@ export default function Menu() {
 	}
 
 	return (
-		<nav className={styles.nav}>
+		<nav className={styles.nav} aria-label="Navigation principale">
 			{/* Logo de l'application */}
 			<Link href={"/" + routeName} className={styles.logo}>
 				<Image src="/icon.svg" alt="icon abricot" height={18.72} width={147} />
@@ -91,11 +91,12 @@ export default function Menu() {
 					Projets
 				</button>
 			</div>
+			{/*déconnexion et profil */}
 			<div className={styles.navUser}>
 				<button className={styles.disconectWrapper} onClick={disconnected}>
 					Deconnection
 				</button>
-				<Link href={"/" + routeName + "/compte"}>
+				<Link href={"/" + routeName + "/compte"} aria-label="Accéder à mon compte">
 					{/* Avatar utilisateur */}
 					{userName ? (
 						<div className={styles.userIcon}>{userName}</div>

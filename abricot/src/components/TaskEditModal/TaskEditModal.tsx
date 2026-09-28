@@ -65,6 +65,16 @@ export default function TaskEditModal({
 		setidTaskModified("");
 	}
 
+	useEffect(() => {
+		function handleKeyDown(e: KeyboardEvent) {
+			if (e.key === "Escape") {
+				onClose();
+			}
+		}
+		window.addEventListener("keydown", handleKeyDown);
+		return () => window.removeEventListener("keydown", handleKeyDown);
+	}, []);
+
 	/** Enregistre les modifications puis ferme la modale */
 	async function handleSave() {
 		const date = new Date(dueDate).toISOString(); // "2026-09-18T00:00:00.000Z"

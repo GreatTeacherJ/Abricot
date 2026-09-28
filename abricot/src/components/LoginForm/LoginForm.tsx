@@ -16,8 +16,13 @@ export default function LoginForm() {
 	async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
 		e.preventDefault();
 		const formData = new FormData(e.currentTarget);
-		const email = formData.get("email") as string;
-		const password = formData.get("password") as string;
+		//const email = formData.get("email") as string;
+		//const password = formData.get("password") as string;
+
+		/*alice@example.com 
+		P@ssword123 */
+		const email = "alice@example.com";
+		const password = "P@ssword123";
 
 		const response = await loginAPI(email, password);
 
@@ -40,7 +45,7 @@ export default function LoginForm() {
 	}
 
 	return (
-		<div className={styles.page}>
+		<main className={styles.page}>
 			{/* Panneau gauche : formulaire */}
 			<div className={styles.panel}>
 				<div className={styles.logo}>
@@ -99,7 +104,7 @@ export default function LoginForm() {
 			</div>
 
 			{/* Panneau droit : illustration (dégradé placeholder) */}
-			<div className={styles.hero} />
-		</div>
+			<div className={styles.hero} aria-hidden="true" />
+		</main>
 	);
 }

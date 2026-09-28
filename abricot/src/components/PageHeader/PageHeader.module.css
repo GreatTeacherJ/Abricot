@@ -43,3 +43,15 @@
 .createBtn:hover {
   background: var(--color-dark);
 }
+
+@media (max-width: 992px) {
+  .header {
+    padding: 0 24px;
+  }
+}
+
+@media (max-width: 640px) {
+  .header {
+    padding: 0 16px;
+  }
+}

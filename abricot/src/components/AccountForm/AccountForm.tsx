@@ -79,7 +79,7 @@ export default function AccountForm() {
 	}
 
 	return (
-		<div className={styles.card}>
+		<section className={styles.card}>
 			{/* En-tête : titre + firstName complet */}
 			<div className={styles.header}>
 				<h1 className={styles.title}>Mon compte</h1>
@@ -184,6 +184,6 @@ export default function AccountForm() {
 					Modifier les informations
 				</button>
 			</form>
-		</div>
+		</section>
 	);
 }

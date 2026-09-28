@@ -33,6 +33,7 @@ export default function TaskList({ assignedTasks }: TaskListProps) {
 						className={styles.searchInput}
 						type="text"
 						placeholder="Rechercher une tâche"
+						aria-label="Rechercher une tâche"
 						onChange={(e) => setSearchText(e.target.value)}
 					/>
 					<svg

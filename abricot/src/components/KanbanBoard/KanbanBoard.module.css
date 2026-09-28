@@ -7,9 +7,17 @@
   padding-bottom: 24px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 992px) {
+  .board {
+    padding: 0 24px;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 640px) {
   .board {
     padding: 0 16px;
-    gap: 16px;
+    gap: 12px;
+    scroll-snap-type: x mandatory;
   }
 }

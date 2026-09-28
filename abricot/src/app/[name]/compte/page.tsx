@@ -8,7 +8,9 @@ export default function ComptePage() {
 		<>
 			{/* Navigation avec liens Dashboard/Projets */}
 			<Menu />
-			<AccountForm />
+			<main>
+				<AccountForm />
+			</main>
 			<Footer />
 		</>
 	);
