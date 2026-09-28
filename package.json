@@ -33,6 +33,7 @@
     "dotenv": "^17.2.1",
     "express": "^4.18.2",
     "helmet": "^7.1.0",
+    "js-tiktoken": "^1.0.21",
     "jsonwebtoken": "9.0.3",
     "morgan": "^1.10.0",
     "swagger-jsdoc": "^6.2.8",

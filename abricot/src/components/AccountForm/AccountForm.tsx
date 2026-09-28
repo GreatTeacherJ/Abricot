@@ -21,6 +21,8 @@ export default function AccountForm() {
 	const [oldPassword, setOldPassword] = useState("");
 	//Message d'érreur
 	const [error, setError] = useState("");
+	//doit être à true pour valider le formulaire
+	const [isModified, setIsModified] = useState<boolean>(false);
 
 	useEffect(() => {
 		if (!currentUser) {
@@ -32,16 +34,18 @@ export default function AccountForm() {
 		if (spaceIndex === -1) {
 			setFirstName(trimmed);
 			setLastName("");
+		} else {
+			setFirstName(trimmed.slice(0, spaceIndex));
+
+			setLastName(trimmed.slice(spaceIndex + 1));
 		}
 
-		setFirstName(trimmed.slice(0, spaceIndex));
-
-		setLastName(trimmed.slice(spaceIndex + 1));
 		setEmail(currentUser.email);
 	}, [currentUser]);
 
 	async function handleChange(e: React.SyntheticEvent<HTMLFormElement>) {
 		e.preventDefault();
+
 		switch (true) {
 			case firstName.trim().length < 3:
 				setError("Merci de rensigner ai moins 2 lettre pour le nom");
@@ -60,15 +64,18 @@ export default function AccountForm() {
 		const name = firstName + " " + lastName;
 		const response = await putProfilApi(name, email, newPassword, oldPassword);
 
-		if (!response.success) {
-			setError(response.message);
-			return;
-		}
+		// on filtre les réponses en échec et on récupère leurs messages
+		const errorList = response
+			.filter((res) => !res.success)
+			.map((res) => res.message);
+
+		const errorMessage = errorList.join("\n");
 
 		setNewPassword("");
 		setOldPassword("");
-		setError(response.message);
+		setError(errorMessage);
 		setRendering((prev) => !prev);
+		setIsModified(false);
 	}
 
 	return (
@@ -90,7 +97,10 @@ export default function AccountForm() {
 						id="firstName"
 						type="text"
 						value={firstName}
-						onChange={(e) => setFirstName(e.target.value)}
+						onChange={(e) => {
+							setFirstName(e.target.value);
+							setIsModified(true);
+						}}
 						required
 					/>
 				</div>
@@ -104,7 +114,10 @@ export default function AccountForm() {
 						id="lastName"
 						type="text"
 						value={lastName}
-						onChange={(e) => setLastName(e.target.value)}
+						onChange={(e) => {
+							setLastName(e.target.value);
+							setIsModified(true);
+						}}
 						required
 					/>
 				</div>
@@ -118,7 +131,10 @@ export default function AccountForm() {
 						id="email"
 						type="email"
 						value={email}
-						onChange={(e) => setEmail(e.target.value)}
+						onChange={(e) => {
+							setEmail(e.target.value);
+							setIsModified(true);
+						}}
 						required
 					/>
 				</div>
@@ -133,7 +149,10 @@ export default function AccountForm() {
 						type="Password"
 						placeholder="•••••••••••"
 						value={newPassword}
-						onChange={(e) => setNewPassword(e.target.value)}
+						onChange={(e) => {
+							setNewPassword(e.target.value);
+							setIsModified(true);
+						}}
 					/>
 				</div>
 				{newPassword && (
@@ -153,7 +172,15 @@ export default function AccountForm() {
 					</div>
 				)}
 				{error && <p className={styles.error}>{error}</p>}
-				<button type="submit" className={styles.submitBtn}>
+				<button
+					type="submit"
+					className={
+						styles.submitBtn +
+						" " +
+						(isModified ? styles.activate : styles.noActivate)
+					}
+					disabled={!isModified}
+				>
 					Modifier les informations
 				</button>
 			</form>

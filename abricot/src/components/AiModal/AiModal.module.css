@@ -1,0 +1,437 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.modal {
+  position: relative;
+  width: 50%;
+  height: 90vh;
+  max-width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+  padding: 55px 60px;
+  background: var(--color-white);
+  border-radius: 10px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+}
+
+.closeBtn {
+  position: absolute;
+  top: 32px;
+  right: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-muted);
+  transition: color 0.2s;
+}
+
+.closeBtn:hover {
+  color: var(--color-title);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
+}
+
+.createBtn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 74px;
+  background: var(--color-title);
+  color: var(--color-white);
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 400;
+  transition: background 0.2s;
+}
+
+.createBtn:hover {
+  background: var(--color-dark);
+}
+
+.titleWrapper{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+}
+
+.title {
+  font-family: var(--font-heading);
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--color-title);
+}
+
+.responseContent {
+display: flex;
+flex:1;
+flex-direction: column;
+align-items: flex-start;
+padding: 0px;
+gap: 10px;
+min-height: 0;
+overflow-y: auto;
+}
+
+.responseContent p{
+  padding: 5px;
+}
+
+.responseText{
+overflow-x: hidden; 
+  overflow-y: hidden;
+  height: auto; 
+border: 1px solid var(--color-border);
+border-radius: 10px;
+ width: 100%;
+  padding: 15px;
+}
+
+.responseText p{
+  overflow-wrap: break-word;  /* casse les mots trop longs si nécessaire */
+  word-break: break-word;    /* alternative/complément selon navigateurs */
+  white-space: normal;  
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 1em;
+line-height: 19px;
+color: var(--color-muted)
+}
+
+.userMessage{
+  background-color: var(--color-amber-bg);
+padding: 5px;
+  
+}
+
+.loading {
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 0.8em;
+line-height: 19px;
+color: var(--color-muted);
+justify-content: end;
+}
+
+.loading::after {
+  content: '';
+  animation: dots 1.5s steps(4, end) infinite;
+}
+
+@keyframes dots {
+  0%   { content: ''; }
+  25%  { content: '.'; }
+  50%  { content: '..'; }
+  75%  { content: '...'; }
+  100% { content: ''; }
+}
+
+.containerArea {
+  display: flex;
+  align-items: flex-end; /* le bouton reste collé en bas quand la bulle grandit */
+  gap: 12px;
+  border-radius: 24px;
+  background-color: #f8fafc;
+  padding: 12px 20px;
+}
+
+.textarea {
+  flex: 1;
+  resize: none;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 15px;
+  line-height: 24px; /* doit matcher LINE_HEIGHT en JS */
+  max-height: 96px;  /* = LINE_HEIGHT * MAX_LINES, dupliqué ici volontairement */
+  overflow-y: auto;
+  font-family: inherit;
+}
+
+.buttonArea {
+  flex-shrink: 0;
+  border: none;  
+  padding: 10px;
+  cursor: pointer;
+  color: #D3590B;
+  transition: opacity 0.2s;
+}
+
+.buttonArea:hover{
+ opacity: 0.8;
+}
+
+.textarea::placeholder{
+
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 0.8em;
+line-height: 12px;
+color: var(--color-muted);
+
+}
+
+.svgBtn{
+  display: block;
+}
+
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--color-black);
+}
+
+
+.control {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 19px 17px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background: var(--color-white);
+  transition: border-color 0.2s;
+}
+
+.control:focus-within {
+  border-color: var(--color-brand);
+}
+
+.controlInput {
+  flex: 1;
+  min-width: 0;
+  font-size: 12px;
+  color: var(--color-title);
+  background: transparent;
+}
+
+.controlInput::placeholder {
+  color: var(--color-muted);
+}
+
+.chevronIcon {
+  flex-shrink: 0;
+  color: var(--color-dark);
+  transition: transform 0.2s;
+}
+
+
+.chevronIcon.open {
+  transform: rotate(180deg);
+}
+
+.saveBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 181px;
+  height: 50px;
+  padding: 13px 74px;
+  background: var(--color-border);
+  color: var(--color-muted-light);
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 400;
+  transition: background 0.2s, color 0.2s;
+}
+
+.saveBtn:hover {
+  background: var(--color-title);
+  color: var(--color-white);
+}
+
+
+
+.error{
+color : rgb(255, 157, 0)
+
+}
+.aiBtn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px;
+  background: var(--color-brand);
+  color: var(--color-white);
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 400;
+  transition: opacity 0.2s;
+  width: fit-content;
+}
+
+.aiBtn:hover {
+  opacity: 0.9;
+}
+
+.aiStar {
+  width: 21px;
+  height: 21px;
+}
+
+@media (max-width: 768px) {
+  .modal {
+    gap: 32px;
+    padding: 40px 24px;
+  }
+
+
+  .saveBtn {
+    width: 100%;
+  }
+}
+
+.botTasksWrapper{
+  width: 100%;
+  margin: 0px;
+box-sizing: border-box;
+display: flex;
+flex-direction: column;
+padding: 25px 40px;
+background: var(--color-white);
+border: 1px solid var(--color-border);
+border-radius: 10px;
+gap:15px;
+}
+
+.botTasksWrapper:has(.botTaskTitle:hover) {
+border-color: var(--color-black);
+}
+
+.botTasksWrapperSlc{
+  border-color: var(--color-muted)
+}
+
+.botTasksWrapperMdf{
+  border-color: var(--color-amber)
+}
+
+.botTaskTextWrp{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.areaInput{
+  width: 100%;
+  resize: none;
+  overflow: hidden;
+  font-family: inherit;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
+
+.botTaskTitle{
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 600;
+font-size: 1.12em;
+line-height: 25px;
+color: var(--color-black);
+margin-bottom: 1px;
+}
+
+.botTaskTitle:hover{
+margin-bottom: 0px;
+border-bottom: solid 1px var(--color-black);
+cursor: pointer;
+}
+
+.areaInput:not(:read-only){
+  background-color: var(--color-border);
+}
+
+.botTaskDesc{
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 17px;
+color: var(--color-muted)
+}
+
+.botTaskButton{
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 0.75em;
+line-height: 15px;
+color: var(--color-muted);
+gap:5px;
+margin-bottom: 1px;
+}
+
+.btnModifyAct{
+  color: var(--color-amber);
+}
+
+.botTaskBtnWrp{
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+ justify-content: flex-start;
+}
+.botTaskBtnWrp p{
+  font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 0.75em;
+line-height: 15px;
+color: var(--color-muted)
+}
+
+.botTaskButton:hover{
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 0.75em;
+line-height: 15px;
+color: var(--color-muted);
+gap:5px;
+border-bottom: solid 1px var(--color-muted);
+margin-bottom: 0px;
+}
+
+.addTasksBtn{
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 13px 74px;
+gap: 10px;
+background: var(--color-title);
+border-radius: 10px;
+color: var(--color-white);
+align-items: flex-end;
+justify-content: center;
+align-self: center;
+width: fit-content;
+}

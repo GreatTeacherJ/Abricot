@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, Dispatch, SetStateAction, useEffect } from "react";
+import { useState, Dispatch, SetStateAction, useEffect, useRef } from "react";
 import { Project, User } from "@/types/types";
 import styles from "./ProjectEditModal.module.css";
 import { getAllProjectApi, putProjectApi } from "@/utils/utilsProject";
+import { getUserSearchApi } from "@/utils/utilsUser";
 
 /** Props de la modale de modification d'un projet */
 interface ProjectEditModalProps {
@@ -29,15 +30,53 @@ export default function ProjectEditModal({
 	/** Description du projet */
 	const [description, setDescription] = useState(project.description);
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-	const [selectedMembers, setSelectedMembers] = useState<Set<User>>(new Set());
+	const [selectedMembers, setSelectedMembers] = useState<Map<string, User>>(new Map());
 	//Liste des collaborateur, trouver comme j'ai pu ( voir plus bas)
 	const [collaboratorList, setCollaboratorList] = useState<CollaboratorMap>(new Map());
 	//erreur de saisi
 	const [error, setError] = useState<string>("");
+	//chercher un contributeur
+	const [searchCtb, setSearchCtb] = useState<User[]>([]);
 
-	if (!project) return null;
+	useEffect(() => {
+		if (!project) {
+			return;
+		}
+		//recupérer tous les membres du projet
+		const idList = new Map<string, User>();
+		project.members.forEach((member) => idList.set(member.user.id, member.user));
+		setSelectedMembers(idList);
+
+		//Recupérer la liste des collaborateur, comme on ne peut pas
+		// les trouver via l'API je recupére tous les collaborateurs
+		// present dans tous les projets
+		async function listCollaborator() {
+			const data = await getAllProjectApi();
+			if (!data.success) {
+				return;
+			}
+			//tous les projet de l'utilisateur
+			const allProjects = data.data.projects;
+
+			const setCollaborator = new Map<string, Collaborator>();
+
+			allProjects.forEach((project) => {
+				//recupérer aussi les propriétaires
+				setCollaborator.set(project.owner.id, { user: project.owner });
+				project.members.forEach((member) => {
+					setCollaborator.set(member.user.id, { user: member.user });
+				});
+			});
+			//retiré le propriétaire de la liste des collaborateurs
+			setCollaborator.delete(project.owner.id);
+
+			setCollaboratorList(setCollaborator);
+		}
+		listCollaborator();
+	}, [project]);
 
 	function onClose() {
+		setSearchCtb([]);
 		setIdProjectModified("");
 	}
 
@@ -63,7 +102,7 @@ export default function ProjectEditModal({
 
 		// liste des collaborateurs supprimer
 		// on construit un Set des ids sélectionnés pour une recherche en O(1)
-		const selectedIds = new Set(Array.from(selectedMembers).map((u) => u.id));
+		const selectedIds = new Set(selectedMembers.keys());
 
 		const removedMembers = project.members
 			.filter(
@@ -72,7 +111,7 @@ export default function ProjectEditModal({
 			.map((m) => m.user);
 
 		const existingIds = new Set(project.members.map((m) => m.user.id));
-		const addedMembers = Array.from(selectedMembers).filter(
+		const addedMembers = Array.from(selectedMembers.values()).filter(
 			(u) => !existingIds.has(u.id), // présent dans la sélection mais pas dans le projet = ajouté
 		);
 
@@ -85,10 +124,14 @@ export default function ProjectEditModal({
 				removedMembers,
 			);
 
-			if (!response.success) {
-				const errorMessage = Array.isArray(response.message)
-					? response.message.join("\n")
-					: response.message;
+			// on filtre les réponses en échec et on récupère leurs messages
+			const errorList = response
+				.filter((res) => !res.success)
+				.map((res) => res.message);
+
+			// s'il y a au moins une erreur, on les joint en un seul message
+			if (errorList.length > 0) {
+				const errorMessage = errorList.join("\n");
 				setError(errorMessage);
 				return;
 			}
@@ -102,55 +145,38 @@ export default function ProjectEditModal({
 
 	function toggleAssignee(user: User) {
 		setSelectedMembers((prev) => {
-			const existing = Array.from(prev).find((u) => u.id === user.id);
-			const next = new Set(prev);
-			if (existing) {
-				next.delete(existing); // il faut delete l'objet exact, pas juste l'id
+			const next = new Map(prev); // copie superficielle de la Map
+			if (next.has(user.id)) {
+				next.delete(user.id); // suppression directe par clé
 			} else {
-				next.add(user);
+				next.set(user.id, user);
 			}
 			return next;
 		});
 	}
 
-	useEffect(() => {
-		if (!project) {
+	const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+	function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+		const value = e.target.value;
+
+		if (value.trim().length < 2) {
+			setSearchCtb([]);
 			return;
 		}
-		//recupérer tous les membres du projet
-		const idList: Set<User> = new Set();
-		project.members.map((member) => idList.add(member.user));
 
-		setSelectedMembers(idList);
+		if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
-		//Recupérer la liste des collaborateur, comme on ne peut pas
-		// les trouver via l'API je recupére tous les collaborateurs
-		// present dans tous les projets
-		async function listCollaborator() {
-			const data = await getAllProjectApi();
-			if (!data.data) {
+		timeoutRef.current = setTimeout(async () => {
+			const response = await getUserSearchApi(value);
+
+			if (!response.success) {
 				return;
 			}
-			//tous les projet de l'utilisateur
-			const allProjects = data.data;
-
-			const setCollaborator = new Map<string, Collaborator>();
-
-			allProjects.flatMap((project) => {
-				//recupérer aussi les propriétaires
-				setCollaborator.set(project.owner.id, { user: project.owner });
-				project.members.map((member) => {
-					setCollaborator.set(member.user.id, { user: member.user });
-				});
-			});
-			//retiré le propriétaire de la liste des collaborateurs
-			setCollaborator.delete(project.owner.id);
-
-			setCollaboratorList(setCollaborator);
-		}
-		listCollaborator();
-	}, []);
-
+			setSearchCtb(response.data.users);
+		}, 800);
+	}
+	if (!project) return null;
 	return (
 		<div className={styles.overlay} onClick={onClose}>
 			<div
@@ -262,7 +288,7 @@ export default function ProjectEditModal({
 													toggleAssignee(member.user)
 												}
 												className={`${styles.assigneeLi}  
-													${Array.from(selectedMembers).find((u) => u.id === id) && styles.assignee}`}
+													${Array.from(selectedMembers.values()).find((u) => u.id === id) && styles.assignee}`}
 											>
 												{member.user.name}
 											</li>
@@ -270,6 +296,44 @@ export default function ProjectEditModal({
 									</ul>
 								)}
 							</div>
+						</div>
+						{/* chercher nouveau contributeur*/}
+						<div className={styles.field}>
+							<label className={styles.label} htmlFor="search-contributor">
+								Trouver de nouveau contributeurs
+							</label>
+							<div className={styles.control}>
+								<input
+									id="search-contributor"
+									className={styles.controlInput}
+									type="text"
+									onChange={handleChange}
+									required
+								/>
+							</div>
+							{
+								//Chercher des collaborateurs
+								searchCtb &&
+									searchCtb.map((user) => (
+										<ul
+											key={user.id}
+											className={styles.searchContainer}
+										>
+											<li
+												onClick={() => {
+													toggleAssignee(user);
+													setCollaboratorList((prev) =>
+														prev.set(user.id, { user: user }),
+													);
+												}}
+												className={`${styles.assigneeLi}  
+													${Array.from(selectedMembers.values()).find((u) => u.id === user.id) && styles.assignee}`}
+											>
+												{user.name + " / " + user.email}
+											</li>
+										</ul>
+									))
+							}
 						</div>
 					</div>
 				</div>

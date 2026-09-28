@@ -1,28 +1,26 @@
-const cookie =
-	"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbXUzMG1sd3gwMDAwdjNtazFra2owemppIiwiZW1haWwiOiJhbGljZUBleGFtcGxlLmNvbSIsImlhdCI6MTc4OTU3MzU0MSwiZXhwIjoxNzkwMTc4MzQxfQ.a_ai_HQ9puZaInn6Y6qr_IMn6aWcKij_LhE6i7JU2hQ";
+/*############# EXEMPLE DE REPONSE ##################*/
+export const BotText = `{\n  \"tasks\": [
+\n    {\n      \"title\": \"Tableau de bord de suivi des progrès\",\n
+      \"description\": \"Tableau de bord permettant aux apprenants de consulter leur progression dans chaque cours.\",\n 
+	       \"dueDate\": \"2026-10-05\"\n   
+		    },\n   
+			 {\n   
+			    \"title\": \"Gestion des inscriptions aux cours\",\n 
+				     \"description\": \"Mettre en place le parcours d’inscription des apprenants aux cours, avec consultation du catalogue.\",\n  
+	      \"dueDate\": \"2026-10-12\"\n 
+		     }\n
+			   ]\n}`;
 
-export async function profilApi(): Promise<string> {
-	try {
-		const response = await fetch("http://localhost:8000/auth/profile", {
-			headers: {
-				"Content-Type": "application/json",
-				Authorization: `Bearer ${cookie} `,
-			},
-		});
-		const data = await response.json();
-
-		if (!response.ok) {
-			return data.message;
-		}
-
-		const id = data.id;
-
-		return id;
-	} catch (error) {
-		const message = "Erreur profilAPI:" + error;
-		console.error(message);
-		return message;
-	}
+interface Pars {
+	tasks: TaskPars[];
 }
-const res = profilApi();
-console.log(res);
+interface TaskPars {
+	title: string;
+	description: string;
+	dueDate: string;
+}
+
+const pars = JSON.parse(BotText) as Pars;
+
+console.log(pars);
+console.log(pars.tasks[0]);

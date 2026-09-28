@@ -30,8 +30,8 @@ export default function LoginForm() {
 			return;
 		}
 
-		if (response.data?.success) {
-			const name = response.data.data.user.name;
+		if (response.success) {
+			const name = response.data.user.name;
 			const initials = name
 				.toLowerCase()
 				.normalize("NFD")

@@ -1,9 +1,9 @@
 import KanbanColumn from "../KanbanColumn/KanbanColumn";
 import styles from "./KanbanBoard.module.css";
-import type { Tasks } from "@/types/types";
+import type { Task } from "@/types/types";
 
 interface KanbanBoardProps {
-	assignedTasks: Tasks;
+	assignedTasks: Task[];
 }
 
 /** Board Kanban avec 3 colonnes : À faire, En cours, Terminées */

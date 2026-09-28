@@ -1,10 +1,12 @@
 "use client";
 
-import { useState, Dispatch, SetStateAction, useEffect } from "react";
-import { Project, User } from "@/types/types";
+import { useState, Dispatch, SetStateAction, useEffect, useRef } from "react";
+import { User } from "@/types/types";
 import styles from "./ProjectCreatModal.module.css";
 import { getAllProjectApi, postCreatProjectApi } from "@/utils/utilsProject";
 import { useProvider } from "@/components/Provider/Provider";
+import { getUserSearchApi } from "@/utils/utilsUser";
+import useClickOutside from "@/utils/useClickOutside";
 
 /** Props de la modale de modification d'un projet */
 interface ProjectCreatModalProps {
@@ -23,7 +25,7 @@ export default function ProjectCreatModal({ setIsRerender }: ProjectCreatModalPr
 	const [name, setName] = useState("");
 	/** Description du projet */
 	const [description, setDescription] = useState("");
-	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
 	const [selectedMembers, setSelectedMembers] = useState<Set<User>>(new Set());
 	//Liste des collaborateur, trouver comme j'ai pu ( voir plus bas)
 	const [collaboratorList, setCollaboratorList] = useState<CollaboratorMap>(new Map());
@@ -32,8 +34,18 @@ export default function ProjectCreatModal({ setIsRerender }: ProjectCreatModalPr
 	//savoir si la modal est ouverte
 	const [isOpen, setIsOpen] = useState<boolean>(false);
 	const { currentUser } = useProvider();
+	//chercher un contributeur
+	const [searchCtb, setSearchCtb] = useState<User[]>([]);
+
+	//partie pour que le menu contextuel des contributeur se ferme tous seul
+	//		savoir si le menu déroulant est ouvert
+	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+	const menuRef = useRef<HTMLDivElement>(null);
+
+	useClickOutside(menuRef, () => setIsDropdownOpen(false));
 
 	function onClose() {
+		setSearchCtb([]);
 		setIsOpen(false);
 	}
 
@@ -59,7 +71,7 @@ export default function ProjectCreatModal({ setIsRerender }: ProjectCreatModalPr
 			description,
 			Array.from(selectedMembers),
 		);
-		if (!response.data) {
+		if (!response.success) {
 			setError(response.message);
 			return;
 		}
@@ -87,15 +99,14 @@ export default function ProjectCreatModal({ setIsRerender }: ProjectCreatModalPr
 		// present dans tous les projets
 		async function listCollaborator() {
 			const data = await getAllProjectApi();
-			if (!data.data) {
+			if (!data.success) {
 				return;
 			}
 			//tous les projet de l'utilisateur
 			const allProjects = data.data;
-
 			const setCollaborator = new Map<string, Collaborator>();
 
-			allProjects.flatMap((project) => {
+			allProjects.projects.flatMap((project) => {
 				//recupérer aussi les propriétaires
 				setCollaborator.set(project.owner.id, { user: project.owner });
 				project.members.map((member) => {
@@ -110,7 +121,29 @@ export default function ProjectCreatModal({ setIsRerender }: ProjectCreatModalPr
 			setCollaboratorList(setCollaborator);
 		}
 		listCollaborator();
-	}, []);
+	}, [currentUser]);
+
+	const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+	function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+		const value = e.target.value;
+
+		if (value.trim().length < 2) {
+			setSearchCtb([]);
+			return;
+		}
+
+		if (timeoutRef.current) clearTimeout(timeoutRef.current);
+
+		timeoutRef.current = setTimeout(async () => {
+			const response = await getUserSearchApi(value);
+
+			if (!response.success) {
+				return;
+			}
+			setSearchCtb(response.data.users);
+		}, 800);
+	}
 
 	return (
 		<>
@@ -205,7 +238,7 @@ export default function ProjectCreatModal({ setIsRerender }: ProjectCreatModalPr
 									>
 										Contributeurs
 									</label>
-									<div className={styles.control}>
+									<div className={styles.control} ref={menuRef}>
 										<input
 											id="project-members"
 											className={styles.controlInput}
@@ -258,6 +291,50 @@ export default function ProjectCreatModal({ setIsRerender }: ProjectCreatModalPr
 										)}
 									</div>
 								</div>
+							</div>
+
+							{/* chercher nouveau contributeur*/}
+							<div className={styles.field}>
+								<label
+									className={styles.label}
+									htmlFor="search-contributor"
+								>
+									Trouver de nouveau contributeurs
+								</label>
+								<div className={styles.control}>
+									<input
+										id="search-contributor"
+										className={styles.controlInput}
+										type="text"
+										onChange={handleChange}
+										required
+									/>
+								</div>
+								{
+									//Chercher des collaborateurs
+									searchCtb &&
+										searchCtb.map((user) => (
+											<ul
+												key={user.id}
+												className={styles.searchContainer}
+											>
+												<li
+													onClick={() => {
+														toggleAssignee(user);
+														setCollaboratorList((prev) =>
+															prev.set(user.id, {
+																user: user,
+															}),
+														);
+													}}
+													className={`${styles.assigneeLi}  
+													${Array.from(selectedMembers).find((u) => u.id === user.id) && styles.assignee}`}
+												>
+													{user.name + " / " + user.email}
+												</li>
+											</ul>
+										))
+								}
 							</div>
 						</div>
 						{error && <p className={styles.error}>{error}</p>}

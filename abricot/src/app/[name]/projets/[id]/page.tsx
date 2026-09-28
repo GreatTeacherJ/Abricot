@@ -1,12 +1,6 @@
 import Menu from "@/components/Menu/Menu";
 import ProjectDetail from "@/components/ProjectDetail/ProjectDetail";
 import Footer from "@/components/Footer/Footer";
-import type { Project } from "@/types/types";
-
-/** Props du composant client de la page projet */
-interface ProjectPageClientProps {
-	project: Promise<Project>;
-}
 
 /** Composant client de la page projet (nécessaire pour le router) */
 export default async function ProjectPageClient({

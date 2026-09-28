@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import styles from "./ProjectCard.module.css";
-import type { Project, Tasks } from "@/types/types";
+import type { Project, Task } from "@/types/types";
 import Image from "next/image";
 import { taskForProjectApi } from "@/utils/utilsUser";
 import { useEffect, useState } from "react";
@@ -16,7 +16,7 @@ interface ProjectCardProps {
 /** Carte projet cliquable menant à la page de détail */
 export default function ProjectCard({ project }: ProjectCardProps) {
 	//liste de tache récupérées
-	const [tasks, setTasks] = useState<Tasks>([]);
+	const [tasks, setTasks] = useState<Task[]>([]);
 	const params = useParams();
 	const routeName = params.name as string;
 
@@ -29,14 +29,14 @@ export default function ProjectCard({ project }: ProjectCardProps) {
 		async function taskForProject() {
 			const data = await taskForProjectApi(project.id);
 
-			if (!data.data) {
+			if (!data.success) {
 				return;
 			}
-			setTasks(data.data);
+			setTasks(data.data.tasks);
 		}
 
 		taskForProject();
-	}, []);
+	}, [project.id]);
 
 	return (
 		<Link href={`/${routeName}/projets/${project.id}`} className={styles.card}>

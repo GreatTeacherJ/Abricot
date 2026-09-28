@@ -5,13 +5,16 @@ import ProjectTaskCard from "../ProjectTaskCard/ProjectTaskCard";
 import Contributors from "../Contributors/Contributors";
 import styles from "./ProjectDetail.module.css";
 import { useState, useEffect } from "react";
-import type { Tasks, Project } from "@/types/types";
+import type { Task, Project } from "@/types/types";
 import { taskForProjectApi, projectsApi } from "@/utils/utilsUser";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import TaskEditModal from "../TaskEditModal/TaskEditModal";
 import ProjectEditModal from "../ProjectEditModal/ProjectEditModal";
+import DeleteModal from "../DeleteModal/DeleteModal";
 import TaskCreateModal from "../TaskCreateModal/TaskCreateModal";
+import { useProvider } from "../Provider/Provider";
+import AiModal from "../AiModal/AiModal";
 
 /** Props de la page de détail d'un projet */
 interface ProjectDetailProps {
@@ -20,19 +23,15 @@ interface ProjectDetailProps {
 
 /** Page de détail d'un projet : tâches, contributeurs, actions */
 export default function ProjectDetail({ id }: ProjectDetailProps) {
-	const [tasks, setTasks] = useState<Tasks>([]);
+	const [tasks, setTasks] = useState<Task[]>([]);
 	const [project, setProjects] = useState<Project>();
 	const [selectedStatus, setSelectedStatus] = useState("ALL");
-	const [filterTask, setFilterTask] = useState<Tasks>(tasks);
 	const [searchText, setsearchText] = useState<string>("");
 	const [openCrtTsk, setOpenCrtTsk] = useState<boolean>(false);
 	const params = useParams();
 	const routeName = params.name as string;
-
-	//state pour savoir si un commentaire ou une tache à été modifier
 	const [cmtIsModfified, setCmtIsModfified] = useState<boolean>(false);
-	//state pour savoir si un projet a été modifé
-	const [prjIsModfified, setPrjIsModfified] = useState<boolean>(false);
+
 	//pour l'ouverture des modale je passe l'id qui me dit que je doit
 	// ouvrire la modale quand l'id est vide la modale est fermée
 	//Ouverture modale modif projet
@@ -47,54 +46,44 @@ export default function ProjectDetail({ id }: ProjectDetailProps) {
 		{ value: "ALL", label: "Statut" },
 	];
 
-	//filtre selon le statut
-	useEffect(() => {
-		let filterTaskStatus;
+	const { currentUser, setRendering, rendering } = useProvider();
+	const isOwner = project?.owner.id === currentUser?.id;
 
-		if (selectedStatus === "ALL") {
-			filterTaskStatus = tasks;
-		} else {
-			filterTaskStatus = tasks.filter((task) => task.status === selectedStatus);
-		}
+	const filterTaskStatus =
+		selectedStatus === "ALL"
+			? tasks
+			: tasks.filter((task) => task.status === selectedStatus);
 
-		// normalisation pour une recherche insensible à la casse
-		const normalizedSearch = searchText.toLowerCase().trim();
+	const normalizedSearch = searchText.toLowerCase().trim();
 
-		// si la recherche est vide, retourne toutes les tâches
-		if (!normalizedSearch) {
-			setFilterTask(filterTaskStatus);
-			return;
-		}
-
-		const filterTaskSearch = filterTaskStatus.filter(
-			(task) =>
-				task.title.toLowerCase().includes(normalizedSearch) ||
-				task.description.toLowerCase().includes(normalizedSearch),
-		);
-
-		setFilterTask(filterTaskSearch);
-	}, [selectedStatus, tasks, searchText]);
+	const filterTask = !normalizedSearch
+		? filterTaskStatus
+		: filterTaskStatus.filter(
+				(task) =>
+					task.title.toLowerCase().includes(normalizedSearch) ||
+					task.description.toLowerCase().includes(normalizedSearch),
+			);
 
 	//apelle API recuperer les taches
 	useEffect(() => {
 		async function taskForProject() {
 			const data = await taskForProjectApi(id);
 
-			if (!data.data) {
+			if (!data.success) {
 				return;
 			}
-			setTasks(data.data);
+			setTasks(data.data.tasks);
 		}
 
 		async function apiProject() {
 			const data = await projectsApi();
 
-			if (!data.data) {
+			if (!data.success) {
 				return;
 			}
 
 			const projects = data.data;
-			const project = projects.filter((project) => project.id === id);
+			const project = projects.projects.filter((project) => project.id === id);
 
 			//on prend le premier élément car la ne devrait avoir qu'un seul projet
 			setProjects(project[0]);
@@ -102,7 +91,7 @@ export default function ProjectDetail({ id }: ProjectDetailProps) {
 
 		taskForProject();
 		apiProject();
-	}, [cmtIsModfified, prjIsModfified]);
+	}, [cmtIsModfified, rendering, id]);
 
 	if (!project) {
 		return <p>Aucun projet trouvé</p>;
@@ -126,33 +115,27 @@ export default function ProjectDetail({ id }: ProjectDetailProps) {
 				<div className={styles.headerInfo}>
 					<div className={styles.titleRow}>
 						<h1 className={styles.title}>{project.name}</h1>
-						<button
-							className={styles.editLink}
-							onClick={() => setidProjectModified(project.id)}
-						>
-							Modifier
-						</button>
+						{isOwner && (
+							<button
+								className={styles.editLink}
+								onClick={() => setidProjectModified(project.id)}
+							>
+								Modifier
+							</button>
+						)}
 					</div>
 					<p className={styles.projectDesc}>{project.description}</p>
 				</div>
 				{/* Boutons d'action : créer tâche + IA */}
 				<div className={styles.actionButtons}>
+					{isOwner && <DeleteModal toDelete={project} />}
 					<button
 						className={styles.createBtn}
 						onClick={() => setOpenCrtTsk(true)}
 					>
 						Créer une tâche
 					</button>
-					<button className={styles.aiBtn}>
-						<svg
-							className={styles.aiStar}
-							viewBox="0 0 21 21"
-							fill="currentColor"
-						>
-							<path d="M10.5 0l2.4 7.4h7.6l-6.1 4.5 2.4 7.4L10.5 14.8l-6.2 4.5 2.4-7.4L.6 7.4h7.6z" />
-						</svg>
-						IA
-					</button>
+					<AiModal project={project} />
 				</div>
 			</div>
 			{/* Barre des contributeurs */}
@@ -254,7 +237,7 @@ export default function ProjectDetail({ id }: ProjectDetailProps) {
 					<TaskEditModal
 						task={tasks.filter((task) => task.id === idTaskModified)[0]}
 						setidTaskModified={setidTaskModified}
-						setPrjIsModfified={setPrjIsModfified}
+						setPrjIsModfified={setCmtIsModfified}
 					/>
 				)
 			}
@@ -264,7 +247,7 @@ export default function ProjectDetail({ id }: ProjectDetailProps) {
 				openCrtTsk && (
 					<TaskCreateModal
 						idProject={id}
-						setPrjIsModfified={setPrjIsModfified}
+						setRendering={setRendering}
 						setOpenCrtTsk={setOpenCrtTsk}
 					/>
 				)
@@ -276,7 +259,7 @@ export default function ProjectDetail({ id }: ProjectDetailProps) {
 					<ProjectEditModal
 						project={project}
 						setIdProjectModified={setidProjectModified}
-						setPrjIsModfified={setPrjIsModfified}
+						setPrjIsModfified={setRendering}
 					/>
 				)
 			}

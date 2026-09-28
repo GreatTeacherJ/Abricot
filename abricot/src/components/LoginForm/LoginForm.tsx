@@ -19,18 +19,15 @@ export default function LoginForm() {
 		const email = formData.get("email") as string;
 		const password = formData.get("password") as string;
 
-		//const response = await loginAPI(email, password);
-
-		//Pour teste a supprimer
-		const response = await loginAPI("alice@example.com", "P@ssword123");
+		const response = await loginAPI(email, password);
 
 		if (!response) {
 			setErrorMessage("Erreur serveur");
 			return;
 		}
 
-		if (response.data?.success) {
-			const name = response.data.data.user.name;
+		if (response.success) {
+			const name = response.data.user.name;
 			const initials = name
 				.toLowerCase()
 				.normalize("NFD")

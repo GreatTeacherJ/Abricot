@@ -6,8 +6,8 @@ import Link from "next/link";
 import { useRouter, usePathname, useParams } from "next/navigation";
 import { profilApi } from "@/utils/utilsUser";
 import { useEffect, useState } from "react";
+import { disconnectedTools } from "@/utils/utilsLog";
 
-const DASHBOARD = "/";
 const PROJECT = "/projets";
 
 /** Barre de navigation supérieure (logo, liens, avatar) */
@@ -23,8 +23,8 @@ export default function Menu() {
 		async function apiProfil() {
 			const data = await profilApi();
 
-			if (data.data) {
-				const userName = data.data.name;
+			if (data.success) {
+				const userName = data.data.user.name;
 				const initials = userName
 					.split(" ")
 					.map((w) => w[0])
@@ -45,6 +45,11 @@ export default function Menu() {
 		if (pathname !== "/" + routeName + PROJECT) {
 			router.push(`/${routeName}${PROJECT}`);
 		}
+	}
+
+	async function disconnected() {
+		await disconnectedTools();
+		router.push("/connexion");
 	}
 
 	return (
@@ -86,14 +91,19 @@ export default function Menu() {
 					Projets
 				</button>
 			</div>
-			<Link href={"/" + routeName + "/compte"}>
-				{/* Avatar utilisateur */}
-				{userName ? (
-					<div className={styles.userIcon}>{userName}</div>
-				) : (
-					<Image src="/iconAvatar.png" alt="" width={65} height={65} />
-				)}
-			</Link>
+			<div className={styles.navUser}>
+				<button className={styles.disconectWrapper} onClick={disconnected}>
+					Deconnection
+				</button>
+				<Link href={"/" + routeName + "/compte"}>
+					{/* Avatar utilisateur */}
+					{userName ? (
+						<div className={styles.userIcon}>{userName}</div>
+					) : (
+						<Image src="/iconAvatar.png" alt="" width={65} height={65} />
+					)}
+				</Link>
+			</div>
 		</nav>
 	);
 }
