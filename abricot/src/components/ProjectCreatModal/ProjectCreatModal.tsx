@@ -49,6 +49,16 @@ export default function ProjectCreatModal({ setIsRerender }: ProjectCreatModalPr
 		setIsOpen(false);
 	}
 
+	useEffect(() => {
+		function handleKeyDown(e: KeyboardEvent) {
+			if (e.key === "Escape") {
+				onClose();
+			}
+		}
+		window.addEventListener("keydown", handleKeyDown);
+		return () => window.removeEventListener("keydown", handleKeyDown);
+	}, []);
+
 	/** Enregistre les modifications puis ferme la modale */
 	async function handleSave() {
 		switch (true) {

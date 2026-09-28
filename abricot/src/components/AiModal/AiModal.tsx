@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import styles from "./AiModal.module.css";
 import { callModelApi } from "@/utils/utilsAi";
 import type { Project, TasksBot, TaskBot } from "@/types/types";
@@ -129,6 +129,16 @@ export default function AiModal({ project }: AiModalProps) {
 		setMessage("");
 		setIsOpen(false);
 	}
+
+	useEffect(() => {
+		function handleKeyDown(e: KeyboardEvent) {
+			if (e.key === "Escape") {
+				onClose();
+			}
+		}
+		window.addEventListener("keydown", handleKeyDown);
+		return () => window.removeEventListener("keydown", handleKeyDown);
+	}, []);
 
 	//Envoyer le prompt a l'API et recupérer la reponsse
 	async function sendMessage() {

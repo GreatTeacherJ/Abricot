@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Project, Task } from "@/types/types";
 import styles from "./DeleteModal.module.css";
@@ -37,6 +37,16 @@ export default function DeleteModal({ toDelete }: DeleteModalProps) {
 	function onClose() {
 		setIsOpen(false);
 	}
+
+	useEffect(() => {
+		function handleKeyDown(e: KeyboardEvent) {
+			if (e.key === "Escape") {
+				onClose();
+			}
+		}
+		window.addEventListener("keydown", handleKeyDown);
+		return () => window.removeEventListener("keydown", handleKeyDown);
+	}, []);
 
 	/** Supprime le projet puis redirige vers la liste des projets */
 	async function handleDelete() {
