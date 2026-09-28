@@ -38,3 +38,27 @@
   background: var(--color-bg);
 }
 
+@media (max-width: 992px) {
+  .actions {
+    padding: 0 24px;
+  }
+}
+
+@media (max-width: 640px) {
+  .actions {
+    padding: 0 16px;
+  }
+
+  .chips {
+    width: 100%;
+  }
+
+  .chip {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+}
+

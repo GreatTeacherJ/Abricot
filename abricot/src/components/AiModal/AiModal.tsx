@@ -4,7 +4,6 @@ import { useState, useRef } from "react";
 import styles from "./AiModal.module.css";
 import { callModelApi } from "@/utils/utilsAi";
 import type { Project, TasksBot, TaskBot } from "@/types/types";
-import { BotText } from "@/utils/teste";
 import { postAddTasksApi } from "@/utils/utilsTasks";
 import { useProvider } from "../Provider/Provider";
 

@@ -16,8 +16,13 @@ export default function LoginForm() {
 	async function handleSubmit(e: React.SyntheticEvent<HTMLFormElement>) {
 		e.preventDefault();
 		const formData = new FormData(e.currentTarget);
-		const email = formData.get("email") as string;
-		const password = formData.get("password") as string;
+		//const email = formData.get("email") as string;
+		//const password = formData.get("password") as string;
+
+		/*alice@example.com 
+		P@ssword123 */
+		const email = "alice@example.com";
+		const password = "P@ssword123";
 
 		const response = await loginAPI(email, password);
 

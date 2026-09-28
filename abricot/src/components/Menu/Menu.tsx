@@ -91,6 +91,7 @@ export default function Menu() {
 					Projets
 				</button>
 			</div>
+			{/*déconnexion et profil */}
 			<div className={styles.navUser}>
 				<button className={styles.disconectWrapper} onClick={disconnected}>
 					Deconnection

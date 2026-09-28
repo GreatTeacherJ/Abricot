@@ -31,3 +31,16 @@
   flex-direction: column;
   gap: 12px;
 }
+
+@media (max-width: 992px) {
+  .column {
+    min-width: 240px;
+  }
+}
+
+@media (max-width: 640px) {
+  .column {
+    min-width: 260px;
+    scroll-snap-align: start;
+  }
+}
