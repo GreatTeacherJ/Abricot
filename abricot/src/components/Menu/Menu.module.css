@@ -89,3 +89,33 @@ gap: 259px;
   font-weight: 400;
   color: var(--color-dark);
 }
+
+.disconectWrapper{
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 5px;
+background: var(--color-border);
+border-radius: 50px;
+
+/* label */
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 0.6em;
+line-height: 17px;
+color: var(--color-muted);
+height: fit-content;
+align-self: center;
+}
+
+.disconectWrapper:hover{
+opacity: 0.8;
+}
+
+.navUser{
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}

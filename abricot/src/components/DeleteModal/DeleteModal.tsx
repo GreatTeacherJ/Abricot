@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, Dispatch, SetStateAction } from "react";
+import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Project, Task } from "@/types/types";
 import styles from "./DeleteModal.module.css";

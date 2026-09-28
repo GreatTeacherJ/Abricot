@@ -76,3 +76,8 @@ export async function registerAPI(
 		return responseCatch(error);
 	}
 }
+
+export async function disconnectedTools() {
+	const cookieStore = await cookies();
+	cookieStore.delete("tokenAbricot");
+}

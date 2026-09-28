@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter, usePathname, useParams } from "next/navigation";
 import { profilApi } from "@/utils/utilsUser";
 import { useEffect, useState } from "react";
+import { disconnectedTools } from "@/utils/utilsLog";
 
 const PROJECT = "/projets";
 
@@ -44,6 +45,11 @@ export default function Menu() {
 		if (pathname !== "/" + routeName + PROJECT) {
 			router.push(`/${routeName}${PROJECT}`);
 		}
+	}
+
+	async function disconnected() {
+		await disconnectedTools();
+		router.push("/connexion");
 	}
 
 	return (
@@ -85,15 +91,19 @@ export default function Menu() {
 					Projets
 				</button>
 			</div>
-			<div>Deconnection</div>
-			<Link href={"/" + routeName + "/compte"}>
-				{/* Avatar utilisateur */}
-				{userName ? (
-					<div className={styles.userIcon}>{userName}</div>
-				) : (
-					<Image src="/iconAvatar.png" alt="" width={65} height={65} />
-				)}
-			</Link>
+			<div className={styles.navUser}>
+				<button className={styles.disconectWrapper} onClick={disconnected}>
+					Deconnection
+				</button>
+				<Link href={"/" + routeName + "/compte"}>
+					{/* Avatar utilisateur */}
+					{userName ? (
+						<div className={styles.userIcon}>{userName}</div>
+					) : (
+						<Image src="/iconAvatar.png" alt="" width={65} height={65} />
+					)}
+				</Link>
+			</div>
 		</nav>
 	);
 }
