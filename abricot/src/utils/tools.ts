@@ -25,7 +25,7 @@ export function responseToken(): Error {
 
 export function responseCatch(error: unknown): Error {
 	const errorMessage = error instanceof Error ? error.message : String(error);
-	const message = `getUserSearchApi: ${errorMessage}`;
+	const message = `Erreur : ${errorMessage}`;
 
 	return {
 		success: false,

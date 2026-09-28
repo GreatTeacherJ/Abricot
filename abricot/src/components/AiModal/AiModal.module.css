@@ -11,14 +11,15 @@
 
 .modal {
   position: relative;
-  width: 598px;
+  width: 50%;
+  height: 90vh;
   max-width: 100%;
   max-height: 90vh;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   gap: 56px;
-  padding: 79px 73px;
+  padding: 55px 60px;
   background: var(--color-white);
   border-radius: 10px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
@@ -42,7 +43,8 @@
 .content {
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  gap: 10px;
+  height: 100%;
 }
 
 .createBtn {
@@ -77,18 +79,24 @@
 }
 
 .responseContent {
-
 display: flex;
+flex:1;
 flex-direction: column;
 align-items: flex-start;
 padding: 0px;
 gap: 10px;
-min-height: 50vh;
+min-height: 0;
+overflow-y: auto;
+}
+
+.responseContent p{
+  padding: 5px;
 }
 
 .responseText{
 overflow-x: hidden; 
-  overflow-y: auto; 
+  overflow-y: hidden;
+  height: auto; 
 border: 1px solid var(--color-border);
 border-radius: 10px;
  width: 100%;
@@ -105,6 +113,12 @@ font-weight: 400;
 font-size: 1em;
 line-height: 19px;
 color: var(--color-muted)
+}
+
+.userMessage{
+  background-color: var(--color-amber-bg);
+padding: 5px;
+  
 }
 
 .loading {
@@ -137,7 +151,6 @@ justify-content: end;
   border-radius: 24px;
   background-color: #f8fafc;
   padding: 12px 20px;
-  align-items: center;
 }
 
 .textarea {
@@ -289,11 +302,136 @@ color : rgb(255, 157, 0)
     padding: 40px 24px;
   }
 
-  .content {
-    gap: 24px;
-  }
 
   .saveBtn {
     width: 100%;
   }
+}
+
+.botTasksWrapper{
+  width: 100%;
+  margin: 0px;
+box-sizing: border-box;
+display: flex;
+flex-direction: column;
+padding: 25px 40px;
+background: var(--color-white);
+border: 1px solid var(--color-border);
+border-radius: 10px;
+gap:15px;
+}
+
+.botTasksWrapper:has(.botTaskTitle:hover) {
+border-color: var(--color-black);
+}
+
+.botTasksWrapperSlc{
+  border-color: var(--color-muted)
+}
+
+.botTasksWrapperMdf{
+  border-color: var(--color-amber)
+}
+
+.botTaskTextWrp{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.areaInput{
+  width: 100%;
+  resize: none;
+  overflow: hidden;
+  font-family: inherit;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
+
+.botTaskTitle{
+font-family: 'Manrope';
+font-style: normal;
+font-weight: 600;
+font-size: 1.12em;
+line-height: 25px;
+color: var(--color-black);
+margin-bottom: 1px;
+}
+
+.botTaskTitle:hover{
+margin-bottom: 0px;
+border-bottom: solid 1px var(--color-black);
+cursor: pointer;
+}
+
+.areaInput:not(:read-only){
+  background-color: var(--color-border);
+}
+
+.botTaskDesc{
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 14px;
+line-height: 17px;
+color: var(--color-muted)
+}
+
+.botTaskButton{
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 0.75em;
+line-height: 15px;
+color: var(--color-muted);
+gap:5px;
+margin-bottom: 1px;
+}
+
+.btnModifyAct{
+  color: var(--color-amber);
+}
+
+.botTaskBtnWrp{
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+ justify-content: flex-start;
+}
+.botTaskBtnWrp p{
+  font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 0.75em;
+line-height: 15px;
+color: var(--color-muted)
+}
+
+.botTaskButton:hover{
+font-family: 'Inter';
+font-style: normal;
+font-weight: 400;
+font-size: 0.75em;
+line-height: 15px;
+color: var(--color-muted);
+gap:5px;
+border-bottom: solid 1px var(--color-muted);
+margin-bottom: 0px;
+}
+
+.addTasksBtn{
+display: flex;
+flex-direction: row;
+justify-content: center;
+align-items: center;
+padding: 13px 74px;
+gap: 10px;
+background: var(--color-title);
+border-radius: 10px;
+color: var(--color-white);
+align-items: flex-end;
+justify-content: center;
+align-self: center;
+width: fit-content;
 }

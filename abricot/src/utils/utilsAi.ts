@@ -1,78 +1,117 @@
+"use server";
+
+import type { Project } from "@/types/types";
+
+import { responseCatch } from "./tools";
+import { PROMPT_HEADER, NO_TASK_MESSAGE } from "@/lib/promptHeader";
+import { getAllTaskForProjectApi } from "./utilsProject";
+import { postEmbeddingApi } from "@/utils/utilsEmbedding";
 import type { ResponseApi } from "@/types/types";
-import { cookies } from "next/headers";
-import { responseToken, responseCatch } from "./tools";
 
-interface Embedding {
-	newlyEmbedded: number;
-	taskIds: string[];
-	tokenSize: number;
-	maxId: number;
+import dotenv from "dotenv";
+dotenv.config(); // charge les variables du .env dans process.env
+
+// Token MammouthAI
+const MAMMOUTH_TOKEN = process.env.MAMMOUTH_TOKEN;
+
+const API_MAMMOUTH = true;
+
+interface ResponseMAMMOUTH {
+	choices: [
+		{
+			message: {
+				content: string;
+			};
+		},
+	];
 }
-interface RequestBody {
-	prompt: string;
-	lengthEmbed?: number; // optionnel dès le départ
-}
 
-type Message = {
-	id: number;
-	text: string;
-	sender: "user" | "bot";
-	timestamp: Date;
-};
-
-export async function postEmbeddingApi(
-	idProject: string,
-	prompt: string,
+export async function callModelApi(
+	project: Project,
+	message: string,
 	lengthEmbed?: number,
-): Promise<ResponseApi<Embedding>> {
+): Promise<ResponseApi<ResponseMAMMOUTH>> {
 	try {
-		const cookieStore = await cookies();
-		const cookie = cookieStore.get("tokenAbricot");
-		const token = cookie?.value;
+		const tasksText: string[] = [];
+		console.log("debut embeding");
 
-		if (!token) {
-			return responseToken();
+		const resTaskIds = await postEmbeddingApi(project.id, message, lengthEmbed);
+		if (resTaskIds.success) {
+			console.log("fin embeding / debut model\n", resTaskIds.data);
+			//Recupérer toutes les tâches du projet
+			const resTask = await getAllTaskForProjectApi(project.id);
+			console.log("fin de l'appel model");
+			if (resTask.success) {
+				//trié les tache en fonction de la liste
+				const tasksFilter = resTask.data.tasks.filter((task) =>
+					resTaskIds.data.taskIds.some((t) => t === task.id),
+				);
+				tasksFilter.forEach((t) => tasksText.push(JSON.stringify(t)));
+			} else {
+				tasksText.push(NO_TASK_MESSAGE);
+			}
+		} else {
+			tasksText.push(NO_TASK_MESSAGE);
+		}
+		console.log("Liste de tache : ", tasksText);
+		//créer le prompt avec entête et tâche existante
+		const prompt =
+			"Projet en cours : " +
+			JSON.stringify(project) +
+			"\n tâche pertinante déja créée du projet : " +
+			tasksText.join("\n") +
+			"\nrequête utilisateur : " +
+			message;
+		console.log("Prompt envoyer : ", prompt);
+
+		let res;
+		if (!API_MAMMOUTH) {
+			//=======Modele Local===============
+			res = await fetch("/api/chat", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ message: prompt }),
+			});
+		} else {
+			//==============API MAMMOUTH===================
+			res = await fetch("https://api.mammouth.ai/v1/chat/completions", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${MAMMOUTH_TOKEN}`,
+				},
+				body: JSON.stringify({
+					model: "gpt-6-luna",
+					messages: [
+						{
+							role: "system",
+							content: PROMPT_HEADER,
+						},
+						{
+							role: "user",
+							content: prompt,
+						},
+					],
+				}),
+			});
 		}
 
-		let body: RequestBody = { prompt: prompt };
-
-		if (lengthEmbed) {
-			body = { ...body, lengthEmbed: lengthEmbed };
-			// ou plus simple : body.lengthEmbed = lengthEmbed;
-		}
-		const response = await fetch("http://localhost:8000/embeddings/" + idProject, {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-				Authorization: `Bearer ${token}`,
-			},
-			body: JSON.stringify(body),
-		});
-		const data = await response.json();
-
-		return data;
-	} catch (error) {
-		return responseCatch(error);
-	}
-}
-
-export async function callModelApi(prompt: string, taskIds: string[]) {
-	try {
-		const res = await fetch("/api/chat", {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ prompt }),
-		});
-
+		console.log("reponse mammouth : ", res);
 		if (!res.ok) {
-			console.error("Erreur serveur:", res.status);
-			return;
+			const errorBody = await res.json().catch(() => null);
+			console.error("Erreur serveur:", res.status, errorBody);
+			return responseCatch(errorBody);
 		}
 
 		const data = await res.json();
 
-		return data;
+		return {
+			success: true,
+			message: "Message Mammouth reçu",
+			data: data,
+		};
 	} catch (error) {
-		responseCatch(error);
+		console.error("Erreur fetch /api/chat:", error);
+		return responseCatch(error);
 	}
 }

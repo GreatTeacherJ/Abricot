@@ -85,6 +85,7 @@ export default function Menu() {
 					Projets
 				</button>
 			</div>
+			<div>Deconnection</div>
 			<Link href={"/" + routeName + "/compte"}>
 				{/* Avatar utilisateur */}
 				{userName ? (

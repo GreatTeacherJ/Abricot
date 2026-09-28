@@ -106,3 +106,12 @@ export interface Error {
 }
 
 export type ResponseApi<T> = Success<T> | Error;
+
+export interface TasksBot {
+	tasks: TaskBot[];
+}
+export interface TaskBot {
+	title: string;
+	description: string;
+	dueDate: string;
+}

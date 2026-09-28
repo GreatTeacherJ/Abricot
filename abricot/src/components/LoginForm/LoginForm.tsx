@@ -19,10 +19,7 @@ export default function LoginForm() {
 		const email = formData.get("email") as string;
 		const password = formData.get("password") as string;
 
-		//const response = await loginAPI(email, password);
-
-		//Pour teste a supprimer
-		const response = await loginAPI("alice@example.com", "P@ssword123");
+		const response = await loginAPI(email, password);
 
 		if (!response) {
 			setErrorMessage("Erreur serveur");

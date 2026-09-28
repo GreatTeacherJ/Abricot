@@ -1,0 +1,1370 @@
+export const models = {
+  "data": [
+    {
+      "id": "mistral-small-2603",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "75a9e83f20b154940ee2f07bccea3b71e846c9a09e3f6133e03955dbe7d56233",
+        "max_input_tokens": null,
+        "max_output_tokens": null,
+        "input_cost_per_token": 1.5e-7,
+        "output_cost_per_token": 6e-7
+      }
+    },
+    {
+      "id": "qwen3.7-max",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "9129afbbe227f90694107d4bf54e9354e066f79b2600ed093f765b764afc54d0",
+        "max_input_tokens": 1000000,
+        "max_output_tokens": 65500,
+        "input_cost_per_token": 0.0000025,
+        "output_cost_per_token": 0.0000075
+      }
+    },
+    {
+      "id": "gpt-6-luna",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "429f3a56a36889635c1c94a4dc1e56667e59a5c009357ed22627a1745f7db7a1",
+        "max_input_tokens": 1050000,
+        "max_output_tokens": 128000,
+        "input_cost_per_token": 1e-7,
+        "output_cost_per_token": 5e-7
+      }
+    },
+    {
+      "id": "claude-sonnet-4-5",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "4e6afbc70b94fba0ad80bec346aafe3a41cd15eb1d1151532581b5302bba8294",
+        "max_input_tokens": 1000000,
+        "max_output_tokens": 64000,
+        "input_cost_per_token": 0.000003,
+        "output_cost_per_token": 0.000015
+      }
+    },
+    {
+      "id": "qwen3.7-plus",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "5925075192afee7f9938c6aaf948ded3c80eaf669654e8d118d45dccc4e10e5c",
+        "max_input_tokens": 1000000,
+        "max_output_tokens": 65500,
+        "input_cost_per_token": 4e-7,
+        "output_cost_per_token": 0.0000016
+      }
+    },
+    {
+      "id": "kimi-k3",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "41773b75ea9cb5ea4e59dc2d347ba06419d7074222c628f187be2779a88cdadf",
+        "max_input_tokens": 1048576,
+        "max_output_tokens": 1048576,
+        "input_cost_per_token": 0.000003,
+        "output_cost_per_token": 0.000015
+      }
+    },
+    {
+      "id": "gemini-3.1-pro-preview",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "116d0358e444a24b23b03c920e3c341375d14d69cfeced2d2748212248e2ae02",
+        "max_input_tokens": 1048576,
+        "max_output_tokens": 65536,
+        "input_cost_per_token": 0.000002,
+        "output_cost_per_token": 0.000012
+      }
+    },
+    {
+      "id": "gemini-3.1-flash-image-preview",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "d8e9752614095666e31b55aea1496b8314a54906cda4042cb554ded62581fba0",
+        "max_input_tokens": 65536,
+        "max_output_tokens": 32768,
+        "input_cost_per_token": 5e-7,
+        "output_cost_per_token": 0.000003
+      }
+    },
+    {
+      "id": "glm-5",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "fad18dee210a57ddaa3eb1ce3190c64badaea10919ac799a63d7a9b80c5ffb40",
+        "max_input_tokens": 204800,
+        "max_output_tokens": 131100,
+        "input_cost_per_token": 9.5e-7,
+        "output_cost_per_token": 0.00000255
+      }
+    },
+    {
+      "id": "gpt-5.6-sol",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "c98ec789ea064d3592b2a8340d074c33208b479823ff38b8c30997e69df573ad",
+        "max_input_tokens": 1050000,
+        "max_output_tokens": 128000,
+        "input_cost_per_token": 0.000005,
+        "output_cost_per_token": 0.00003
+      }
+    },
+    {
+      "id": "deepseek-v4-pro",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "51e3ee66e9f3ad0cd496e374320475441c44029f75501bf98c3c44803b1acca7",
+        "max_input_tokens": 1050000,
+        "max_output_tokens": 384000,
+        "input_cost_per_token": 0.00000174,
+        "output_cost_per_token": 0.00000348
+      }
+    },
+    {
+      "id": "sonar-deep-research",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "6fa9984c9e1a47d6aca800053fcb3c4f4e1f36bf9a9dc3f9cc0fa810b36298e5",
+        "max_input_tokens": 128000,
+        "max_output_tokens": null,
+        "input_cost_per_token": 0.000002,
+        "output_cost_per_token": 0.000008
+      }
+    },
+    {
+      "id": "qwen3-coder-flash",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "71431bebee85c0cc5435a00f442d8898b974a3b355dc610bec0562ab6d75d3ed",
+        "max_input_tokens": 997952,
+        "max_output_tokens": 65536,
+        "input_cost_per_token": 3.25e-7,
+        "output_cost_per_token": 0.000001625
+      }
+    },
+    {
+      "id": "codestral-2508",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "639eaf54fcf2eb8b2f467ee673f6cf2eee71932f463fcdf66bb820995e9f6e32",
+        "max_input_tokens": 256000,
+        "max_output_tokens": 256000,
+        "input_cost_per_token": 3e-7,
+        "output_cost_per_token": 9e-7
+      }
+    },
+    {
+      "id": "gemini-3.7-flash",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "79ac856308d006015812a13f4fdb83903ce95ccbd827906ee9e70968053812fe",
+        "max_input_tokens": 1048576,
+        "max_output_tokens": 65536,
+        "input_cost_per_token": 0.0000015,
+        "output_cost_per_token": 0.0000075
+      }
+    },
+    {
+      "id": "gpt-6-astra",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "27be32955aa18527ef039c001a127bd0211eddbf2f8df79c9e6da2c6223424b7",
+        "max_input_tokens": 1050000,
+        "max_output_tokens": 128000,
+        "input_cost_per_token": 0.00001,
+        "output_cost_per_token": 0.00005
+      }
+    },
+    {
+      "id": "grok-4.6",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "ed0ac277b0aafeb88c80a700ccac0d5e5ac7094309db2ccf7c3c797ee92731f0",
+        "max_input_tokens": 500000,
+        "max_output_tokens": 500000,
+        "input_cost_per_token": 0.000002,
+        "output_cost_per_token": 0.000006
+      }
+    },
+    {
+      "id": "gpt-5.1-codex",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "74ea9aedd50aeebffc8e5505002b511d256b6fe09e2b98dc304819ed2b3a6439",
+        "max_input_tokens": 272000,
+        "max_output_tokens": 128000,
+        "input_cost_per_token": 0.00000125,
+        "output_cost_per_token": 0.00001
+      }
+    },
+    {
+      "id": "gemini-3.1-pro-preview-customtools",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "9df009924a3a88eb20a00f83500e8e574462f9b79acf9d12f9161ab6c675e481",
+        "max_input_tokens": 1048576,
+        "max_output_tokens": 65536,
+        "input_cost_per_token": 0.000002,
+        "output_cost_per_token": 0.000012
+      }
+    },
+    {
+      "id": "gpt-5.2-chat",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "923d5e35fa6eb8ad492bbeff162b64826012cb7b5dde5062c2f34586e9d693e0",
+        "max_input_tokens": 128000,
+        "max_output_tokens": 16384,
+        "input_cost_per_token": 0.00000175,
+        "output_cost_per_token": 0.000014
+      }
+    },
+    {
+      "id": "grok-4.7",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "13d2ae6d8da4d6506e9fc8ab3c4c0da7211c84f963470e01cdb24308a0332726",
+        "max_input_tokens": 500000,
+        "max_output_tokens": 500000,
+        "input_cost_per_token": 0.000002,
+        "output_cost_per_token": 0.000006
+      }
+    },
+    {
+      "id": "gemini-3.1-flash-lite-image",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "8a41fe0e5df238701a059bb635586b67218891294430ff5623e1b3e374a106ee",
+        "max_input_tokens": 65536,
+        "max_output_tokens": 32768,
+        "input_cost_per_token": 2.5e-7,
+        "output_cost_per_token": 0.0000015
+      }
+    },
+    {
+      "id": "minimax-m2.7",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "21d35b7a02a6066555534f759dcaa975a7d3cf99071f56514dce6f7fe76a2944",
+        "max_input_tokens": 204800,
+        "max_output_tokens": 131100,
+        "input_cost_per_token": 3e-7,
+        "output_cost_per_token": 0.0000012
+      }
+    },
+    {
+      "id": "gpt-5.3-codex",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "2e8091c6625736d911a5342e19df5b394a1a0e493d84610bca4b981263a77624",
+        "max_input_tokens": 272000,
+        "max_output_tokens": 128000,
+        "input_cost_per_token": 0.00000175,
+        "output_cost_per_token": 0.000014
+      }
+    },
+    {
+      "id": "mammouth-recommended",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "6d4165f5222deff8b0199454b3a22d070166a584a19ec2c0dec5122ecbe88b71",
+        "max_input_tokens": 1048576,
+        "max_output_tokens": 128000,
+        "input_cost_per_token": 1.5e-7,
+        "output_cost_per_token": 5e-7
+      }
+    },
+    {
+      "id": "gpt-6-sol",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "2cbc3ec7cb6ffd74441d324521eceb35f2ff6e9f2c4a1e7cf23db3333307245e",
+        "max_input_tokens": 1050000,
+        "max_output_tokens": 128000,
+        "input_cost_per_token": 0.000002,
+        "output_cost_per_token": 0.00001
+      }
+    },
+    {
+      "id": "claude-opus-5-fast",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "3eb34bb8dea99573c6792e7a315a49a80609cd3034fdddf3dc73555e17925354",
+        "max_input_tokens": 1000000,
+        "max_output_tokens": 128000,
+        "input_cost_per_token": 0.00001,
+        "output_cost_per_token": 0.00005
+      }
+    },
+    {
+      "id": "gemini-2.5-flash-lite",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "06952138fca7a8013df7e7b10f88d82db3458a0a1c93a1fae0ff0c86e9784aa7",
+        "max_input_tokens": 1048576,
+        "max_output_tokens": 65535,
+        "input_cost_per_token": 1e-7,
+        "output_cost_per_token": 4e-7
+      }
+    },
+    {
+      "id": "claude-opus-5-5-fast",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "e0cd9e13d88c56a1172c7ac3fdbd03da6e89b47bef676dc24d8f417ed7ea0f5d",
+        "max_input_tokens": 1000000,
+        "max_output_tokens": 128000,
+        "input_cost_per_token": 0.000008,
+        "output_cost_per_token": 0.00004
+      }
+    },
+    {
+      "id": "gpt-5.1",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "a69858d882251516039de56c4e4b77f1d51be85ce2c07d6d9fd3139fd801d996",
+        "max_input_tokens": 272000,
+        "max_output_tokens": 128000,
+        "input_cost_per_token": 0.00000125,
+        "output_cost_per_token": 0.00001
+      }
+    },
+    {
+      "id": "llama-4-maverick",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "669f70d870590ebebf41fb10a3a34dbccbdf9671ef4d7bda398210eed597adce",
+        "max_input_tokens": 131072,
+        "max_output_tokens": 131072,
+        "input_cost_per_token": 1.5e-7,
+        "output_cost_per_token": 6e-7
+      }
+    },
+    {
+      "id": "claude-sonnet-4",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "452eee21ba73d41d49f0625797edbfaeb763acfaa402f9c880abbeeeeb7be854",
+        "max_input_tokens": 1000000,
+        "max_output_tokens": 64000,
+        "input_cost_per_token": 0.000003,
+        "output_cost_per_token": 0.000015
+      }
+    },
+    {
+      "id": "kimi-k2.6",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "e6edfbe2ef02973c0d40aef225c4c6f9f45227e2d708366cb6a54e2296be4bd7",
+        "max_input_tokens": 262100,
+        "max_output_tokens": 262100,
+        "input_cost_per_token": 7.3e-7,
+        "output_cost_per_token": 0.00000349
+      }
+    },
+    {
+      "id": "llama-4-scout",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "5144ec9afe85bdb230f9d01af81667cb1c434d25ef8caba10f588c46f19e8673",
+        "max_input_tokens": 131072,
+        "max_output_tokens": 8192,
+        "input_cost_per_token": 8e-8,
+        "output_cost_per_token": 5e-7
+      }
+    },
+    {
+      "id": "gpt-4.1",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "2e680e2531483966139973c672db5b5ccd6b5160b2b70b1610f1960eb8b4a1c7",
+        "max_input_tokens": 1047576,
+        "max_output_tokens": 32768,
+        "input_cost_per_token": 0.000002,
+        "output_cost_per_token": 0.000008
+      }
+    },
+    {
+      "id": "gemini-3.5-flash",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "4f3a14941ef702586c47944b9c5f8519e9243983dfaf629dbf95a133a66403b6",
+        "max_input_tokens": 1048576,
+        "max_output_tokens": 65535,
+        "input_cost_per_token": 0.0000015,
+        "output_cost_per_token": 0.000009
+      }
+    },
+    {
+      "id": "qwen3.5-35b-a3b",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "b9211b732862c551d9979603386ccec3d4e4796e714c5c40d5264d2d7f9f65f0",
+        "max_input_tokens": 262144,
+        "max_output_tokens": 262144,
+        "input_cost_per_token": 2.5e-7,
+        "output_cost_per_token": 0.0000015
+      }
+    },
+    {
+      "id": "gpt-5.6-luna",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "9b188bda3efec3b7edfab873689e6af3742b7879c8c43226a52b3f5ed6cf0591",
+        "max_input_tokens": 1050000,
+        "max_output_tokens": 128000,
+        "input_cost_per_token": 2e-7,
+        "output_cost_per_token": 0.0000012
+      }
+    },
+    {
+      "id": "qwen3.5-397b-a17b",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "cb8ee91c86e05b533c1544f9c1f7ffc48c6457666f3397c81519521c6575e637",
+        "max_input_tokens": 262144,
+        "max_output_tokens": 262144,
+        "input_cost_per_token": 6e-7,
+        "output_cost_per_token": 0.0000036
+      }
+    },
+    {
+      "id": "gpt-4.1-nano",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "c7cce5129b5308ea1b803a84ad0a88a22bcad85117a80bcd2661ab96dfb375d7",
+        "max_input_tokens": 1047576,
+        "max_output_tokens": 32768,
+        "input_cost_per_token": 1e-7,
+        "output_cost_per_token": 4e-7
+      }
+    },
+    {
+      "id": "claude-sonnet-5",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "3984b422212a13fbb214c015424bebe52ef76f18d507d2cc2610c8c7364184ba",
+        "max_input_tokens": 1000000,
+        "max_output_tokens": 128000,
+        "input_cost_per_token": 0.000002,
+        "output_cost_per_token": 0.00001
+      }
+    },
+    {
+      "id": "text-embedding-3-small",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "baf5ee2a4a2e30b24fa4d9428a293e68a32bee411f16c3915e972c14fc90197f",
+        "max_input_tokens": 8191,
+        "max_output_tokens": null,
+        "input_cost_per_token": 2e-8,
+        "output_cost_per_token": 0
+      }
+    },
+    {
+      "id": "minimax-m2.7-highspeed",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "fb911d007055c62645b70a86ac76d5013cf747d92044921185fcbef6fc90e390",
+        "max_input_tokens": 204800,
+        "max_output_tokens": 131100,
+        "input_cost_per_token": 6e-7,
+        "output_cost_per_token": 0.0000024
+      }
+    },
+    {
+      "id": "gemini-2.5-flash",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "843c0bcc9917457bf2796d585a51e5d530ce755a7036f031959c91c8809cea38",
+        "max_input_tokens": 1048576,
+        "max_output_tokens": 65535,
+        "input_cost_per_token": 3e-7,
+        "output_cost_per_token": 0.0000025
+      }
+    },
+    {
+      "id": "claude-haiku-4-5",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "dd253ce6afecccc6766098a456b03de6bfc42f63571e269c36ff0d14590a6505",
+        "max_input_tokens": 1000000,
+        "max_output_tokens": 64000,
+        "input_cost_per_token": 0.000001,
+        "output_cost_per_token": 0.000005
+      }
+    },
+    {
+      "id": "gpt-5.1-chat",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "82c56d6c2f2c8b869ffd02066fccc7862a1f9ac0a9a71299499233132ff858b2",
+        "max_input_tokens": 128000,
+        "max_output_tokens": 128000,
+        "input_cost_per_token": 0.00000125,
+        "output_cost_per_token": 0.00001
+      }
+    },
+    {
+      "id": "grok-4.5",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "ee847b1f867d6d0c901a0567efb54af953e9beff9dad8ba117d64a95941c4240",
+        "max_input_tokens": 500000,
+        "max_output_tokens": 500000,
+        "input_cost_per_token": 0.000002,
+        "output_cost_per_token": 0.000006
+      }
+    },
+    {
+      "id": "claude-opus-4-6",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "b333ba33faf7147dd142656a14b8301f2154239f83147eab6c57ebb4a09e6e29",
+        "max_input_tokens": 1000000,
+        "max_output_tokens": 128000,
+        "input_cost_per_token": 0.000005,
+        "output_cost_per_token": 0.000025
+      }
+    },
+    {
+      "id": "gemini-3-pro-image-preview",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "2e14ac158f89b20ad8d7cfce1b798f395520c042c912cc05eed4efba4b864b38",
+        "max_input_tokens": 65536,
+        "max_output_tokens": 32768,
+        "input_cost_per_token": 0.000002,
+        "output_cost_per_token": 0.000012
+      }
+    },
+    {
+      "id": "claude-opus-4-8",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "b03e3490e8689f30958cffca6e5ee784f3f238429f6085c743abde00bd3a9e48",
+        "max_input_tokens": 1000000,
+        "max_output_tokens": 128000,
+        "input_cost_per_token": 0.000005,
+        "output_cost_per_token": 0.000025
+      }
+    },
+    {
+      "id": "qwen3.8-flash",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "0fdc48aff563af8e63e32d929ebc6c5bf98af477f2bb37cf186958b823f1ffee",
+        "max_input_tokens": 1000000,
+        "max_output_tokens": 131072,
+        "input_cost_per_token": 1.5e-7,
+        "output_cost_per_token": 4.7e-7
+      }
+    },
+    {
+      "id": "gpt-5.4-mini",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "7e2692fe2fa619a1d6c64c354de877e24923365aca57b3991048e8931a1f48ee",
+        "max_input_tokens": 922000,
+        "max_output_tokens": 128000,
+        "input_cost_per_token": 7.5e-7,
+        "output_cost_per_token": 0.0000045
+      }
+    },
+    {
+      "id": "mistral-medium-3.1",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "60b983b2c27d64e59404058d6781a851b8a4e6ae25867600664fa8586a892afb",
+        "max_input_tokens": 131072,
+        "max_output_tokens": 131072,
+        "input_cost_per_token": 4e-7,
+        "output_cost_per_token": 0.000002
+      }
+    },
+    {
+      "id": "gpt-5.5",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "b783059c89808bfb9d8601e296e53df24b78f64cca686ebf54eb9dae04a62ece",
+        "max_input_tokens": 1050000,
+        "max_output_tokens": 128000,
+        "input_cost_per_token": 0.000005,
+        "output_cost_per_token": 0.00003
+      }
+    },
+    {
+      "id": "gpt-5.6-terra",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "4670f7f45766d15f3c90f0f67fc13f9c109d32520a25e580881b8e995a0b47e7",
+        "max_input_tokens": 1050000,
+        "max_output_tokens": 128000,
+        "input_cost_per_token": 0.000002,
+        "output_cost_per_token": 0.000012
+      }
+    },
+    {
+      "id": "claude-sonnet-4-6",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "9490036ebd2900545fd665453374f8d882426d8b3b3f6695604e164370a01692",
+        "max_input_tokens": 1000000,
+        "max_output_tokens": 128000,
+        "input_cost_per_token": 0.000003,
+        "output_cost_per_token": 0.000015
+      }
+    },
+    {
+      "id": "minimax-m3",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "2bc6ebadb08f012a60b8a0c35e55f537e7b113945c96e84e955a35292a39e580",
+        "max_input_tokens": 512000,
+        "max_output_tokens": 512000,
+        "input_cost_per_token": 3e-7,
+        "output_cost_per_token": 0.0000012
+      }
+    },
+    {
+      "id": "claude-fable-5.1",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "07a699eb0b9c6c6bc5fe3b903a01bdb2736648d374aa300420ef9ec38a9a6e00",
+        "max_input_tokens": 1000000,
+        "max_output_tokens": 128000,
+        "input_cost_per_token": 0.00001,
+        "output_cost_per_token": 0.00005
+      }
+    },
+    {
+      "id": "gemini-2.5-pro",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "d69d263ffd69a26b1d67a20f45176313cccb86170526f9d47be173866970563d",
+        "max_input_tokens": 1048576,
+        "max_output_tokens": 8192,
+        "input_cost_per_token": 0.0000025,
+        "output_cost_per_token": 0.000015
+      }
+    },
+    {
+      "id": "deepseek-v4-flash",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "2e7b5202648b84f4f5384ccd1e580fe7ed90cf8e075da164a9fa4c0d60c114fc",
+        "max_input_tokens": 1050000,
+        "max_output_tokens": 384000,
+        "input_cost_per_token": 1.4e-7,
+        "output_cost_per_token": 2.8e-7
+      }
+    },
+    {
+      "id": "deepseek-v4.1-flash",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "880543645c8e2bc141783fe3ceb663ae82b6a1a9f2adba4295585b6548742dbc",
+        "max_input_tokens": 1048576,
+        "max_output_tokens": 1048576,
+        "input_cost_per_token": 2.2e-7,
+        "output_cost_per_token": 6.6e-7
+      }
+    },
+    {
+      "id": "qwen3.8-27b",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "a67f05199e35fb4b548ce6c1a97fb22b664d75031c203fc6f7397913b3d1cb92",
+        "max_input_tokens": 1000000,
+        "max_output_tokens": 131072,
+        "input_cost_per_token": 4e-7,
+        "output_cost_per_token": 0.00000255
+      }
+    },
+    {
+      "id": "mistral-medium-3-5",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "19aeaed1115c043303d3fafdf90c5c86de844d3a7446b8d299e9e532b0e7f7e6",
+        "max_input_tokens": 262144,
+        "max_output_tokens": 262144,
+        "input_cost_per_token": 0.0000015,
+        "output_cost_per_token": 0.0000075
+      }
+    },
+    {
+      "id": "sonar-pro",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "e18ab5ecd58e692a6154dbd4f9d286022758293c38fe0da9d48f464b414ae65a",
+        "max_input_tokens": 200000,
+        "max_output_tokens": 8000,
+        "input_cost_per_token": 0.000003,
+        "output_cost_per_token": 0.000015
+      }
+    },
+    {
+      "id": "gpt-5.2",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "ac0bdfc9bcdcdcf62eef31006a41602d69104daceee14488d586e8eab16cd1df",
+        "max_input_tokens": 272000,
+        "max_output_tokens": 128000,
+        "input_cost_per_token": 0.00000175,
+        "output_cost_per_token": 0.000014
+      }
+    },
+    {
+      "id": "claude-opus-4-5",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "c6849a7ff92c349bce5c816fea1d30c1da2dea08d2433a12268a2610aa4932f9",
+        "max_input_tokens": 200000,
+        "max_output_tokens": 64000,
+        "input_cost_per_token": 0.000005,
+        "output_cost_per_token": 0.000025
+      }
+    },
+    {
+      "id": "deepseek-v4-flash-0731",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "63ce669cf9c05d49724055837ebff7fe6fe642ff6a904e0518e5831cf2189c7c",
+        "max_input_tokens": 1050000,
+        "max_output_tokens": 384000,
+        "input_cost_per_token": 1.4e-7,
+        "output_cost_per_token": 2.8e-7
+      }
+    },
+    {
+      "id": "kimi-k3-fast",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "bdc4789102d065c7eb89c5ec149e460e663e5d922a94f2d87bff7a9fc6416bdd",
+        "max_input_tokens": 1048576,
+        "max_output_tokens": 1048576,
+        "input_cost_per_token": 0.0000045,
+        "output_cost_per_token": 0.0000225
+      }
+    },
+    {
+      "id": "gpt-5.1-codex-max",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "052d2618c0934b1ccc772c3321748deecb6b7c5b1e1b8ac0fc1695924721153f",
+        "max_input_tokens": 272000,
+        "max_output_tokens": 128000,
+        "input_cost_per_token": 0.00000125,
+        "output_cost_per_token": 0.00001
+      }
+    },
+    {
+      "id": "claude-opus-5-5",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "afd87d8d8ab78d3873d2a912e3eb7c7ba70613ad2f270c108705994d74447e1b",
+        "max_input_tokens": 1000000,
+        "max_output_tokens": 128000,
+        "input_cost_per_token": 0.000004,
+        "output_cost_per_token": 0.00002
+      }
+    },
+    {
+      "id": "gpt-image-2",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "4c7276df0f95b58c538e09fc68d4a6bc1de29a26303d96ed2f20aa2755bc0e4e",
+        "max_input_tokens": null,
+        "max_output_tokens": null,
+        "input_cost_per_token": 0.000008,
+        "output_cost_per_token": 0.000015
+      }
+    },
+    {
+      "id": "gpt-5.3-chat",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "898ba646ed9505f3a0fc605978c265d8db3ea61f36e106697e06c3489deb97ee",
+        "max_input_tokens": 128000,
+        "max_output_tokens": 16384,
+        "input_cost_per_token": 0.00000175,
+        "output_cost_per_token": 0.000014
+      }
+    },
+    {
+      "id": "gpt-5.2-codex",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "7587a953b44f0738a01bfbd2cd015ac9c31696a175ca9ed99104e59c310f8720",
+        "max_input_tokens": 272000,
+        "max_output_tokens": 128000,
+        "input_cost_per_token": 0.00000175,
+        "output_cost_per_token": 0.000014
+      }
+    },
+    {
+      "id": "gpt-4.1-mini",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "a827ab50459294c05ac0c86839e5ee6656e0446e5e940de67700dceadbc42689",
+        "max_input_tokens": 1047576,
+        "max_output_tokens": 32768,
+        "input_cost_per_token": 4e-7,
+        "output_cost_per_token": 0.0000016
+      }
+    },
+    {
+      "id": "glm-5.2",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "998b21a3aff31ec89fc633bd9920f2979078c9a38efd7ebb35fd3cfa16779407",
+        "max_input_tokens": 1048576,
+        "max_output_tokens": 131072,
+        "input_cost_per_token": 0.0000014,
+        "output_cost_per_token": 0.0000044
+      }
+    },
+    {
+      "id": "glm-5.3-flash",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "1e6af272b1a78891b9c15e480de97bac3ca041c648af07aa85054b2879826379",
+        "max_input_tokens": 1048576,
+        "max_output_tokens": 128000,
+        "input_cost_per_token": 1.5e-7,
+        "output_cost_per_token": 5e-7
+      }
+    },
+    {
+      "id": "deepseek-v3.2",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "705020de4dd33c30ac65e18c1aee369ee6192ab99421bb812ac3eae67d08e4dc",
+        "max_input_tokens": 163840,
+        "max_output_tokens": 163840,
+        "input_cost_per_token": 2.7e-7,
+        "output_cost_per_token": 4e-7
+      }
+    },
+    {
+      "id": "grok-4.3",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "da0b4d7fb2d35738e9bbca61114e551f7bc3551d5b95e148e823e2f0ffd7ee8d",
+        "max_input_tokens": 1000000,
+        "max_output_tokens": 1000000,
+        "input_cost_per_token": 0.00000125,
+        "output_cost_per_token": 0.0000025
+      }
+    },
+    {
+      "id": "claude-opus-5",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "d28fb934772a945be0539d0be788115960ffc7c4945743e98c561a1746e997ed",
+        "max_input_tokens": 1000000,
+        "max_output_tokens": 128000,
+        "input_cost_per_token": 0.000005,
+        "output_cost_per_token": 0.000025
+      }
+    },
+    {
+      "id": "devstral-2512",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "320b1b13a1d40a7b0b398d80e9919ab5efcf62a9d1b8a348ee5857c8da375e7e",
+        "max_input_tokens": 262144,
+        "max_output_tokens": 65536,
+        "input_cost_per_token": 4e-7,
+        "output_cost_per_token": 0.000002
+      }
+    },
+    {
+      "id": "gpt-5.4",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "b22085b511647c4947d3cae6e06895aedaa3e13e83b24b5451524722a5b2a280",
+        "max_input_tokens": 922000,
+        "max_output_tokens": 128000,
+        "input_cost_per_token": 0.0000025,
+        "output_cost_per_token": 0.000015
+      }
+    },
+    {
+      "id": "qwen3.5-9b",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "6271adb7ca6522bd2f91e6fa0e515613256953211c04037256a0a687728889f4",
+        "max_input_tokens": 256000,
+        "max_output_tokens": 256000,
+        "input_cost_per_token": 1e-7,
+        "output_cost_per_token": 1.5e-7
+      }
+    },
+    {
+      "id": "glm-5.1",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "6c8bbd0d24fa6e84fdcb8bba17bd21637ec23e4272b9c0a49df3495528d52efa",
+        "max_input_tokens": 202800,
+        "max_output_tokens": 202800,
+        "input_cost_per_token": 0.00000105,
+        "output_cost_per_token": 0.0000035
+      }
+    },
+    {
+      "id": "gemini-3.1-flash-lite-preview",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "3c03960473764bc0b4db23eae9943f3be85ae93dab974fb18da79bbbc2ed4566",
+        "max_input_tokens": 1048576,
+        "max_output_tokens": 65536,
+        "input_cost_per_token": 2.5e-7,
+        "output_cost_per_token": 0.0000015
+      }
+    },
+    {
+      "id": "gemini-3.8-flash",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "98ac8e9edeb3fde0692e96ce44265029bb5090b9a06c7c91a7cc98404d56a8e1",
+        "max_input_tokens": 1048576,
+        "max_output_tokens": 65536,
+        "input_cost_per_token": 7.5e-7,
+        "output_cost_per_token": 0.00000375
+      }
+    },
+    {
+      "id": "gpt-5.4-nano",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "d7615a5fcf06eb436e0d8421a76ac94c922404ebe96e98ad84df3630a24624c7",
+        "max_input_tokens": 922000,
+        "max_output_tokens": 128000,
+        "input_cost_per_token": 2e-7,
+        "output_cost_per_token": 0.00000125
+      }
+    },
+    {
+      "id": "gemini-3.6-flash",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "1bf24104b7ce33998f5c3a0710c8ecab2ab6942d3635a0aba70bd55041a66dad",
+        "max_input_tokens": 1048576,
+        "max_output_tokens": 65535,
+        "input_cost_per_token": 0.0000015,
+        "output_cost_per_token": 0.0000075
+      }
+    },
+    {
+      "id": "mistral-large-3",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "a57c696a0f8fa99312ba0094ff3beb2a2192c64cdc63dd6b73e3b9a11d45bccb",
+        "max_input_tokens": 262144,
+        "max_output_tokens": 262144,
+        "input_cost_per_token": 5e-7,
+        "output_cost_per_token": 0.0000015
+      }
+    },
+    {
+      "id": "gpt-5.1-codex-mini",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "8e817b39a16aadb75cddfc3afd5d713db34ab0aaf49f175c07fc334937914e38",
+        "max_input_tokens": 272000,
+        "max_output_tokens": 128000,
+        "input_cost_per_token": 2.5e-7,
+        "output_cost_per_token": 0.000002
+      }
+    },
+    {
+      "id": "gemini-3-flash-preview",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "8b9669d59b95fbe57c164b60b36b1d30b6c8fc91ef59249bc7ceffcf2b086184",
+        "max_input_tokens": 1048576,
+        "max_output_tokens": 65535,
+        "input_cost_per_token": 5e-7,
+        "output_cost_per_token": 0.000003
+      }
+    },
+    {
+      "id": "claude-opus-4-7",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "6d4fa0aa7d9cea501ca7d7e969ec4b7660080f0db5b189b7bef50d60a3e9b13e",
+        "max_input_tokens": 1000000,
+        "max_output_tokens": 128000,
+        "input_cost_per_token": 0.000005,
+        "output_cost_per_token": 0.000025
+      }
+    },
+    {
+      "id": "glm-5-turbo",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "da5796031943251fc473034a0c85b97e3aebdf1466cb6568d7aa03f08eecdced",
+        "max_input_tokens": 202800,
+        "max_output_tokens": 131100,
+        "input_cost_per_token": 0.0000012,
+        "output_cost_per_token": 0.000004
+      }
+    },
+    {
+      "id": "claude-fable-5",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "fd9168a725da7269ddcc2a86a332cc2fe733c5716ad73b099f0253dc7c7a5ac5",
+        "max_input_tokens": 1000000,
+        "max_output_tokens": 128000,
+        "input_cost_per_token": 0.00001,
+        "output_cost_per_token": 0.00005
+      }
+    },
+    {
+      "id": "deepseek-r1-0528",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "1793f0250d30968995f994b1358885085419cafbef98cf01dab1f3b09cb2f861",
+        "max_input_tokens": 65336,
+        "max_output_tokens": 8192,
+        "input_cost_per_token": 5e-7,
+        "output_cost_per_token": 0.00000218
+      }
+    },
+    {
+      "id": "qwen3-coder",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "fc3cdc09fe1429f3ce48053057760fb5820d54c5c708cfcffadf2c14a457651f",
+        "max_input_tokens": 262100,
+        "max_output_tokens": 262100,
+        "input_cost_per_token": 2.5e-7,
+        "output_cost_per_token": 0.00000145
+      }
+    },
+    {
+      "id": "text-embedding-3-large",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "69dbe9695678c2845ce7faa213b29943b82df856c74e06690ecfbb2316b3802b",
+        "max_input_tokens": 8191,
+        "max_output_tokens": null,
+        "input_cost_per_token": 1.3e-7,
+        "output_cost_per_token": 0
+      }
+    },
+    {
+      "id": "kimi-k2.5",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "7cf8d98985cf014a36178b686a93fa255362eacbd11ab6e4f161553bcfe41073",
+        "max_input_tokens": 262144,
+        "max_output_tokens": 262144,
+        "input_cost_per_token": 6e-7,
+        "output_cost_per_token": 0.000003
+      }
+    },
+    {
+      "id": "mistral-small-3.2-24b-instruct",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "5b3406b3181b67c9fd71a1c2f24e7903cfbea9151334d4fbab5d05c306fe330c",
+        "max_input_tokens": 128000,
+        "max_output_tokens": 128000,
+        "input_cost_per_token": 1e-7,
+        "output_cost_per_token": 3e-7
+      }
+    },
+    {
+      "id": "gpt-4o",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "c0555a7c689a4cb4bfc2bb095f074d26041e7303813695e8d160d9a78262b4fb",
+        "max_input_tokens": 128000,
+        "max_output_tokens": 16384,
+        "input_cost_per_token": 0.0000025,
+        "output_cost_per_token": 0.00001
+      }
+    },
+    {
+      "id": "kimi-k2.7-code",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "0c6c3b316d908f14eb990e81d5464ee00dec125ff79015eeeb69fccd4f22301a",
+        "max_input_tokens": 262144,
+        "max_output_tokens": 262144,
+        "input_cost_per_token": 7.5e-7,
+        "output_cost_per_token": 0.0000035
+      }
+    },
+    {
+      "id": "glm-5.3",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "1caa073bc9eb670d26b1608b1b8505bb9f7af90ca1c94617370153004a5ccb68",
+        "max_input_tokens": 1048576,
+        "max_output_tokens": 131072,
+        "input_cost_per_token": 0.0000014,
+        "output_cost_per_token": 0.0000044
+      }
+    },
+    {
+      "id": "deepseek-v3.1-terminus",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "e80e8dedf0a7057fef9d30c2d02ae9d9d5792be142b44ecbdc54d6e9e8b23532",
+        "max_input_tokens": 131072,
+        "max_output_tokens": 32768,
+        "input_cost_per_token": 2.7e-7,
+        "output_cost_per_token": 0.000001
+      }
+    },
+    {
+      "id": "gemini-3.5-flash-lite",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "3bb84eca172fc1a14c495a84a1345dc7f221b315bfda3caa007ecae82fae75ab",
+        "max_input_tokens": 1048576,
+        "max_output_tokens": 65535,
+        "input_cost_per_token": 3e-7,
+        "output_cost_per_token": 0.0000025
+      }
+    },
+    {
+      "id": "gemini-2.5-flash-image",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "6ddc1411bcafed88317f86590eb837f68b9e467fe878b125d8080dcc57020a0f",
+        "max_input_tokens": 32768,
+        "max_output_tokens": 32768,
+        "input_cost_per_token": 3e-7,
+        "output_cost_per_token": 0.0000025
+      }
+    },
+    {
+      "id": "qwen3-coder-plus",
+      "object": "model",
+      "created": 1790389723,
+      "owned_by": "openai",
+      "model_info": {
+        "id": "667d9c9049904ec9ebf804fe2a4197e6cea455e42a10276ce75c04e955db2ec7",
+        "max_input_tokens": 997952,
+        "max_output_tokens": 65536,
+        "input_cost_per_token": 0.00000117,
+        "output_cost_per_token": 0.00000585
+      }
+    }
+  ],
+  "object": "list"
+}

@@ -1,7 +1,7 @@
 "use server";
 
 import { cookies } from "next/headers";
-import type { Project, User, ResponseApi, Projects } from "@/types/types";
+import type { Project, User, ResponseApi, Projects, Tasks } from "@/types/types";
 import { responseToken, responseCatch } from "./tools";
 
 export async function getProjectApi(
@@ -216,6 +216,34 @@ export async function postCreatProjectApi(
 				contributors: contributor,
 			}),
 		});
+		const data = await response.json();
+
+		return data;
+	} catch (error) {
+		return responseCatch(error);
+	}
+}
+export async function getAllTaskForProjectApi(
+	idProject: string,
+): Promise<ResponseApi<Tasks>> {
+	try {
+		const cookieStore = await cookies();
+		const cookie = cookieStore.get("tokenAbricot");
+		const token = cookie?.value;
+
+		if (!token) {
+			return responseToken();
+		}
+
+		const response = await fetch(
+			"http://localhost:8000/projects/" + idProject + "/tasks",
+			{
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`,
+				},
+			},
+		);
 		const data = await response.json();
 
 		return data;

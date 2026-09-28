@@ -11,7 +11,7 @@ export function sendToMammouthProcess(
 
 		// Create new process for each message
 		const process = spawn("mammouth", args, {
-			shell: true,
+			//shell: true,
 			stdio: ["ignore", "pipe", "pipe"],
 		});
 
@@ -33,7 +33,7 @@ export function sendToMammouthProcess(
 				process.kill();
 				reject(new Error("Mammouth timeout"));
 			}
-		}, 15000);
+		}, 55000);
 
 		process.on("close", (code) => {
 			if (isResolved) return;
@@ -41,7 +41,7 @@ export function sendToMammouthProcess(
 			clearTimeout(timeoutId);
 
 			if (code !== 0) {
-				return reject(new Error(`Mammouth exited with code ${code}`));
+				return reject(new Error(`Mammouth exited with code ${code}: ${stderr}`));
 			}
 
 			let responseText = "";

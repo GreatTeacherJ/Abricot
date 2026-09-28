@@ -32,8 +32,6 @@ export default function ProjectDetail({ id }: ProjectDetailProps) {
 	const routeName = params.name as string;
 	const [cmtIsModfified, setCmtIsModfified] = useState<boolean>(false);
 
-	console.log("projet : ", project);
-
 	//pour l'ouverture des modale je passe l'id qui me dit que je doit
 	// ouvrire la modale quand l'id est vide la modale est fermée
 	//Ouverture modale modif projet
@@ -137,7 +135,7 @@ export default function ProjectDetail({ id }: ProjectDetailProps) {
 					>
 						Créer une tâche
 					</button>
-					<AiModal />
+					<AiModal project={project} />
 				</div>
 			</div>
 			{/* Barre des contributeurs */}
