@@ -44,7 +44,7 @@ export default function LoginForm() {
 	}
 
 	return (
-		<div className={styles.page}>
+		<main className={styles.page}>
 			{/* Panneau gauche : formulaire */}
 			<div className={styles.panel}>
 				<div className={styles.logo}>
@@ -124,7 +124,7 @@ export default function LoginForm() {
 			</div>
 
 			{/* Panneau droit : illustration (dégradé placeholder) */}
-			<div className={styles.hero} />
-		</div>
+			<div className={styles.hero} aria-hidden="true" />
+		</main>
 	);
 }

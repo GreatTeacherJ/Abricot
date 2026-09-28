@@ -39,15 +39,17 @@ export default function Page({ params }: PageProps) {
 		<>
 			{/* Navigation : clic sur "Projets" → /projets */}
 			<Menu />
-			{/* En-tête avec toggle Liste/Kanban */}
-			<PageHeader setIsRerender={setIsRerender} />
-			<TypeView activeView={activeView} onViewChange={setActiveView} />
-			{/* Affichage conditionnel selon la vue sélectionnée */}
-			{activeView === "list" ? (
-				<TaskList assignedTasks={assignedTasks} />
-			) : (
-				<KanbanBoard assignedTasks={assignedTasks} />
-			)}
+			<main>
+				{/* En-tête avec toggle Liste/Kanban */}
+				<PageHeader setIsRerender={setIsRerender} />
+				<TypeView activeView={activeView} onViewChange={setActiveView} />
+				{/* Affichage conditionnel selon la vue sélectionnée */}
+				{activeView === "list" ? (
+					<TaskList assignedTasks={assignedTasks} />
+				) : (
+					<KanbanBoard assignedTasks={assignedTasks} />
+				)}
+			</main>
 			<Footer />
 		</>
 	);

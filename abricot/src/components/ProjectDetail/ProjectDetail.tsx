@@ -101,7 +101,11 @@ export default function ProjectDetail({ id }: ProjectDetailProps) {
 		<div className={styles.page}>
 			{/* En-tête : bouton retour + titre + lien modifier */}
 			<div className={styles.projectHeader}>
-				<Link href={"/" + routeName + "/projets"} className={styles.backBtn}>
+				<Link
+					href={"/" + routeName + "/projets"}
+					className={styles.backBtn}
+					aria-label="Retour à la liste des projets"
+				>
 					<svg
 						className={styles.backIcon}
 						viewBox="0 0 15 15"
@@ -142,7 +146,7 @@ export default function ProjectDetail({ id }: ProjectDetailProps) {
 			<Contributors project={project} />
 
 			{/* Carte principale : onglets + filtres + liste de tâches */}
-			<div className={styles.contentCard}>
+			<section className={styles.contentCard} aria-label={`Tâches du projet ${project.name}`}>
 				<div className={styles.contentHeader}>
 					<div className={styles.contentTitle}>
 						<h2 className={styles.sectionTitle}>Tâches</h2>
@@ -175,10 +179,11 @@ export default function ProjectDetail({ id }: ProjectDetailProps) {
 						{/* Filtre par statut */}
 						<div className={styles.wrapper}>
 							<select
-								value={selectedStatus}
-								onChange={(e) => setSelectedStatus(e.target.value)}
-								className={styles.select}
-							>
+							value={selectedStatus}
+							onChange={(e) => setSelectedStatus(e.target.value)}
+							className={styles.select}
+							aria-label="Filtrer par statut"
+						>
 								{STATUS_OPTIONS.map((option) => (
 									<option key={option.value} value={option.value}>
 										{option.label}
@@ -202,6 +207,7 @@ export default function ProjectDetail({ id }: ProjectDetailProps) {
 								className={styles.searchInput}
 								type="text"
 								placeholder="Rechercher une tâche"
+								aria-label="Rechercher une tâche"
 								onChange={(e) => setsearchText(e.target.value)}
 							/>
 							<svg
@@ -229,7 +235,7 @@ export default function ProjectDetail({ id }: ProjectDetailProps) {
 						/>
 					))}
 				</div>
-			</div>
+			</section>
 
 			{
 				/*Modale modfier tache */
@@ -261,7 +267,7 @@ export default function ProjectDetail({ id }: ProjectDetailProps) {
 						setIdProjectModified={setidProjectModified}
 						setPrjIsModfified={setRendering}
 					/>
-				)
+)
 			}
 		</div>
 	);

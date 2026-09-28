@@ -10,7 +10,7 @@ interface KanbanColumnProps {
 /** Colonne unique du board Kanban (header + cartes) */
 export default function KanbanColumn({ title, assignedTasks }: KanbanColumnProps) {
 	return (
-		<div className={styles.column}>
+		<section className={styles.column} aria-label={`Colonne kanban ${title}`}>
 			{/* En-tête : titre + compteur */}
 			<div className={styles.header}>
 				<h3 className={styles.title}>{title}</h3>
@@ -22,6 +22,6 @@ export default function KanbanColumn({ title, assignedTasks }: KanbanColumnProps
 					<KanbanCard key={i} task={task} />
 				))}
 			</div>
-		</div>
+		</section>
 	);
 }

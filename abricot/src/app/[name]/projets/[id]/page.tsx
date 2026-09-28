@@ -13,10 +13,10 @@ export default async function ProjectPageClient({
 		<>
 			{/* Navigation avec liens Dashboard/Projets */}
 			<Menu />
-			{/* Détail du projet ou message d'erreur */}
-
-			<ProjectDetail id={id} />
-
+			<main>
+				{/* Détail du projet ou message d'erreur */}
+				<ProjectDetail id={id} />
+			</main>
 			<Footer />
 		</>
 	);

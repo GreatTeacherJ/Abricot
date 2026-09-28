@@ -55,6 +55,11 @@ export default function ProjectCard({ project }: ProjectCardProps) {
 				<div className={styles.progressBar}>
 					<div
 						className={styles.progressFill}
+						role="progressbar"
+						aria-valuenow={progress}
+						aria-valuemin={0}
+						aria-valuemax={100}
+						aria-label={`Progression ${progress}%`}
 						style={{ width: `${progress}%` }}
 					/>
 				</div>

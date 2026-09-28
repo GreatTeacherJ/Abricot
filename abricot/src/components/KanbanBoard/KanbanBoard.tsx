@@ -13,10 +13,10 @@ export default function KanbanBoard({ assignedTasks }: KanbanBoardProps) {
 	const done = assignedTasks.filter((task) => task.status === "DONE");
 
 	return (
-		<div className={styles.board}>
+		<section className={styles.board} aria-label="Tableau Kanban des tâches assignées">
 			<KanbanColumn title="À faires" assignedTasks={todo} />
 			<KanbanColumn title="En cours" assignedTasks={inProgress} />
 			<KanbanColumn title="Términées" assignedTasks={done} />
-		</div>
+		</section>
 	);
 }

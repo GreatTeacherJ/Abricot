@@ -26,7 +26,7 @@ export default function Contributors({ project }: ContributorsProps) {
 	}));
 
 	return (
-		<div className={styles.bar}>
+		<section className={styles.bar}>
 			{/* En-tête : titre + compteur */}
 			<div className={styles.header}>
 				<h3 className={styles.title}>Contributeurs</h3>
@@ -56,6 +56,6 @@ export default function Contributors({ project }: ContributorsProps) {
 					</div>
 				))}
 			</div>
-		</div>
+		</section>
 	);
 }

@@ -30,13 +30,13 @@ export default function PageHeader({ setIsRerender }: Props) {
 	}
 
 	return (
-		<div className={styles.header}>
+		<header className={styles.header}>
 			{/* Titre et sous-titre */}
 			<div className={styles.titleBlock}>
 				<h1 className={styles.title}>{title}</h1>
 				<p className={styles.subtitle}>{desc}</p>
 			</div>
 			<ProjectCreatModal setIsRerender={setIsRerender} />
-		</div>
+		</header>
 	);
 }
